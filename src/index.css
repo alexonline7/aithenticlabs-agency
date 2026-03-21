@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222 47% 6%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 9%;
+    --card-foreground: 210 40% 98%;
+    --primary: 43 96% 56%;
+    --primary-foreground: 222 47% 6%;
+    --secondary: 217 91% 60%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 217 91% 60%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 43 96% 56%;
+    --radius: 0.5rem;
+
+    --deep-gold-400: 43 96% 64%;
+    --deep-gold-500: 43 96% 56%;
+    --deep-gold-600: 43 96% 48%;
+    --electric-blue-400: 217 91% 68%;
+    --electric-blue-500: 217 91% 60%;
+    --electric-blue-600: 217 91% 52%;
+    --deep-purple-500: 271 81% 56%;
+    --charcoal-900: 222 47% 6%;
+    --surface-secondary: 222 47% 12%;
+    --text-muted: 215 20% 55%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-bricolage antialiased;
+  }
+}
+
+@layer components {
+  .luxury-gradient {
+    background: linear-gradient(
+      135deg,
+      hsl(222 47% 6%) 0%,
+      hsl(271 81% 10%) 30%,
+      hsl(222 47% 8%) 60%,
+      hsl(217 91% 10%) 100%
+    );
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-deep-gold-500 via-deep-gold-400 to-electric-blue-500 bg-clip-text text-transparent;
+  }
+
+  .glass-effect {
+    @apply bg-white/5 backdrop-blur-md border border-white/10;
+  }
+
+  .dark-slate-purple-card {
+    background: linear-gradient(
+      135deg,
+      hsl(222 47% 9%) 0%,
+      hsl(271 81% 12%) 50%,
+      hsl(222 47% 11%) 100%
+    );
+    border: 1px solid hsl(271 81% 20% / 0.3);
+  }
+
+  .accent-gradient {
+    @apply bg-gradient-to-r from-deep-gold-500 via-deep-gold-400 to-electric-blue-500;
+  }
+}
