@@ -211,6 +211,18 @@ const toolSpecs = [
         output: "SSE stream → consensus report markdown",
       },
     ],
+    consensusReportStructure: [
+      "Executive Summary — What we're building, for whom, key differentiators, expected impact (3-4 paragraphs)",
+      "Project Scope & Deliverables — Numbered MVP scope, Phase 1 vs Future Enhancements separation",
+      "Cost Estimate — Table: Phase | Description | Estimated Cost | Timeline (calibrated: $500–$15k, days not months)",
+      "Risk Assessment — Top 5-8 risks table: Risk | Probability | Impact | Mitigation",
+      "Recommended Team Composition — Lean roles for AI-assisted dev (1-2 devs with AI tools vs traditional teams)",
+      "Technology Decisions (Final) — Consolidated tech stack with justifications (React/Next.js, Supabase, Vercel, etc.)",
+      "Implementation Roadmap — Day-by-day or sprint-by-sprint plan, MVP targeting days not months",
+      "Key Metrics & Success Criteria — Measurable KPIs to determine project success",
+      "Client Action Items — What the client must provide/decide before development begins",
+      "Next Steps — Immediate actions to kick off the project, emphasizing speed",
+    ],
     database: [
       "Table: `generated_reports` — stores each step's output",
       "report_type values: interview, architecture, ux_blueprint, consensus",
