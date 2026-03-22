@@ -150,7 +150,7 @@ export default function AdminFlashApps() {
 
               {/* ── Standard User Version ── */}
               <TabsContent value="user-view">
-                <ScrollArea className="max-h-[65vh]">
+                <ScrollArea className="h-[65vh]">
                   <div className={`${markdownStyles} p-4`}>
                     <ReactMarkdown>{typeof viewReport.metadata?.userVersion === "string" ? String(viewReport.metadata.userVersion) : viewReport.content}</ReactMarkdown>
                   </div>
@@ -159,7 +159,7 @@ export default function AdminFlashApps() {
 
               {/* ── Professional Dev Version ── */}
               <TabsContent value="system-view">
-                <ScrollArea className="max-h-[65vh]">
+                <ScrollArea className="h-[65vh]">
                   <div className="space-y-5 p-1">
 
                     {/* Project Overview Card */}
