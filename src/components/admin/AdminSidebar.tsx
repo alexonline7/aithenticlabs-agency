@@ -32,6 +32,10 @@ const specificationSections = [
     label: "Idea → Action Plan Specs",
     item: { title: "View Idea → Action Plan", url: "/admin/idea-blueprint", icon: Lightbulb },
   },
+  {
+    label: "AI Recommendation",
+    item: { title: "View AI Recommendations", url: "/admin/ai-recommendations", icon: BrainCircuit },
+  },
 ];
 
 export default function AdminSidebar() {
