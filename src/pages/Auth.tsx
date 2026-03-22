@@ -11,6 +11,7 @@ export default function Auth() {
   const [password, setPassword] = useState("");
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [isSendingReset, setIsSendingReset] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -21,30 +22,75 @@ export default function Auth() {
     setError(null);
     setMessage(null);
 
-    if (isLogin) {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) setError(error.message);
-      else navigate("/");
-    } else {
-      const { error } = await supabase.auth.signUp({
+    try {
+      if (isLogin) {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        navigate("/");
+        return;
+      }
+
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: { emailRedirectTo: window.location.origin },
       });
-      if (error) setError(error.message);
-      else setMessage("Check your email for a confirmation link.");
+
+      if (error) throw error;
+
+      if (data.user?.identities && data.user.identities.length === 0) {
+        setMessage("This email is already registered. Please sign in instead.");
+      } else {
+        setMessage("Check your email for a confirmation link.");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Authentication failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
     setError(null);
-    const { error } = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
-    });
-    if (error) setError(error.message);
-    setLoading(false);
+    setMessage(null);
+
+    try {
+      const { error } = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
+      });
+
+      if (error) throw error;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Google sign-in failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setError("Enter your email address first, then click forgot password.");
+      return;
+    }
+
+    setIsSendingReset(true);
+    setError(null);
+    setMessage(null);
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) throw error;
+
+      setMessage("Password reset email sent. Check inbox and spam folder.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not send reset email. Please try again.");
+    } finally {
+      setIsSendingReset(false);
+    }
   };
 
   return (
@@ -96,7 +142,7 @@ export default function Auth() {
             <Button
               type="button"
               onClick={handleGoogleSignIn}
-              disabled={loading}
+              disabled={loading || isSendingReset}
               variant="outline"
               className="w-full h-12 flex items-center justify-center gap-3 border-slate-700/50 bg-slate-800/40 hover:bg-slate-700/50 transition-all duration-300 font-bricolage text-slate-200 disabled:opacity-50"
             >
@@ -145,10 +191,10 @@ export default function Auth() {
               </div>
               <Button
                 type="submit"
-                disabled={loading}
+                disabled={loading || isSendingReset}
                 className="w-full h-12 bg-gradient-to-r from-deep-gold-500 via-deep-gold-400 to-electric-blue-500 hover:from-deep-gold-600 hover:via-deep-gold-500 hover:to-electric-blue-600 text-charcoal-900 font-bold text-lg font-bricolage shadow-lg hover:shadow-xl hover:shadow-deep-gold-500/25 transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50"
               >
-                {isLogin ? "Sign In" : "Create Account"} <Zap className="ml-2 h-4 w-4" />
+                {loading ? "Working..." : isLogin ? "Sign In" : "Create Account"} <Zap className="ml-2 h-4 w-4" />
               </Button>
             </form>
 
@@ -165,14 +211,20 @@ export default function Auth() {
 
             <div className="space-y-2">
               <button
+                type="button"
                 onClick={() => setIsLogin(!isLogin)}
                 className="w-full text-electric-blue-400 hover:text-electric-blue-400 hover:bg-slate-800/30 transition-all duration-300 font-bricolage h-12 text-lg rounded-md"
               >
                 {isLogin ? "Create your account" : "Sign in instead"}
               </button>
               {isLogin && (
-                <button className="w-full text-slate-400 hover:text-slate-300 hover:bg-slate-800/20 transition-all duration-300 font-bricolage text-sm h-10 rounded-md">
-                  Forgot your password?
+                <button
+                  type="button"
+                  onClick={handleForgotPassword}
+                  disabled={loading || isSendingReset}
+                  className="w-full text-slate-400 hover:text-slate-300 hover:bg-slate-800/20 transition-all duration-300 font-bricolage text-sm h-10 rounded-md disabled:opacity-50"
+                >
+                  {isSendingReset ? "Sending reset email..." : "Forgot your password?"}
                 </button>
               )}
             </div>
