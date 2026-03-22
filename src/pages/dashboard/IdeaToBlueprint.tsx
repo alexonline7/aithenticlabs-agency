@@ -121,6 +121,7 @@ async function streamFromFunction(
 }
 
 export default function IdeaToBlueprint() {
+  const { user } = useAuth();
   const [scope, setScope] = useState<Scope | null>(null);
   const [currentStep, setCurrentStep] = useState<PipelineStep>("scope");
 

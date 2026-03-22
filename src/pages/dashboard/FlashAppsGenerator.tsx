@@ -129,6 +129,7 @@ const previousGenerations = [
 /* ═══════════════════════════════════════════════════════════ */
 
 export default function FlashAppsGenerator() {
+  const { user } = useAuth();
   // ── wizard state
   const [activeTab, setActiveTab] = useState("configure");
   const [appName, setAppName] = useState("");
