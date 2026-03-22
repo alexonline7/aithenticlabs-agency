@@ -454,7 +454,7 @@ export default function AdminBlueprints() {
                       </Card>
                     )}
                   </div>
-                  {meta.selectedFeatures && typeof meta.selectedFeatures === "object" && (
+                  {!!meta.selectedFeatures && typeof meta.selectedFeatures === "object" && (
                     <Card>
                       <CardContent className="p-3">
                         <p className="text-xs text-muted-foreground mb-2">Selected Advanced Features</p>
