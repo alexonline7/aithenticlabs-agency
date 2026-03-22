@@ -75,12 +75,19 @@ async function streamFromFunction(
   onError: (msg: string) => void
 ) {
   try {
+    const { data: sessionData } = await supabase.auth.getSession();
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      apikey: SUPABASE_KEY,
+    };
+
+    if (sessionData.session?.access_token) {
+      headers.Authorization = `Bearer ${sessionData.session.access_token}`;
+    }
+
     const resp = await fetch(`${SUPABASE_URL}/functions/v1/${fnName}`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${SUPABASE_KEY}`,
-      },
+      headers,
       body: JSON.stringify(body),
     });
 
