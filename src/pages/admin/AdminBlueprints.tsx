@@ -11,7 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   FileText, Search, Eye, Loader2, Filter, DollarSign, Clock, AlertTriangle,
-  Users, Layers, Target, CheckCircle, Rocket, ArrowRight,
+  Users, Layers, Target, CheckCircle, Rocket, ArrowRight, Code, MonitorSmartphone,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
@@ -394,7 +394,7 @@ export default function AdminBlueprints() {
         </div>
       )}
 
-      {/* View Dialog — enhanced for consensus reports */}
+      {/* View Dialog — Dual View: User View + System View */}
       <Dialog open={!!viewReport} onOpenChange={() => setViewReport(null)}>
         <DialogContent className="max-w-5xl max-h-[90vh]">
           <DialogHeader>
@@ -411,84 +411,158 @@ export default function AdminBlueprints() {
             </DialogTitle>
           </DialogHeader>
 
-          {viewReport?.report_type === "consensus" ? (
-            <div>
-              <QuickInfoCards report={viewReport} />
-              <ConsensusDetailView report={viewReport} />
-            </div>
-          ) : viewReport?.report_type === "quantum-blueprint" ? (
-            <div>
-              <QuickInfoCards report={viewReport} />
-              {/* Quantum metadata: project type, platforms, features, notes */}
-              {viewReport.metadata && (() => {
-                const meta = viewReport.metadata as Record<string, unknown>;
-                return (
-                <div className="space-y-3 mb-4">
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {!!meta.projectType && (
-                      <Card>
-                        <CardContent className="p-3">
-                          <p className="text-xs text-muted-foreground mb-1">Project Type</p>
-                          <p className="text-sm font-semibold text-foreground">{String(meta.projectType)}</p>
-                        </CardContent>
-                      </Card>
-                    )}
-                    {Array.isArray(meta.platforms) && (
-                      <Card>
-                        <CardContent className="p-3">
-                          <p className="text-xs text-muted-foreground mb-1">Platforms</p>
-                          <div className="flex flex-wrap gap-1">
-                            {(meta.platforms as string[]).map((p: string) => (
-                              <Badge key={p} variant="secondary" className="text-xs">{p}</Badge>
-                            ))}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )}
-                    {!!meta.additionalNotes && (
-                      <Card>
-                        <CardContent className="p-3">
-                          <p className="text-xs text-muted-foreground mb-1">Client Notes</p>
-                          <p className="text-sm text-foreground">{String(meta.additionalNotes)}</p>
-                        </CardContent>
-                      </Card>
-                    )}
+          {viewReport && (
+            <Tabs defaultValue="user-view">
+              <TabsList className="mb-4">
+                <TabsTrigger value="user-view" className="gap-1.5">
+                  <MonitorSmartphone className="h-3.5 w-3.5" />
+                  User View
+                </TabsTrigger>
+                <TabsTrigger value="system-view" className="gap-1.5">
+                  <Code className="h-3.5 w-3.5" />
+                  System View
+                </TabsTrigger>
+              </TabsList>
+
+              {/* USER VIEW — Exactly as the client sees it */}
+              <TabsContent value="user-view">
+                <ScrollArea className="max-h-[65vh]">
+                  <div className="prose prose-invert max-w-none text-sm p-4">
+                    <ReactMarkdown>{viewReport.content}</ReactMarkdown>
                   </div>
-                  {!!meta.selectedFeatures && typeof meta.selectedFeatures === "object" && (
+                </ScrollArea>
+              </TabsContent>
+
+              {/* SYSTEM VIEW — Full metadata + structured data + raw content */}
+              <TabsContent value="system-view">
+                <ScrollArea className="max-h-[65vh]">
+                  <div className="space-y-4 p-1">
+                    {/* Quick Info Cards */}
+                    <QuickInfoCards report={viewReport} />
+
+                    {/* Report Metadata */}
                     <Card>
-                      <CardContent className="p-3">
-                        <p className="text-xs text-muted-foreground mb-2">Selected Advanced Features</p>
-                        <div className="space-y-2">
-                          {Object.entries(meta.selectedFeatures as Record<string, string[]>).map(([category, features]) => (
-                            <div key={category}>
-                              <p className="text-xs font-medium text-primary mb-1">{category}</p>
-                              <div className="flex flex-wrap gap-1">
-                                {features.map((f: string) => (
-                                  <Badge key={f} variant="outline" className="text-xs">{f}</Badge>
-                                ))}
-                              </div>
-                            </div>
-                          ))}
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Report Metadata</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-2 text-sm">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                          <div>
+                            <p className="text-xs text-muted-foreground">Report ID</p>
+                            <p className="font-mono text-xs text-foreground break-all">{viewReport.id}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">User Email</p>
+                            <p className="text-foreground">{viewReport.user_email || "Anonymous"}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">Report Type</p>
+                            <p className="text-foreground">{viewReport.report_type}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">Content Length</p>
+                            <p className="text-foreground">{viewReport.content.length.toLocaleString()} chars</p>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
-                  )}
-                  <Separator />
-                </div>
-                );
-              })()}
-              <ScrollArea className="max-h-[50vh]">
-                <div className="prose prose-invert prose-sm max-w-none p-4">
-                  <ReactMarkdown>{viewReport.content}</ReactMarkdown>
-                </div>
-              </ScrollArea>
-            </div>
-          ) : (
-            <ScrollArea className="max-h-[65vh]">
-              <div className="prose prose-invert prose-sm max-w-none p-4">
-                <ReactMarkdown>{viewReport?.content || ""}</ReactMarkdown>
-              </div>
-            </ScrollArea>
+
+                    {/* Full Metadata JSON */}
+                    {viewReport.metadata && Object.keys(viewReport.metadata).length > 0 && (
+                      <Card>
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-sm">Full Metadata (JSON)</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          {/* Structured cards for known fields */}
+                          {(() => {
+                            const meta = viewReport.metadata as Record<string, unknown>;
+                            return (
+                              <div className="space-y-3">
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                  {!!meta.projectType && (
+                                    <div className="bg-muted/30 rounded-lg p-3">
+                                      <p className="text-xs text-muted-foreground mb-1">Project Type</p>
+                                      <p className="text-sm font-semibold text-foreground">{String(meta.projectType)}</p>
+                                    </div>
+                                  )}
+                                  {Array.isArray(meta.platforms) && (
+                                    <div className="bg-muted/30 rounded-lg p-3">
+                                      <p className="text-xs text-muted-foreground mb-1">Platforms</p>
+                                      <div className="flex flex-wrap gap-1">
+                                        {(meta.platforms as string[]).map((p: string) => (
+                                          <Badge key={p} variant="secondary" className="text-xs">{p}</Badge>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
+                                  {!!meta.additionalNotes && (
+                                    <div className="bg-muted/30 rounded-lg p-3">
+                                      <p className="text-xs text-muted-foreground mb-1">Client Notes</p>
+                                      <p className="text-sm text-foreground">{String(meta.additionalNotes)}</p>
+                                    </div>
+                                  )}
+                                </div>
+                                {!!meta.selectedFeatures && typeof meta.selectedFeatures === "object" && (
+                                  <div className="bg-muted/30 rounded-lg p-3">
+                                    <p className="text-xs text-muted-foreground mb-2">Selected Advanced Features</p>
+                                    <div className="space-y-2">
+                                      {Object.entries(meta.selectedFeatures as Record<string, string[]>).map(([category, features]) => (
+                                        <div key={category}>
+                                          <p className="text-xs font-medium text-primary mb-1">{category}</p>
+                                          <div className="flex flex-wrap gap-1">
+                                            {features.map((f: string) => (
+                                              <Badge key={f} variant="outline" className="text-xs">{f}</Badge>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                                <Separator />
+                                <details className="group">
+                                  <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground transition-colors">
+                                    Raw JSON
+                                  </summary>
+                                  <pre className="mt-2 bg-muted/20 rounded-lg p-3 text-xs font-mono text-foreground overflow-x-auto whitespace-pre-wrap">
+                                    {JSON.stringify(viewReport.metadata, null, 2)}
+                                  </pre>
+                                </details>
+                              </div>
+                            );
+                          })()}
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {/* Consensus structured view if applicable */}
+                    {viewReport.report_type === "consensus" && (
+                      <Card>
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-sm">Parsed Consensus Sections</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <ConsensusDetailView report={viewReport} />
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {/* Full Raw Content */}
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Full Generated Content</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="prose prose-invert prose-sm max-w-none">
+                          <ReactMarkdown>{viewReport.content}</ReactMarkdown>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </ScrollArea>
+              </TabsContent>
+            </Tabs>
           )}
         </DialogContent>
       </Dialog>
