@@ -159,7 +159,7 @@ export default function AdminFlashApps() {
 
               {/* ── Professional Dev Version ── */}
               <TabsContent value="system-view">
-                <ScrollArea className="max-h-[65vh]">
+                <ScrollArea className="h-[65vh]">
                   <div className="space-y-5 p-1">
 
                     {/* Project Overview Card */}
