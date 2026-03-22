@@ -47,7 +47,7 @@ function App() {
           <Route path="briefs" element={<GeneratedBriefs />} />
           <Route path="quantum-optimization" element={<QuantumOptimization />} />
           <Route path="deployment-tracker" element={<DeploymentTracker />} />
-          <Route path="photo-studio" element={<PhotoStudio />} />
+          
           <Route path="ai-recommendation" element={<AIRecommendation />} />
           <Route path="flash-apps" element={<FlashAppsGenerator />} />
           <Route path="settings" element={<DashboardSettings />} />
