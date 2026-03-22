@@ -159,7 +159,7 @@ export default function AdminIdeaBlueprint() {
                 </ScrollArea>
               </TabsContent>
               <TabsContent value="system-view">
-                <ScrollArea className="max-h-[65vh]">
+                <ScrollArea className="h-[65vh]">
                   <div className="space-y-4 p-1">
                     <Card><CardHeader className="pb-2"><CardTitle className="text-sm">Report Metadata</CardTitle></CardHeader>
                       <CardContent className="text-sm">
