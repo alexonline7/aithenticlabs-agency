@@ -5,7 +5,6 @@ import {
   FileText,
   Zap,
   Rocket,
-  Image,
   Brain,
   Sparkles,
   Settings,
