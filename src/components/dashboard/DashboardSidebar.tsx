@@ -5,7 +5,6 @@ import {
   FileText,
   Zap,
   Rocket,
-  Image,
   Brain,
   Sparkles,
   Settings,
@@ -38,7 +37,6 @@ const mainItems = [
 const advancedItems = [
   { title: "Quantum Optimization", url: "/dashboard/quantum-optimization", icon: Zap },
   { title: "Deployment Tracker", url: "/dashboard/deployment-tracker", icon: Rocket },
-  { title: "Photo Studio", url: "/dashboard/photo-studio", icon: Image },
 ];
 
 const toolItems = [
