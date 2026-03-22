@@ -48,32 +48,51 @@ export default function SubmitProject() {
     setError("");
 
     try {
-      const { data: userData } = await supabase.auth.getUser();
-      const userId = userData.user?.id || null;
+      const { data: sessionData } = await supabase.auth.getSession();
+      const userId = sessionData.session?.user?.id ?? null;
+      const submissionType = prefilledTitle ? "ai_recommendation" : "contact";
 
-      const typeLabels = selectedTypes.map(v => PROJECT_TYPES.find(t => t.value === v)?.label || v).join(", ");
+      const typeLabels = selectedTypes.map((v) => PROJECT_TYPES.find((t) => t.value === v)?.label || v).join(", ");
       const projectDescription = [
         prefilledTitle ? `Recommended App: ${prefilledTitle}` : "",
         `Type: ${typeLabels || "Not specified"}`,
         `Budget: ${budget || "Not specified"}`,
         "",
         description,
-      ].filter(Boolean).join("\n");
+      ]
+        .filter(Boolean)
+        .join("\n");
 
-      const { error: insertError } = await supabase.from("client_submissions").insert({
+      const payload = {
         email: email.trim(),
         name: name.trim() || null,
         project_description: projectDescription,
-        submission_type: "contact",
+        submission_type: submissionType,
         user_id: userId,
         ai_recommendation: prefilledTitle ? { recommended_app: prefilledTitle } : {},
-      });
+      };
+
+      let { error: insertError } = await supabase.from("client_submissions").insert(payload);
+
+      if (insertError && /jwt|token|session|auth/i.test(insertError.message)) {
+        await supabase.auth.signOut();
+        const { error: retryError } = await supabase
+          .from("client_submissions")
+          .insert({ ...payload, user_id: null });
+        insertError = retryError;
+      }
 
       if (insertError) throw insertError;
       setSubmitted(true);
     } catch (err) {
       console.error("Submit error:", err);
-      setError(err instanceof Error ? err.message : "Failed to submit. Please try again.");
+      const message =
+        err instanceof Error
+          ? err.message
+          : typeof err === "object" && err !== null && "message" in err
+            ? String((err as { message?: unknown }).message || "Failed to submit. Please try again.")
+            : "Failed to submit. Please try again.";
+      setError(message);
     } finally {
       setSubmitting(false);
     }
