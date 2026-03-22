@@ -124,6 +124,13 @@ const PLATFORMS = [
 ];
 
 /* ── Component ──────────────────────────────────────────── */
+interface AiSuggestion {
+  featureId: string;
+  label: string;
+  category: string;
+  reason: string;
+}
+
 export default function QuantumOptimization() {
   const [projectName, setProjectName] = useState("");
   const [projectType, setProjectType] = useState("");
@@ -137,6 +144,10 @@ export default function QuantumOptimization() {
   const [blueprint, setBlueprint] = useState("");
   const [error, setError] = useState("");
   const blueprintRef = useRef<HTMLDivElement>(null);
+
+  // AI recommendation state
+  const [recommending, setRecommending] = useState(false);
+  const [aiSuggestions, setAiSuggestions] = useState<AiSuggestion[]>([]);
 
   const totalSelected = Object.values(selectedFeatures).reduce((sum, arr) => sum + arr.length, 0);
 
