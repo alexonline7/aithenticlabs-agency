@@ -445,7 +445,7 @@ export default function AdminBlueprints() {
                         </CardContent>
                       </Card>
                     )}
-                    {meta.additionalNotes && (
+                    {!!meta.additionalNotes && (
                       <Card>
                         <CardContent className="p-3">
                           <p className="text-xs text-muted-foreground mb-1">Client Notes</p>
