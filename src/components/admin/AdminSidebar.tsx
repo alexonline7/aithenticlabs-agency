@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, FileText, Lightbulb, ShieldAlert, Zap, Cpu } from "lucide-react";
+import { ArrowLeft, FileText, Lightbulb, ShieldAlert, Zap, Cpu, BrainCircuit } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
   Sidebar,
