@@ -145,47 +145,22 @@ export default function IdeaToBlueprint() {
   const handleScopeSelect = (s: Scope) => {
     setScope(s);
     setCurrentStep("interview");
-    // Kick off the interview with an initial greeting
-    const initMsg: ChatMessage = { id: "init", role: "user", content: "Hello, I'd like to start discussing my project idea." };
-    setMessages([initMsg]);
+    setMessages([]);
     setIsTyping(true);
 
     let assistantContent = "";
     streamFromFunction(
       "idea-interview",
-      { messages: [{ role: "user", content: initMsg.content }] },
-      (delta) => {
-        assistantContent += delta;
-        setMessages((prev) => {
-          const last = prev[prev.length - 1];
-          if (last?.role === "assistant") {
-            return prev.map((m, i) => (i === prev.length - 1 ? { ...m, content: assistantContent } : m));
-          }
-          return [...prev, { id: crypto.randomUUID(), role: "assistant", content: assistantContent }];
-        });
-      },
-      () => {
-        setIsTyping(false);
-        if (assistantContent.includes("[INTERVIEW_COMPLETE]")) setInterviewComplete(true);
-      },
-      (err) => { setIsTyping(false); setGenError(err); }
-    );
-    // Remove the fake "init" user message from UI
-    setMessages([]);
-    setIsTyping(true);
-
-    // Re-trigger with empty user display
-    streamFromFunction(
-      "idea-interview",
       { messages: [] },
       (delta) => {
         assistantContent += delta;
+        const clean = assistantContent.replace("[INTERVIEW_COMPLETE]", "");
         setMessages((prev) => {
           const last = prev[prev.length - 1];
           if (last?.role === "assistant") {
-            return prev.map((m, i) => (i === prev.length - 1 ? { ...m, content: assistantContent.replace("[INTERVIEW_COMPLETE]", "") } : m));
+            return prev.map((m, i) => (i === prev.length - 1 ? { ...m, content: clean } : m));
           }
-          return [...prev, { id: crypto.randomUUID(), role: "assistant", content: assistantContent.replace("[INTERVIEW_COMPLETE]", "") }];
+          return [{ id: crypto.randomUUID(), role: "assistant", content: clean }];
         });
       },
       () => {
