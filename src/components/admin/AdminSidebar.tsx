@@ -7,8 +7,10 @@ import {
   BarChart3,
   ArrowLeft,
   ShieldAlert,
-  Sparkles,
   Code,
+  Zap,
+  Cpu,
+  Lightbulb,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -32,6 +34,13 @@ const adminItems = [
   { title: "Submissions & Leads", url: "/admin/submissions", icon: Users },
   { title: "Project Board", url: "/admin/projects", icon: KanbanSquare },
   { title: "Analytics & Metrics", url: "/admin/analytics", icon: BarChart3 },
+];
+
+const toolItems = [
+  { title: "FlashApps Generator", url: "/admin/flash-apps", icon: Zap },
+  { title: "Generated Reports", url: "/admin/reports", icon: FileText },
+  { title: "Quantum Optimization", url: "/admin/quantum", icon: Cpu },
+  { title: "Idea → Blueprint", url: "/admin/idea-blueprint", icon: Lightbulb },
 ];
 
 export default function AdminSidebar() {
@@ -64,6 +73,28 @@ export default function AdminSidebar() {
                     <NavLink
                       to={item.url}
                       end={item.url === "/admin"}
+                      className="flex items-center gap-2 px-2 py-1.5 rounded-md text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
+                      activeClassName="bg-sidebar-accent text-primary font-medium"
+                    >
+                      <item.icon className="h-4 w-4 shrink-0" />
+                      {!collapsed && <span>{item.title}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Tools (Dual View)</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {toolItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <NavLink
+                      to={item.url}
                       className="flex items-center gap-2 px-2 py-1.5 rounded-md text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
                       activeClassName="bg-sidebar-accent text-primary font-medium"
                     >

@@ -24,6 +24,10 @@ import AdminClients from "@/pages/admin/AdminClients";
 import AdminSubmissions from "@/pages/admin/AdminSubmissions";
 import AdminProjects from "@/pages/admin/AdminProjects";
 import AdminAnalytics from "@/pages/admin/AdminAnalytics";
+import AdminFlashApps from "@/pages/admin/AdminFlashApps";
+import AdminGeneratedReports from "@/pages/admin/AdminGeneratedReports";
+import AdminQuantum from "@/pages/admin/AdminQuantum";
+import AdminIdeaBlueprint from "@/pages/admin/AdminIdeaBlueprint";
 
 function App() {
   return (
@@ -76,6 +80,10 @@ function App() {
           <Route path="submissions" element={<AdminSubmissions />} />
           <Route path="projects" element={<AdminProjects />} />
           <Route path="analytics" element={<AdminAnalytics />} />
+          <Route path="flash-apps" element={<AdminFlashApps />} />
+          <Route path="reports" element={<AdminGeneratedReports />} />
+          <Route path="quantum" element={<AdminQuantum />} />
+          <Route path="idea-blueprint" element={<AdminIdeaBlueprint />} />
         </Route>
 
         {/* Public pages */}
