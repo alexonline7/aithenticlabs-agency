@@ -6,6 +6,29 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 
+const AUTH_REQUEST_TIMEOUT_MS = 15000;
+
+const withTimeout = async <T,>(promise: Promise<T>, timeoutMs = AUTH_REQUEST_TIMEOUT_MS): Promise<T> => {
+  return await Promise.race([
+    promise,
+    new Promise<T>((_, reject) => {
+      setTimeout(() => reject(new Error("Authentication request timed out. Please try again.")), timeoutMs);
+    }),
+  ]);
+};
+
+const getAuthErrorMessage = (err: unknown, fallback: string) => {
+  if (err instanceof Error) {
+    const normalized = err.message.toLowerCase();
+    if (normalized.includes("failed to fetch") || normalized.includes("networkerror")) {
+      return "Network blocked the auth request. Disable VPN/ad blocker and try again.";
+    }
+    return err.message;
+  }
+
+  return fallback;
+};
+
 export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,20 +45,50 @@ export default function Auth() {
     setError(null);
     setMessage(null);
 
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!normalizedEmail) {
+      setError("Please enter a valid email address.");
+      setLoading(false);
+      return;
+    }
+
+    if (!isLogin && password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      setLoading(false);
+      return;
+    }
+
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await withTimeout(supabase.auth.signInWithPassword({ email: normalizedEmail, password }));
         if (error) throw error;
         navigate("/");
         return;
       }
 
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { emailRedirectTo: window.location.origin },
-      });
+      const signUpRequest = () =>
+        withTimeout(
+          supabase.auth.signUp({
+            email: normalizedEmail,
+            password,
+            options: { emailRedirectTo: window.location.origin },
+          })
+        );
 
+      let signUpResponse: Awaited<ReturnType<typeof signUpRequest>>;
+
+      try {
+        signUpResponse = await signUpRequest();
+      } catch (err) {
+        if (err instanceof Error && err.message.toLowerCase().includes("failed to fetch")) {
+          signUpResponse = await signUpRequest();
+        } else {
+          throw err;
+        }
+      }
+
+      const { data, error } = signUpResponse;
       if (error) throw error;
 
       if (data.user?.identities && data.user.identities.length === 0) {
@@ -44,7 +97,7 @@ export default function Auth() {
         setMessage("Check your email for a confirmation link.");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Authentication failed. Please try again.");
+      setError(getAuthErrorMessage(err, "Authentication failed. Please try again."));
     } finally {
       setLoading(false);
     }
@@ -56,20 +109,24 @@ export default function Auth() {
     setMessage(null);
 
     try {
-      const { error } = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
-      });
+      const { error } = await withTimeout(
+        lovable.auth.signInWithOAuth("google", {
+          redirect_uri: window.location.origin,
+        })
+      );
 
       if (error) throw error;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Google sign-in failed. Please try again.");
+      setError(getAuthErrorMessage(err, "Google sign-in failed. Please try again."));
     } finally {
       setLoading(false);
     }
   };
 
   const handleForgotPassword = async () => {
-    if (!email) {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!normalizedEmail) {
       setError("Enter your email address first, then click forgot password.");
       return;
     }
@@ -79,15 +136,17 @@ export default function Auth() {
     setMessage(null);
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
-      });
+      const { error } = await withTimeout(
+        supabase.auth.resetPasswordForEmail(normalizedEmail, {
+          redirectTo: `${window.location.origin}/reset-password`,
+        })
+      );
 
       if (error) throw error;
 
       setMessage("Password reset email sent. Check inbox and spam folder.");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not send reset email. Please try again.");
+      setError(getAuthErrorMessage(err, "Could not send reset email. Please try again."));
     } finally {
       setIsSendingReset(false);
     }
