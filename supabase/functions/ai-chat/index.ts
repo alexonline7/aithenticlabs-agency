@@ -52,7 +52,7 @@ serve(async (req) => {
             "x-goog-api-key": GEMINI_API_KEY!,
           },
           body: JSON.stringify({
-            model: "gemini-2.5-flash",
+            model: "gemini-2.5-flash-preview-04-17",
             messages: allMessages,
             stream: true,
           }),
