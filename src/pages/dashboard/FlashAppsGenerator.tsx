@@ -268,6 +268,33 @@ export default function FlashAppsGenerator() {
       clearInterval(interval);
       setProgress(100);
       setGenerationPhase("Brief generated successfully!");
+
+      // Save to database
+      if (briefRef.current) {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          await supabase.from("generated_reports").insert({
+            user_id: user.id,
+            user_email: user.email,
+            project_name: appName,
+            report_type: "ai-brief",
+            content: briefRef.current,
+            metadata: {
+              category: appCategories.find((c) => c.id === selectedCategory)?.label || selectedCategory,
+              tier: selectedTier,
+              platforms: selectedPlatforms,
+              features: selectedFeatures.map((fId) => featureModules.find((f) => f.id === fId)?.label || fId),
+              tech: selectedTech,
+              targetAudience,
+              monetization,
+              includeDesignSystem,
+              includeDeployGuide,
+              includeApiDocs,
+              includeTestSpecs,
+            },
+          });
+        }
+      }
     } catch (err) {
       console.error("Brief generation error:", err);
       clearInterval(interval);
