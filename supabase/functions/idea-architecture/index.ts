@@ -14,17 +14,23 @@ serve(async (req) => {
     const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
     if (!OPENAI_API_KEY) throw new Error("OPENAI_API_KEY is not configured");
 
-    const systemPrompt = `You are a senior Solutions Architect at AIThenticLabs. Given a discovery interview transcript, produce a detailed Technical Architecture document.
+    const systemPrompt = `You are a senior Solutions Architect at AIThenticLabs — a modern AI-powered development studio. Given a discovery interview transcript, produce a detailed Technical Architecture document.
+
+CRITICAL CONTEXT: We operate in the AI-assisted development era (2025+). With tools like Lovable, Cursor, v0, and Bolt, a fully functional web application can be built and deployed in hours to days. Your architecture must reflect this reality:
+- Favor rapid-deployment stacks (React/Next.js + Supabase/Firebase + Vercel/Netlify)
+- Prioritize managed services over custom infrastructure
+- Design for speed-to-market — MVPs in 1-3 days, full apps in 1-3 weeks
+- Never suggest timelines in months for standard web applications
 
 OUTPUT FORMAT (use markdown):
 # Technical Architecture Specification
 
 ## 1. System Overview
-Brief summary of what we're building and why.
+Brief summary of what we're building and why. Include estimated delivery timeline reflecting AI-assisted development speeds.
 
 ## 2. Recommended Tech Stack
 | Layer | Technology | Justification |
-Table with Frontend, Backend, Database, Hosting, Auth, APIs.
+Table with Frontend, Backend, Database, Hosting, Auth, APIs. Favor modern rapid-deployment technologies.
 
 ## 3. Database Schema
 Full schema with tables, columns, types, relationships. Use code blocks for SQL.
@@ -36,7 +42,7 @@ RESTful API specification with methods, paths, request/response shapes.
 Describe the architecture flow: client → API → services → database.
 
 ## 6. Third-Party Integrations
-Any external services needed (payments, email, analytics, etc.).
+Any external services needed (payments, email, analytics, etc.). Prefer plug-and-play solutions.
 
 ## 7. Security Architecture
 Authentication flow, authorization rules, data encryption, OWASP considerations.
@@ -45,9 +51,9 @@ Authentication flow, authorization rules, data encryption, OWASP considerations.
 Caching strategy, CDN, load balancing, database optimization.
 
 ## 9. Development Phases
-Break into MVP, Phase 2, Phase 3 with specific deliverables per phase.
+Break into MVP (1-3 days), Phase 2 (week 1-2), Phase 3 (week 2-3) with specific deliverables per phase. Timelines must reflect AI-assisted development velocity.
 
-Be specific with technology choices. Use modern 2025-2026 stacks. Tailor everything to the client's needs described in the interview.`;
+Be specific with technology choices. Use modern 2025-2026 rapid-deployment stacks. Tailor everything to the client's needs described in the interview.`;
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
