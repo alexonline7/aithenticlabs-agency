@@ -19,6 +19,8 @@ import Projects from "@/pages/Projects";
 
 import AdminLayout from "@/components/admin/AdminLayout";
 import AdminBlueprints from "@/pages/admin/AdminBlueprints";
+import AdminToolSpecs from "@/pages/admin/AdminToolSpecs";
+import AdminClients from "@/pages/admin/AdminClients";
 import AdminSubmissions from "@/pages/admin/AdminSubmissions";
 import AdminProjects from "@/pages/admin/AdminProjects";
 import AdminAnalytics from "@/pages/admin/AdminAnalytics";
@@ -69,6 +71,8 @@ function App() {
           }
         >
           <Route index element={<AdminBlueprints />} />
+          <Route path="tool-specs" element={<AdminToolSpecs />} />
+          <Route path="clients" element={<AdminClients />} />
           <Route path="submissions" element={<AdminSubmissions />} />
           <Route path="projects" element={<AdminProjects />} />
           <Route path="analytics" element={<AdminAnalytics />} />

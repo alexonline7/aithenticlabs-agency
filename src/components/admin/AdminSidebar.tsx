@@ -2,11 +2,13 @@ import { useNavigate } from "react-router-dom";
 import {
   FileText,
   Users,
+  UserCheck,
   KanbanSquare,
   BarChart3,
   ArrowLeft,
   ShieldAlert,
   Sparkles,
+  Code,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -25,6 +27,8 @@ import {
 
 const adminItems = [
   { title: "Blueprints & Reports", url: "/admin", icon: FileText },
+  { title: "Tool Specifications", url: "/admin/tool-specs", icon: Code },
+  { title: "Users & Clients", url: "/admin/clients", icon: UserCheck },
   { title: "Submissions & Leads", url: "/admin/submissions", icon: Users },
   { title: "Project Board", url: "/admin/projects", icon: KanbanSquare },
   { title: "Analytics & Metrics", url: "/admin/analytics", icon: BarChart3 },
