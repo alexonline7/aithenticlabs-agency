@@ -2,11 +2,13 @@ import { useNavigate } from "react-router-dom";
 import {
   FileText,
   Users,
+  UserCheck,
   KanbanSquare,
   BarChart3,
   ArrowLeft,
   ShieldAlert,
   Sparkles,
+  Code,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
