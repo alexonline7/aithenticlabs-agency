@@ -39,6 +39,7 @@ export default function GeneratedBriefs() {
   const [search, setSearch] = useState("");
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState("");
   const [viewingReport, setViewingReport] = useState<Report | null>(null);
 
   useEffect(() => {
