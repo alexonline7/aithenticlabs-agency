@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAdminRole } from "@/hooks/useAdminRole";
 import {
   LayoutDashboard,
   MessageSquare,
@@ -11,6 +12,7 @@ import {
   LogOut,
   ChevronRight,
   Lightbulb,
+  ShieldAlert,
 } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { NavLink } from "@/components/NavLink";
@@ -50,6 +52,7 @@ export default function DashboardSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const { user, signOut } = useAuth();
+  const { isAdmin } = useAdminRole();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -145,6 +148,20 @@ export default function DashboardSidebar() {
           <p className="text-xs text-muted-foreground truncate mb-2">{user.email}</p>
         )}
         <SidebarMenu>
+          {isAdmin && (
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <NavLink
+                  to="/admin"
+                  className="flex items-center gap-2 px-2 py-1.5 rounded-md text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
+                  activeClassName="bg-sidebar-accent text-primary font-medium"
+                >
+                  <ShieldAlert className="h-4 w-4 shrink-0 text-primary" />
+                  {!collapsed && <span className="text-primary font-medium">Admin Panel</span>}
+                </NavLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <NavLink
