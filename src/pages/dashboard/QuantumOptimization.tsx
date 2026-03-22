@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -133,6 +134,7 @@ interface AiSuggestion {
 }
 
 export default function QuantumOptimization() {
+  const { user } = useAuth();
   const [projectName, setProjectName] = useState("");
   const [projectType, setProjectType] = useState("");
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
@@ -268,30 +270,36 @@ export default function QuantumOptimization() {
       }
       // Save to database
       if (accumulated) {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          const featureMap: Record<string, string[]> = {};
-          for (const [catId, featureIds] of Object.entries(selectedFeatures)) {
-            const cat = FEATURE_CATEGORIES.find((c) => c.id === catId);
-            if (!cat || featureIds.length === 0) continue;
-            featureMap[cat.title] = featureIds.map((fId) => {
-              const f = cat.features.find((feat) => feat.id === fId);
-              return f ? f.label : fId;
-            });
-          }
-          await supabase.from("generated_reports").insert({
-            user_id: user.id,
-            user_email: user.email,
-            project_name: projectName,
-            report_type: "quantum-blueprint",
-            content: accumulated,
-            metadata: {
-              projectType: PROJECT_TYPES.find((t) => t.id === projectType)?.label || projectType,
-              platforms: selectedPlatforms.map((p) => PLATFORMS.find((pl) => pl.id === p)?.label || p),
-              selectedFeatures: featureMap,
-              additionalNotes,
-            },
+        if (!user) {
+          throw new Error("Your session expired before saving. Please sign in again and retry.");
+        }
+
+        const featureMap: Record<string, string[]> = {};
+        for (const [catId, featureIds] of Object.entries(selectedFeatures)) {
+          const cat = FEATURE_CATEGORIES.find((c) => c.id === catId);
+          if (!cat || featureIds.length === 0) continue;
+          featureMap[cat.title] = featureIds.map((fId) => {
+            const f = cat.features.find((feat) => feat.id === fId);
+            return f ? f.label : fId;
           });
+        }
+
+        const { error: insertError } = await supabase.from("generated_reports").insert({
+          user_id: user.id,
+          user_email: user.email,
+          project_name: projectName,
+          report_type: "quantum-blueprint",
+          content: accumulated,
+          metadata: {
+            projectType: PROJECT_TYPES.find((t) => t.id === projectType)?.label || projectType,
+            platforms: selectedPlatforms.map((p) => PLATFORMS.find((pl) => pl.id === p)?.label || p),
+            selectedFeatures: featureMap,
+            additionalNotes,
+          },
+        });
+
+        if (insertError) {
+          throw new Error(`Failed to save blueprint: ${insertError.message}`);
         }
       }
     } catch (e) {

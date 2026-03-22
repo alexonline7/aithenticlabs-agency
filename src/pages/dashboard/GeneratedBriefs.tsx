@@ -39,6 +39,7 @@ export default function GeneratedBriefs() {
   const [search, setSearch] = useState("");
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState("");
   const [viewingReport, setViewingReport] = useState<Report | null>(null);
 
   useEffect(() => {
@@ -48,7 +49,9 @@ export default function GeneratedBriefs() {
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (!error && data) {
+      if (error) {
+        setFetchError(error.message);
+      } else if (data) {
         setReports(data as Report[]);
       }
       setLoading(false);
@@ -103,12 +106,20 @@ export default function GeneratedBriefs() {
         <div className="flex items-center justify-center py-12">
           <Loader2 className="h-6 w-6 animate-spin text-primary" />
         </div>
+      ) : fetchError ? (
+        <Card className="dark-slate-purple-card">
+          <CardContent className="pt-6 text-center py-12">
+            <p className="text-destructive text-sm">Failed to load reports: {fetchError}</p>
+          </CardContent>
+        </Card>
       ) : filtered.length === 0 ? (
         <Card className="dark-slate-purple-card">
           <CardContent className="pt-6 text-center py-12">
             <FileText className="h-12 w-12 text-primary/30 mx-auto mb-4" />
             <p className="text-muted-foreground">
-              {search ? "No briefs match your search." : "No briefs generated yet. Create one from Quantum Optimization or other tools."}
+              {search
+                ? "No briefs match your search."
+                : "No briefs found in this environment yet. Generate one from Quantum Optimization or other tools."}
             </p>
           </CardContent>
         </Card>
