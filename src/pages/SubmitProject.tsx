@@ -207,7 +207,7 @@ export default function SubmitProject() {
                     <SelectTrigger className="bg-background border-input">
                       <SelectValue placeholder="Select range" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent position="item-aligned" className="z-50">
                       <SelectItem value="500-1k">$500 – $1,000</SelectItem>
                       <SelectItem value="3k-5k">$3,000 – $5,000</SelectItem>
                       <SelectItem value="7k-10k">$7,000 – $10,000</SelectItem>
