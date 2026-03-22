@@ -6,6 +6,7 @@ import ResetPassword from "@/pages/ResetPassword";
 import AIGenerator from "@/pages/AIGenerator";
 import FlashApps from "@/pages/FlashApps";
 import Projects from "@/pages/Projects";
+import { GuestRoute, ProtectedRoute } from "@/components/auth/RouteGuards";
 
 function App() {
   return (
@@ -13,11 +14,39 @@ function App() {
       <Toaster />
       <Routes>
         <Route path="/" element={<Index />} />
-        <Route path="/auth" element={<Auth />} />
+        <Route
+          path="/auth"
+          element={
+            <GuestRoute>
+              <Auth />
+            </GuestRoute>
+          }
+        />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/ai-generator" element={<AIGenerator />} />
-        <Route path="/flash-apps" element={<FlashApps />} />
-        <Route path="/projects" element={<Projects />} />
+        <Route
+          path="/ai-generator"
+          element={
+            <ProtectedRoute>
+              <AIGenerator />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/flash-apps"
+          element={
+            <ProtectedRoute>
+              <FlashApps />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/projects"
+          element={
+            <ProtectedRoute>
+              <Projects />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
