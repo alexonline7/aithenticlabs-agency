@@ -14,36 +14,50 @@ import {
   CheckCircle,
   BarChart3,
   Zap,
+  AlertCircle,
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
-const recommendations = [
-  {
-    title: "Progressive Web App (PWA)",
-    match: 95,
-    reason: "Your target audience primarily uses mobile. A PWA provides native-like experience with web reach.",
-    techs: ["React", "Service Workers", "Web Manifest"],
-    timeline: "4-6 weeks",
-  },
-  {
-    title: "AI-Powered Dashboard",
-    match: 88,
-    reason: "Data-heavy workflow suggests a smart dashboard with predictive analytics would maximize user efficiency.",
-    techs: ["React", "TensorFlow.js", "D3.js"],
-    timeline: "6-8 weeks",
-  },
-  {
-    title: "Real-time Collaboration Platform",
-    match: 82,
-    reason: "Team-based workflow benefits from real-time features like shared editing and instant notifications.",
-    techs: ["WebSockets", "CRDT", "React"],
-    timeline: "8-10 weeks",
-  },
-];
+interface Recommendation {
+  title: string;
+  match: number;
+  reason: string;
+  techs: string[];
+  timeline: string;
+}
 
 export default function AIRecommendation() {
   const [step, setStep] = useState(1);
   const [businessDesc, setBusinessDesc] = useState("");
   const [industry, setIndustry] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
+
+  const handleAnalyze = async () => {
+    if (!industry.trim() && !businessDesc.trim()) return;
+    setStep(2);
+    setLoading(true);
+    setError("");
+
+    try {
+      const { data, error: fnError } = await supabase.functions.invoke("ai-recommend", {
+        body: { industry, businessDesc },
+      });
+
+      if (fnError) throw new Error(fnError.message);
+      if (data?.error) throw new Error(data.error);
+
+      setRecommendations(data.recommendations || []);
+      setStep(3);
+    } catch (err) {
+      console.error("Recommendation error:", err);
+      setError(err instanceof Error ? err.message : "Failed to get recommendations");
+      setStep(1);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -52,7 +66,7 @@ export default function AIRecommendation() {
           <Brain className="h-8 w-8 text-primary" />
           AI Recommendation Engine
         </h1>
-        <p className="text-muted-foreground mt-1">Get personalized app recommendations powered by quantum AI</p>
+        <p className="text-muted-foreground mt-1">Get personalized app recommendations powered by GPT-4</p>
       </div>
 
       {/* Progress Steps */}
@@ -73,6 +87,15 @@ export default function AIRecommendation() {
           {step === 1 ? "Describe your business" : step === 2 ? "AI Analysis" : "Recommendations"}
         </span>
       </div>
+
+      {error && (
+        <Card className="border-destructive/50 bg-destructive/10">
+          <CardContent className="pt-4 flex items-center gap-2 text-destructive">
+            <AlertCircle className="h-4 w-4" />
+            <span className="text-sm">{error}</span>
+          </CardContent>
+        </Card>
+      )}
 
       {step === 1 && (
         <Card className="dark-slate-purple-card">
@@ -102,7 +125,7 @@ export default function AIRecommendation() {
                 rows={4}
               />
             </div>
-            <Button onClick={() => setStep(2)} className="accent-gradient text-primary-foreground gap-2">
+            <Button onClick={handleAnalyze} className="accent-gradient text-primary-foreground gap-2">
               Analyze with AI <Sparkles className="h-4 w-4" />
             </Button>
           </CardContent>
@@ -113,12 +136,9 @@ export default function AIRecommendation() {
         <Card className="dark-slate-purple-card">
           <CardContent className="pt-6 text-center space-y-4">
             <Zap className="h-12 w-12 text-primary mx-auto animate-pulse" />
-            <h3 className="text-xl font-bold text-foreground">Quantum AI Analyzing...</h3>
-            <p className="text-muted-foreground">Processing your business profile through our multi-model AI engine</p>
-            <Progress value={68} className="h-2 max-w-xs mx-auto" />
-            <Button onClick={() => setStep(3)} variant="outline" className="mt-4">
-              View Results <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            <h3 className="text-xl font-bold text-foreground">GPT-4 Analyzing Your Business...</h3>
+            <p className="text-muted-foreground">Processing your business profile through OpenAI's GPT-4</p>
+            <Progress value={loading ? 65 : 100} className="h-2 max-w-xs mx-auto" />
           </CardContent>
         </Card>
       )}
@@ -130,36 +150,44 @@ export default function AIRecommendation() {
               <Lightbulb className="h-5 w-5 text-primary" />
               AI Recommendations
             </h2>
-            <Button variant="outline" size="sm" onClick={() => setStep(1)}>
+            <Button variant="outline" size="sm" onClick={() => { setStep(1); setRecommendations([]); }}>
               Start Over
             </Button>
           </div>
-          {recommendations.map((rec, i) => (
-            <Card key={i} className="dark-slate-purple-card hover:border-primary/30 transition-all">
-              <CardContent className="pt-6">
-                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                  <div className="space-y-3 flex-1">
-                    <div className="flex items-center gap-3">
-                      <h3 className="text-lg font-semibold text-foreground">{rec.title}</h3>
-                      <Badge className="accent-gradient text-primary-foreground">{rec.match}% Match</Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground">{rec.reason}</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {rec.techs.map((t) => (
-                        <Badge key={t} variant="secondary" className="text-xs">{t}</Badge>
-                      ))}
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <BarChart3 className="h-4 w-4" /> Est. timeline: {rec.timeline}
-                    </div>
-                  </div>
-                  <Button className="accent-gradient text-primary-foreground gap-2 shrink-0">
-                    Get Started <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </div>
+          {recommendations.length === 0 ? (
+            <Card className="dark-slate-purple-card">
+              <CardContent className="pt-6 text-center text-muted-foreground">
+                No recommendations generated. Please try again with more details.
               </CardContent>
             </Card>
-          ))}
+          ) : (
+            recommendations.map((rec, i) => (
+              <Card key={i} className="dark-slate-purple-card hover:border-primary/30 transition-all">
+                <CardContent className="pt-6">
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                    <div className="space-y-3 flex-1">
+                      <div className="flex items-center gap-3">
+                        <h3 className="text-lg font-semibold text-foreground">{rec.title}</h3>
+                        <Badge className="accent-gradient text-primary-foreground">{rec.match}% Match</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">{rec.reason}</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {rec.techs.map((t) => (
+                          <Badge key={t} variant="secondary" className="text-xs">{t}</Badge>
+                        ))}
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <BarChart3 className="h-4 w-4" /> Est. timeline: {rec.timeline}
+                      </div>
+                    </div>
+                    <Button className="accent-gradient text-primary-foreground gap-2 shrink-0">
+                      Get Started <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          )}
         </div>
       )}
     </div>
