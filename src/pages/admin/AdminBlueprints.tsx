@@ -43,6 +43,9 @@ const typeLabels: Record<string, string> = {
   architecture: "Architecture Spec",
   ux_blueprint: "UX Blueprint",
   consensus: "Consensus Report",
+  "quantum-blueprint": "Quantum Blueprint",
+  "ai-brief": "AI Brief",
+  "flash-app": "Flash App",
 };
 
 const typeBadgeColors: Record<string, string> = {
@@ -50,6 +53,9 @@ const typeBadgeColors: Record<string, string> = {
   architecture: "bg-purple-500/20 text-purple-400 border-purple-500/30",
   ux_blueprint: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
   consensus: "bg-primary/20 text-primary border-primary/30",
+  "quantum-blueprint": "bg-amber-500/20 text-amber-400 border-amber-500/30",
+  "ai-brief": "bg-cyan-500/20 text-cyan-400 border-cyan-500/30",
+  "flash-app": "bg-pink-500/20 text-pink-400 border-pink-500/30",
 };
 
 function extractConsensusSection(content: string, sectionName: string): string {
