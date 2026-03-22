@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Sparkles, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -37,6 +37,7 @@ export default function Auth() {
   const [isSendingReset, setIsSendingReset] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const emailInputRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -128,12 +129,14 @@ export default function Auth() {
 
     if (!normalizedEmail) {
       setError("Enter your email address first, then click forgot password.");
+      emailInputRef.current?.focus();
+      emailInputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
 
     setIsSendingReset(true);
     setError(null);
-    setMessage(null);
+    setMessage("Sending password reset email...");
 
     try {
       const { error } = await withTimeout(
@@ -147,6 +150,7 @@ export default function Auth() {
       setMessage("Password reset email sent. Check inbox and spam folder.");
     } catch (err) {
       setError(getAuthErrorMessage(err, "Could not send reset email. Please try again."));
+      setMessage(null);
     } finally {
       setIsSendingReset(false);
     }
@@ -227,6 +231,7 @@ export default function Auth() {
               <div className="space-y-2">
                 <label htmlFor="email" className="text-slate-300 font-medium text-sm font-bricolage">Email Address</label>
                 <Input
+                  ref={emailInputRef}
                   id="email"
                   type="email"
                   required
