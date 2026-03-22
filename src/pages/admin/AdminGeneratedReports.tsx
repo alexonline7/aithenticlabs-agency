@@ -78,7 +78,7 @@ export default function AdminGeneratedReports() {
           <FileText className="h-6 w-6 text-primary" />
           Generated Summaries & Reports
         </h1>
-        <p className="text-muted-foreground mt-1">All generated reports across every tool, with dual User/System views.</p>
+        <p className="text-muted-foreground mt-1">All generated reports across every tool, each with a Standard User version and a Professional Developer version.</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
