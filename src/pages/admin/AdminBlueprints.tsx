@@ -11,7 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   FileText, Search, Eye, Loader2, Filter, DollarSign, Clock, AlertTriangle,
-  Users, Layers, Target, CheckCircle, Rocket, ArrowRight,
+  Users, Layers, Target, CheckCircle, Rocket, ArrowRight, Code, MonitorSmartphone,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
