@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -148,6 +149,9 @@ export default function FlashAppsGenerator() {
   const [generating, setGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
   const [generationPhase, setGenerationPhase] = useState("");
+  const [generatedBrief, setGeneratedBrief] = useState("");
+  const [generationError, setGenerationError] = useState("");
+  const briefRef = useRef("");
 
   const phases = [
     "Analyzing niche requirements...",
@@ -165,31 +169,111 @@ export default function FlashAppsGenerator() {
   const toggleFeature = (id: string) =>
     setSelectedFeatures((f) => f.includes(id) ? f.filter((x) => x !== id) : [...f, id]);
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (!appName.trim() || !selectedCategory) return;
     setGenerating(true);
     setProgress(0);
     setActiveTab("generate");
+    setGeneratedBrief("");
+    setGenerationError("");
+    briefRef.current = "";
     let phaseIndex = 0;
     setGenerationPhase(phases[0]);
 
+    // Progress animation
     const interval = setInterval(() => {
       setProgress((prev) => {
-        const next = prev + Math.random() * 8 + 4;
-        const pi = Math.min(Math.floor((next / 100) * phases.length), phases.length - 1);
+        const next = prev + Math.random() * 3 + 1;
+        const pi = Math.min(Math.floor((next / 90) * phases.length), phases.length - 1);
         if (pi !== phaseIndex) {
           phaseIndex = pi;
           setGenerationPhase(phases[pi]);
         }
-        if (next >= 100) {
+        if (next >= 90) {
           clearInterval(interval);
-          setGenerating(false);
-          setGenerationPhase("Brief generated successfully!");
-          return 100;
+          return 90;
         }
         return next;
       });
-    }, 400);
+    }, 600);
+
+    const BRIEF_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-brief`;
+
+    try {
+      const resp = await fetch(BRIEF_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
+          appName,
+          appDescription,
+          category: appCategories.find((c) => c.id === selectedCategory)?.label || selectedCategory,
+          tier: selectedTier,
+          platforms: selectedPlatforms,
+          features: selectedFeatures.map((fId) => featureModules.find((f) => f.id === fId)?.label || fId),
+          tech: selectedTech,
+          targetAudience,
+          monetization,
+          includeDesignSystem,
+          includeDeployGuide,
+          includeApiDocs,
+          includeTestSpecs,
+        }),
+      });
+
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({ error: "Unknown error" }));
+        throw new Error(err.error || `Error ${resp.status}`);
+      }
+
+      const reader = resp.body?.getReader();
+      if (!reader) throw new Error("No response stream");
+
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        let newlineIndex: number;
+        while ((newlineIndex = buffer.indexOf("\n")) !== -1) {
+          let line = buffer.slice(0, newlineIndex);
+          buffer = buffer.slice(newlineIndex + 1);
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (line.startsWith(":") || line.trim() === "") continue;
+          if (!line.startsWith("data: ")) continue;
+
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === "[DONE]") break;
+
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) {
+              briefRef.current += content;
+              setGeneratedBrief(briefRef.current);
+            }
+          } catch {
+            buffer = line + "\n" + buffer;
+            break;
+          }
+        }
+      }
+
+      clearInterval(interval);
+      setProgress(100);
+      setGenerationPhase("Brief generated successfully!");
+    } catch (err) {
+      console.error("Brief generation error:", err);
+      clearInterval(interval);
+      setGenerationError(err instanceof Error ? err.message : "Failed to generate brief");
+    } finally {
+      setGenerating(false);
+    }
   };
 
   const tierData = pricingTiers.find((t) => t.id === selectedTier)!;
@@ -515,39 +599,54 @@ export default function FlashAppsGenerator() {
         <TabsContent value="generate" className="space-y-6 mt-4">
           {generating ? (
             <Card className="dark-slate-purple-card border-primary/30">
-              <CardContent className="py-12 space-y-6 text-center">
-                <Brain className="h-16 w-16 text-primary mx-auto animate-pulse" />
-                <div>
-                  <h3 className="text-xl font-bold text-foreground mb-1">Quantum AI Generating Brief</h3>
+              <CardContent className="py-12 space-y-6">
+                <div className="text-center">
+                  <Brain className="h-16 w-16 text-primary mx-auto animate-pulse" />
+                  <h3 className="text-xl font-bold text-foreground mb-1 mt-4">Gemini AI Generating Brief</h3>
                   <p className="text-muted-foreground">{generationPhase}</p>
                 </div>
                 <div className="max-w-md mx-auto space-y-2">
                   <Progress value={progress} className="h-3" />
                   <div className="flex justify-between text-sm text-muted-foreground">
                     <span>{Math.round(progress)}% complete</span>
-                    <span>~{Math.max(1, Math.round((100 - progress) / 8))}s remaining</span>
                   </div>
                 </div>
-                <div className="flex flex-wrap justify-center gap-2 mt-4">
-                  {selectedFeatures.slice(0, 6).map((fId) => {
-                    const feat = featureModules.find((f) => f.id === fId);
-                    return feat ? (
-                      <Badge key={fId} variant="outline" className="gap-1 text-xs border-primary/30">
-                        <feat.icon className="h-3 w-3 text-primary" /> {feat.label}
-                      </Badge>
-                    ) : null;
-                  })}
-                </div>
+                {generatedBrief && (
+                  <div className="glass-effect rounded-lg p-6 max-h-96 overflow-y-auto">
+                    <div className="prose prose-sm prose-invert max-w-none">
+                      <ReactMarkdown>{generatedBrief}</ReactMarkdown>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          ) : generationError ? (
+            <Card className="dark-slate-purple-card border-destructive/30">
+              <CardContent className="py-10 text-center space-y-4">
+                <h3 className="text-xl font-bold text-foreground">Generation Failed</h3>
+                <p className="text-destructive">{generationError}</p>
+                <Button onClick={() => { setGenerationError(""); setActiveTab("configure"); }} variant="outline">
+                  Try Again
+                </Button>
               </CardContent>
             </Card>
           ) : progress >= 100 ? (
-            <Card className="dark-slate-purple-card border-green-500/30">
+            <Card className="dark-slate-purple-card border-primary/30">
               <CardContent className="py-10 space-y-6">
                 <div className="text-center">
-                  <CheckCircle className="h-14 w-14 text-green-400 mx-auto mb-4" />
+                  <CheckCircle className="h-14 w-14 text-primary mx-auto mb-4" />
                   <h3 className="text-2xl font-bold text-foreground mb-1">Brief Generated Successfully!</h3>
                   <p className="text-muted-foreground">Your comprehensive project brief is ready</p>
                 </div>
+
+                {/* Generated Brief Content */}
+                {generatedBrief && (
+                  <div className="glass-effect rounded-lg p-6 max-h-[60vh] overflow-y-auto">
+                    <div className="prose prose-sm prose-invert max-w-none">
+                      <ReactMarkdown>{generatedBrief}</ReactMarkdown>
+                    </div>
+                  </div>
+                )}
 
                 {/* Brief Summary */}
                 <div className="glass-effect rounded-lg p-6 space-y-4 max-w-2xl mx-auto">
@@ -559,24 +658,12 @@ export default function FlashAppsGenerator() {
                     <div><span className="text-muted-foreground">Platforms:</span> <span className="font-medium text-foreground ml-1">{selectedPlatforms.length} targets</span></div>
                     <div><span className="text-muted-foreground">Pages Est.:</span> <span className="font-medium text-foreground ml-1">{selectedFeatures.length * 4 + 8} pages</span></div>
                   </div>
-                  <Separator className="bg-border/50" />
-                  <div className="flex flex-wrap gap-2">
-                    {selectedFeatures.map((fId) => {
-                      const feat = featureModules.find((f) => f.id === fId);
-                      return feat ? <Badge key={fId} variant="outline" className="text-xs">{feat.label}</Badge> : null;
-                    })}
-                  </div>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                  <Button className="accent-gradient text-primary-foreground gap-2">
-                    <Download className="h-4 w-4" /> Download PDF Brief
-                  </Button>
-                  <Button variant="outline" className="gap-2">
-                    <Eye className="h-4 w-4" /> Preview Brief
-                  </Button>
                   <Button variant="outline" className="gap-2" onClick={() => {
                     setProgress(0);
+                    setGeneratedBrief("");
                     setActiveTab("configure");
                   }}>
                     <RefreshCw className="h-4 w-4" /> New Generation
