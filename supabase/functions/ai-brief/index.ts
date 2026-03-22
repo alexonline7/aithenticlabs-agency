@@ -57,7 +57,7 @@ Format with clear markdown headings and bullet points. Be specific with technolo
           "Authorization": `Bearer ${GEMINI_API_KEY}`,
         },
         body: JSON.stringify({
-          model: "gemini-2.0-flash",
+          model: "gemini-2.5-flash",
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: userPrompt },
