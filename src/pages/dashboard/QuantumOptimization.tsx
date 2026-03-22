@@ -548,6 +548,58 @@ export default function QuantumOptimization() {
             </CardContent>
           </Card>
 
+          {/* AI Recommendations */}
+          <Card className="dark-slate-purple-card border-primary/20">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Brain className="h-5 w-5 text-primary" />
+                AI-Powered Recommendations
+              </CardTitle>
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2"
+                disabled={recommending || totalSelected === 0}
+                onClick={handleAiRecommend}
+              >
+                {recommending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                {recommending ? "Analyzing…" : "Get AI Suggestions"}
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {aiSuggestions.length === 0 && !recommending && (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  Click "Get AI Suggestions" to receive personalized feature recommendations based on your current selections.
+                </p>
+              )}
+              {recommending && (
+                <div className="flex items-center justify-center gap-3 py-6">
+                  <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                  <span className="text-sm text-muted-foreground">Analyzing your selections and generating recommendations…</span>
+                </div>
+              )}
+              {aiSuggestions.length > 0 && (
+                <div className="space-y-3">
+                  <p className="text-xs text-muted-foreground">Click a suggestion to add it to your selections:</p>
+                  {aiSuggestions.map((suggestion) => (
+                    <button
+                      key={suggestion.featureId}
+                      onClick={() => applySuggestion(suggestion)}
+                      className="w-full flex items-start gap-3 p-3 rounded-lg border border-primary/30 bg-primary/5 hover:bg-primary/10 text-left transition-all"
+                    >
+                      <div className="mt-0.5 flex-shrink-0">
+                        <Sparkles className="h-4 w-4 text-primary" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-foreground">{suggestion.label}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{suggestion.reason}</p>
+                      </div>
+                      <Badge variant="secondary" className="text-xs shrink-0 mt-0.5">+ Add</Badge>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </CardContent>
           {/* Summary */}
           <Card className="dark-slate-purple-card">
             <CardHeader>
