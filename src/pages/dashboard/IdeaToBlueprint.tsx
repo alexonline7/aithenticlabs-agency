@@ -319,18 +319,32 @@ export default function IdeaToBlueprint() {
 
     const summary = getInterviewSummary();
 
+    const saveReport = async (reportType: string, content: string) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user && content) {
+        await supabase.from("generated_reports").insert({
+          user_id: user.id,
+          user_email: user.email,
+          project_name: messages[1]?.content?.slice(0, 80) || "Idea Blueprint",
+          report_type: reportType,
+          content,
+          metadata: { scope, pipelineStep: reportType },
+        });
+      }
+    };
+
     if (nextStep === "architecture") {
       let content = "";
       streamFromFunction("idea-architecture", { interviewSummary: summary },
         (d) => { content += d; setArchitectureSpec(content); },
-        () => { setGenerating(false); },
+        () => { setGenerating(false); saveReport("architecture", content); },
         (err) => { setGenerating(false); setGenError(err); }
       );
     } else if (nextStep === "ux-blueprint") {
       let content = "";
       streamFromFunction("idea-ux-blueprint", { interviewSummary: summary, architectureSpec },
         (d) => { content += d; setUxBlueprint(content); },
-        () => { setGenerating(false); },
+        () => { setGenerating(false); saveReport("ux_blueprint", content); },
         (err) => { setGenerating(false); setGenError(err); }
       );
     } else if (nextStep === "consensus") {
@@ -338,14 +352,13 @@ export default function IdeaToBlueprint() {
       const body: Record<string, string> = { interviewSummary: summary };
       if (architectureSpec) body.architectureSpec = architectureSpec;
       if (uxBlueprint) body.uxBlueprint = uxBlueprint;
-      // For interview-report scope, pass interview as all three
       if (scope === "interview-report") {
         body.architectureSpec = "(Not generated — interview-only scope)";
         body.uxBlueprint = "(Not generated — interview-only scope)";
       }
       streamFromFunction("idea-consensus", body,
         (d) => { content += d; setConsensusReport(content); },
-        () => { setGenerating(false); },
+        () => { setGenerating(false); saveReport("consensus", content); },
         (err) => { setGenerating(false); setGenError(err); }
       );
     }
