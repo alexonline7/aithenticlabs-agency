@@ -425,7 +425,7 @@ export default function AdminBlueprints() {
                 return (
                 <div className="space-y-3 mb-4">
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {meta.projectType && (
+                    {!!meta.projectType && (
                       <Card>
                         <CardContent className="p-3">
                           <p className="text-xs text-muted-foreground mb-1">Project Type</p>
