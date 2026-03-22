@@ -210,7 +210,7 @@ export default function AdminFlashApps() {
                     </Card>
 
                     {/* Tech Stack Card */}
-                    {viewReport.metadata?.tech && typeof viewReport.metadata.tech === "object" && (
+                    {viewReport.metadata?.tech != null && typeof viewReport.metadata.tech === "object" && (
                       <Card>
                         <CardHeader className="pb-2">
                           <CardTitle className="text-sm flex items-center gap-2">
