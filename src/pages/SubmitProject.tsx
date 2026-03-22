@@ -51,9 +51,10 @@ export default function SubmitProject() {
       const { data: userData } = await supabase.auth.getUser();
       const userId = userData.user?.id || null;
 
+      const typeLabels = selectedTypes.map(v => PROJECT_TYPES.find(t => t.value === v)?.label || v).join(", ");
       const projectDescription = [
         prefilledTitle ? `Recommended App: ${prefilledTitle}` : "",
-        `Type: ${PROJECT_TYPES.find(t => t.value === projectType)?.label || projectType || "Not specified"}`,
+        `Type: ${typeLabels || "Not specified"}`,
         `Budget: ${budget || "Not specified"}`,
         "",
         description,
