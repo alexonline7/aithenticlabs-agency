@@ -7,8 +7,10 @@ import {
   BarChart3,
   ArrowLeft,
   ShieldAlert,
-  Sparkles,
   Code,
+  Zap,
+  Cpu,
+  Lightbulb,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -32,6 +34,13 @@ const adminItems = [
   { title: "Submissions & Leads", url: "/admin/submissions", icon: Users },
   { title: "Project Board", url: "/admin/projects", icon: KanbanSquare },
   { title: "Analytics & Metrics", url: "/admin/analytics", icon: BarChart3 },
+];
+
+const toolItems = [
+  { title: "FlashApps Generator", url: "/admin/flash-apps", icon: Zap },
+  { title: "Generated Reports", url: "/admin/reports", icon: FileText },
+  { title: "Quantum Optimization", url: "/admin/quantum", icon: Cpu },
+  { title: "Idea → Blueprint", url: "/admin/idea-blueprint", icon: Lightbulb },
 ];
 
 export default function AdminSidebar() {
