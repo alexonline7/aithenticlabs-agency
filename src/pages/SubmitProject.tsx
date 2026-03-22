@@ -64,7 +64,7 @@ export default function SubmitProject() {
         email: email.trim(),
         name: name.trim() || null,
         project_description: projectDescription,
-        submission_type: "project-request",
+        submission_type: "contact",
         user_id: userId,
         ai_recommendation: prefilledTitle ? { recommended_app: prefilledTitle } : {},
       });
