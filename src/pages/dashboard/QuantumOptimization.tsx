@@ -600,6 +600,8 @@ export default function QuantumOptimization() {
                 </div>
               )}
             </CardContent>
+          </Card>
+
           {/* Summary */}
           <Card className="dark-slate-purple-card">
             <CardHeader>
