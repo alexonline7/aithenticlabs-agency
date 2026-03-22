@@ -322,16 +322,22 @@ export default function IdeaToBlueprint() {
     const summary = getInterviewSummary();
 
     const saveReport = async (reportType: string, content: string) => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user && content) {
-        await supabase.from("generated_reports").insert({
-          user_id: user.id,
-          user_email: user.email,
-          project_name: messages[1]?.content?.slice(0, 80) || "Idea Blueprint",
-          report_type: reportType,
-          content,
-          metadata: { scope, pipelineStep: reportType },
-        });
+      if (!content) return;
+      if (!user) {
+        throw new Error("Your session expired before saving. Please sign in again and retry.");
+      }
+
+      const { error: insertError } = await supabase.from("generated_reports").insert({
+        user_id: user.id,
+        user_email: user.email,
+        project_name: messages[1]?.content?.slice(0, 80) || "Idea Blueprint",
+        report_type: reportType,
+        content,
+        metadata: { scope, pipelineStep: reportType },
+      });
+
+      if (insertError) {
+        throw new Error(`Failed to save ${reportType}: ${insertError.message}`);
       }
     };
 
