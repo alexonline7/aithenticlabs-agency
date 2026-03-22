@@ -262,6 +262,7 @@ export default function AdminBlueprints() {
           { label: "Architecture", value: stats.architectures, color: "text-purple-400" },
           { label: "UX Blueprints", value: stats.blueprints, color: "text-emerald-400" },
           { label: "Consensus", value: stats.consensus, color: "text-primary" },
+          { label: "Quantum", value: stats.quantum, color: "text-amber-400" },
         ].map((s) => (
           <Card key={s.label}>
             <CardContent className="p-4 text-center">
