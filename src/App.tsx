@@ -71,6 +71,8 @@ function App() {
           }
         >
           <Route index element={<AdminBlueprints />} />
+          <Route path="tool-specs" element={<AdminToolSpecs />} />
+          <Route path="clients" element={<AdminClients />} />
           <Route path="submissions" element={<AdminSubmissions />} />
           <Route path="projects" element={<AdminProjects />} />
           <Route path="analytics" element={<AdminAnalytics />} />
