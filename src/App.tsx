@@ -14,6 +14,7 @@ import DeploymentTracker from "@/pages/dashboard/DeploymentTracker";
 import AIRecommendation from "@/pages/dashboard/AIRecommendation";
 import FlashAppsGenerator from "@/pages/dashboard/FlashAppsGenerator";
 import DashboardSettings from "@/pages/dashboard/DashboardSettings";
+import IdeaToBlueprint from "@/pages/dashboard/IdeaToBlueprint";
 import FlashApps from "@/pages/FlashApps";
 import Projects from "@/pages/Projects";
 
@@ -48,6 +49,7 @@ function App() {
           <Route path="quantum-optimization" element={<QuantumOptimization />} />
           <Route path="deployment-tracker" element={<DeploymentTracker />} />
           
+          <Route path="idea-to-blueprint" element={<IdeaToBlueprint />} />
           <Route path="ai-recommendation" element={<AIRecommendation />} />
           <Route path="flash-apps" element={<FlashAppsGenerator />} />
           <Route path="settings" element={<DashboardSettings />} />

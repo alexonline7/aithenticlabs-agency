@@ -10,6 +10,7 @@ import {
   Settings,
   LogOut,
   ChevronRight,
+  Lightbulb,
 } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { NavLink } from "@/components/NavLink";
@@ -40,6 +41,7 @@ const advancedItems = [
 ];
 
 const toolItems = [
+  { title: "Idea → Blueprint", url: "/dashboard/idea-to-blueprint", icon: Lightbulb },
   { title: "AI Recommendation", url: "/dashboard/ai-recommendation", icon: Brain },
   { title: "FlashApps Generator", url: "/dashboard/flash-apps", icon: Sparkles },
 ];
