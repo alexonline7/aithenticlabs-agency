@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Zap, Search, Eye, Loader2, Code, MonitorSmartphone, Clock, Layers, Server, Shield, Palette, Rocket, TestTube, FileCode, Database, Globe, Users, DollarSign, Tag } from "lucide-react";
+import { Zap, Search, Eye, Loader2, Code, MonitorSmartphone, Clock, Layers, Server, Shield, Palette, Rocket, TestTube, FileCode, Globe, Users, DollarSign, Tag } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
 interface Report {
