@@ -127,7 +127,9 @@ export default function IdeaToBlueprint() {
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [interviewComplete, setInterviewComplete] = useState(false);
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Generation state
   const [architectureSpec, setArchitectureSpec] = useState("");
@@ -140,6 +142,70 @@ export default function IdeaToBlueprint() {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
+
+  useEffect(() => {
+    if (outputRef.current) outputRef.current.scrollTop = outputRef.current.scrollHeight;
+  }, [architectureSpec, uxBlueprint, consensusReport]);
+
+  // File upload helpers
+  const fileToBase64 = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    const newAttachments: Attachment[] = [];
+    for (const file of files) {
+      const isImage = file.type.startsWith("image/");
+      const att: Attachment = {
+        id: crypto.randomUUID(),
+        file,
+        type: isImage ? "image" : "document",
+      };
+      if (isImage) {
+        att.preview = await fileToBase64(file);
+      }
+      newAttachments.push(att);
+    }
+    setAttachments((prev) => [...prev, ...newAttachments]);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const removeAttachment = (id: string) => {
+    setAttachments((prev) => prev.filter((a) => a.id !== id));
+  };
+
+  const buildMessageContent = async (text: string, atts: Attachment[]) => {
+    if (atts.length === 0) return text;
+
+    const parts: any[] = [];
+    if (text.trim()) {
+      parts.push({ type: "text", text });
+    }
+    for (const att of atts) {
+      if (att.type === "image") {
+        const dataUrl = att.preview || (await fileToBase64(att.file));
+        parts.push({ type: "image_url", image_url: { url: dataUrl } });
+      } else {
+        // For documents, read as text if possible
+        const docText = await att.file.text();
+        parts.push({
+          type: "document_text",
+          text: `[Uploaded document: ${att.file.name}]\n\n${docText.slice(0, 50000)}`,
+        });
+      }
+    }
+    if (!text.trim() && atts.length > 0) {
+      parts.unshift({ type: "text", text: `I'm sharing ${atts.length} file(s) for you to analyze.` });
+    }
+    return parts;
+  };
 
   useEffect(() => {
     if (outputRef.current) outputRef.current.scrollTop = outputRef.current.scrollHeight;
