@@ -10,13 +10,18 @@ import SupportChat from "@/pages/dashboard/SupportChat";
 import GeneratedBriefs from "@/pages/dashboard/GeneratedBriefs";
 import QuantumOptimization from "@/pages/dashboard/QuantumOptimization";
 import DeploymentTracker from "@/pages/dashboard/DeploymentTracker";
-
 import AIRecommendation from "@/pages/dashboard/AIRecommendation";
 import FlashAppsGenerator from "@/pages/dashboard/FlashAppsGenerator";
 import DashboardSettings from "@/pages/dashboard/DashboardSettings";
 import IdeaToBlueprint from "@/pages/dashboard/IdeaToBlueprint";
 import FlashApps from "@/pages/FlashApps";
 import Projects from "@/pages/Projects";
+
+import AdminLayout from "@/components/admin/AdminLayout";
+import AdminBlueprints from "@/pages/admin/AdminBlueprints";
+import AdminSubmissions from "@/pages/admin/AdminSubmissions";
+import AdminProjects from "@/pages/admin/AdminProjects";
+import AdminAnalytics from "@/pages/admin/AdminAnalytics";
 
 function App() {
   return (
@@ -48,26 +53,30 @@ function App() {
           <Route path="briefs" element={<GeneratedBriefs />} />
           <Route path="quantum-optimization" element={<QuantumOptimization />} />
           <Route path="deployment-tracker" element={<DeploymentTracker />} />
-          
           <Route path="idea-to-blueprint" element={<IdeaToBlueprint />} />
           <Route path="ai-recommendation" element={<AIRecommendation />} />
           <Route path="flash-apps" element={<FlashAppsGenerator />} />
           <Route path="settings" element={<DashboardSettings />} />
         </Route>
 
+        {/* Admin Panel (role-based) */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<AdminBlueprints />} />
+          <Route path="submissions" element={<AdminSubmissions />} />
+          <Route path="projects" element={<AdminProjects />} />
+          <Route path="analytics" element={<AdminAnalytics />} />
+        </Route>
+
         {/* Public pages */}
-        <Route
-          path="/flash-apps"
-          element={
-            <FlashApps />
-          }
-        />
-        <Route
-          path="/projects"
-          element={
-            <Projects />
-          }
-        />
+        <Route path="/flash-apps" element={<FlashApps />} />
+        <Route path="/projects" element={<Projects />} />
       </Routes>
     </BrowserRouter>
   );
