@@ -80,6 +80,10 @@ function App() {
           <Route path="submissions" element={<AdminSubmissions />} />
           <Route path="projects" element={<AdminProjects />} />
           <Route path="analytics" element={<AdminAnalytics />} />
+          <Route path="flash-apps" element={<AdminFlashApps />} />
+          <Route path="reports" element={<AdminGeneratedReports />} />
+          <Route path="quantum" element={<AdminQuantum />} />
+          <Route path="idea-blueprint" element={<AdminIdeaBlueprint />} />
         </Route>
 
         {/* Public pages */}

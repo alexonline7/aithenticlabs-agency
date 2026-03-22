@@ -150,14 +150,14 @@ export default function AdminQuantum() {
                                   <div className="flex flex-wrap gap-1">{(meta.platforms as string[]).map((p) => <Badge key={p} variant="secondary" className="text-xs">{p}</Badge>)}</div>
                                 </div>
                               )}
-                              {meta.additionalNotes && (
+                              {!!meta.additionalNotes && (
                                 <div className="bg-muted/30 rounded-lg p-3">
                                   <p className="text-xs text-muted-foreground mb-1">Client Notes</p>
                                   <p className="text-sm text-foreground">{String(meta.additionalNotes)}</p>
                                 </div>
                               )}
                             </div>
-                            {meta.selectedFeatures && typeof meta.selectedFeatures === "object" && (
+                            {!!meta.selectedFeatures && typeof meta.selectedFeatures === "object" && (
                               <div className="bg-muted/30 rounded-lg p-3">
                                 <p className="text-xs text-muted-foreground mb-2">Selected Advanced Features</p>
                                 <div className="space-y-2">
