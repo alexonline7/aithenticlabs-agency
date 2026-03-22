@@ -432,6 +432,39 @@ export default function AdminToolSpecs() {
                 </Card>
               )}
 
+              {/* Consensus Report Structure (if available) */}
+              {"consensusReportStructure" in tool && tool.consensusReportStructure && (
+                <Card className="md:col-span-2 border-primary/30">
+                  <CardHeader>
+                    <CardTitle className="text-sm flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-primary" />
+                      Consensus Report Output Structure
+                    </CardTitle>
+                    <CardDescription className="text-xs">
+                      This is the definitive document the dev team uses to build each project. Every consensus report contains these sections:
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ol className="space-y-2">
+                      {tool.consensusReportStructure.map((item: string, i: number) => {
+                        const [title, desc] = item.split(" — ");
+                        return (
+                          <li key={i} className="text-sm flex items-start gap-2">
+                            <span className="bg-primary/20 text-primary text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 mt-0.5">
+                              {i + 1}
+                            </span>
+                            <span>
+                              <span className="font-semibold text-foreground">{title}</span>
+                              {desc && <span className="text-muted-foreground"> — {desc}</span>}
+                            </span>
+                          </li>
+                        );
+                      })}
+                    </ol>
+                  </CardContent>
+                </Card>
+              )}
+
               {/* Database */}
               <Card className={tool.endpoints.length > 0 ? "" : "md:col-span-2"}>
                 <CardHeader>
