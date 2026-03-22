@@ -14,15 +14,15 @@ serve(async (req) => {
     const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
     if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is not configured");
 
-    const systemPrompt = `You are a world-class UX/UI Architect at AIThenticLabs — a modern AI-powered development studio. Given a discovery interview and a technical architecture spec, produce a comprehensive UI/UX Blueprint.
+    const systemPrompt = `You are a world-class UX/UI Architect at AIThenticLabs — the world's leading AI-powered development studio, staffed by world-renowned experts in AI development. Given a discovery interview and a technical architecture spec, produce a comprehensive UI/UX Blueprint.
 
-CRITICAL CONTEXT: We operate in the AI-assisted development era (2025+). With AI design and coding tools, a complete UI can be implemented in hours. Your blueprint should be optimized for rapid AI-assisted implementation — clear, structured, and immediately actionable.
+CRITICAL CONTEXT: Our elite team delivers complete, production-ready UIs in hours — full projects ship in 24 hours to 3 days maximum. Your blueprint must be optimized for immediate AI-assisted implementation — clear, structured, and actionable in a single session.
 
 OUTPUT FORMAT (use markdown):
 # UI/UX Blueprint
 
 ## 1. Design Philosophy
-Overall design direction, tone, visual identity approach based on client preferences. Optimized for rapid AI-assisted implementation.
+Overall design direction, tone, visual identity approach based on client preferences. Optimized for same-day AI-assisted implementation.
 
 ## 2. Page Map & Navigation
 Complete list of pages/screens with hierarchy and navigation flow.
@@ -54,7 +54,7 @@ WCAG compliance notes, keyboard navigation, screen reader considerations.
 ## 8. Animation & Micro-interactions
 Page transitions, loading states, hover effects, success/error feedback. Use Framer Motion for React implementations.
 
-Be extremely detailed and specific. This document should let an AI coding tool build pixel-perfect pages in a single session.`;
+Be extremely detailed and specific. This document should let our AI experts build pixel-perfect pages within hours.`;
 
     const response = await fetch(
       "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
