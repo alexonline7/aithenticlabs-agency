@@ -149,6 +149,9 @@ export default function FlashAppsGenerator() {
   const [generating, setGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
   const [generationPhase, setGenerationPhase] = useState("");
+  const [generatedBrief, setGeneratedBrief] = useState("");
+  const [generationError, setGenerationError] = useState("");
+  const briefRef = useRef("");
 
   const phases = [
     "Analyzing niche requirements...",
@@ -166,31 +169,111 @@ export default function FlashAppsGenerator() {
   const toggleFeature = (id: string) =>
     setSelectedFeatures((f) => f.includes(id) ? f.filter((x) => x !== id) : [...f, id]);
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (!appName.trim() || !selectedCategory) return;
     setGenerating(true);
     setProgress(0);
     setActiveTab("generate");
+    setGeneratedBrief("");
+    setGenerationError("");
+    briefRef.current = "";
     let phaseIndex = 0;
     setGenerationPhase(phases[0]);
 
+    // Progress animation
     const interval = setInterval(() => {
       setProgress((prev) => {
-        const next = prev + Math.random() * 8 + 4;
-        const pi = Math.min(Math.floor((next / 100) * phases.length), phases.length - 1);
+        const next = prev + Math.random() * 3 + 1;
+        const pi = Math.min(Math.floor((next / 90) * phases.length), phases.length - 1);
         if (pi !== phaseIndex) {
           phaseIndex = pi;
           setGenerationPhase(phases[pi]);
         }
-        if (next >= 100) {
+        if (next >= 90) {
           clearInterval(interval);
-          setGenerating(false);
-          setGenerationPhase("Brief generated successfully!");
-          return 100;
+          return 90;
         }
         return next;
       });
-    }, 400);
+    }, 600);
+
+    const BRIEF_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-brief`;
+
+    try {
+      const resp = await fetch(BRIEF_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
+          appName,
+          appDescription,
+          category: appCategories.find((c) => c.id === selectedCategory)?.label || selectedCategory,
+          tier: selectedTier,
+          platforms: selectedPlatforms,
+          features: selectedFeatures.map((fId) => featureModules.find((f) => f.id === fId)?.label || fId),
+          tech: selectedTech,
+          targetAudience,
+          monetization,
+          includeDesignSystem,
+          includeDeployGuide,
+          includeApiDocs,
+          includeTestSpecs,
+        }),
+      });
+
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({ error: "Unknown error" }));
+        throw new Error(err.error || `Error ${resp.status}`);
+      }
+
+      const reader = resp.body?.getReader();
+      if (!reader) throw new Error("No response stream");
+
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        let newlineIndex: number;
+        while ((newlineIndex = buffer.indexOf("\n")) !== -1) {
+          let line = buffer.slice(0, newlineIndex);
+          buffer = buffer.slice(newlineIndex + 1);
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (line.startsWith(":") || line.trim() === "") continue;
+          if (!line.startsWith("data: ")) continue;
+
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === "[DONE]") break;
+
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) {
+              briefRef.current += content;
+              setGeneratedBrief(briefRef.current);
+            }
+          } catch {
+            buffer = line + "\n" + buffer;
+            break;
+          }
+        }
+      }
+
+      clearInterval(interval);
+      setProgress(100);
+      setGenerationPhase("Brief generated successfully!");
+    } catch (err) {
+      console.error("Brief generation error:", err);
+      clearInterval(interval);
+      setGenerationError(err instanceof Error ? err.message : "Failed to generate brief");
+    } finally {
+      setGenerating(false);
+    }
   };
 
   const tierData = pricingTiers.find((t) => t.id === selectedTier)!;
