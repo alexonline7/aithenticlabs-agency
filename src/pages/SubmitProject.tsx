@@ -209,10 +209,10 @@ export default function SubmitProject() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="500-1k">$500 – $1,000</SelectItem>
-                      <SelectItem value="1k-3k">$1,000 – $3,000</SelectItem>
                       <SelectItem value="3k-5k">$3,000 – $5,000</SelectItem>
-                      <SelectItem value="5k-10k">$5,000 – $10,000</SelectItem>
-                      <SelectItem value="10k+">$10,000+</SelectItem>
+                      <SelectItem value="7k-10k">$7,000 – $10,000</SelectItem>
+                      <SelectItem value="15k-20k">$15,000 – $20,000</SelectItem>
+                      <SelectItem value="20k+">$20,000+</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
