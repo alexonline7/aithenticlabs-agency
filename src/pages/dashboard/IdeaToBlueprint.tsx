@@ -360,7 +360,15 @@ export default function IdeaToBlueprint() {
       let content = "";
       streamFromFunction("idea-ux-blueprint", { interviewSummary: summary, architectureSpec },
         (d) => { content += d; setUxBlueprint(content); },
-        () => { setGenerating(false); saveReport("ux_blueprint", content); },
+        async () => {
+          try {
+            await saveReport("ux_blueprint", content);
+            setGenerating(false);
+          } catch (err) {
+            setGenerating(false);
+            setGenError(err instanceof Error ? err.message : "Failed to save UX blueprint report");
+          }
+        },
         (err) => { setGenerating(false); setGenError(err); }
       );
     } else if (nextStep === "consensus") {
