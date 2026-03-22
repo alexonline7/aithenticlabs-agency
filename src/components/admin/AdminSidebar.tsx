@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, FileText, Lightbulb, ShieldAlert, Zap, Cpu } from "lucide-react";
+import { ArrowLeft, FileText, Lightbulb, ShieldAlert, Zap, Cpu, BrainCircuit } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
   Sidebar,
@@ -31,6 +31,10 @@ const specificationSections = [
   {
     label: "Idea → Action Plan Specs",
     item: { title: "View Idea → Action Plan", url: "/admin/idea-blueprint", icon: Lightbulb },
+  },
+  {
+    label: "AI Recommendation",
+    item: { title: "View AI Recommendations", url: "/admin/ai-recommendations", icon: BrainCircuit },
   },
 ];
 

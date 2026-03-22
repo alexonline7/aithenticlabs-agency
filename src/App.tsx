@@ -29,6 +29,7 @@ import AdminFlashApps from "@/pages/admin/AdminFlashApps";
 import AdminGeneratedReports from "@/pages/admin/AdminGeneratedReports";
 import AdminQuantum from "@/pages/admin/AdminQuantum";
 import AdminIdeaBlueprint from "@/pages/admin/AdminIdeaBlueprint";
+import AdminAIRecommendations from "@/pages/admin/AdminAIRecommendations";
 
 function App() {
   return (
@@ -85,6 +86,7 @@ function App() {
           <Route path="reports" element={<AdminGeneratedReports />} />
           <Route path="quantum" element={<AdminQuantum />} />
           <Route path="idea-blueprint" element={<AdminIdeaBlueprint />} />
+          <Route path="ai-recommendations" element={<AdminAIRecommendations />} />
         </Route>
 
         {/* Public pages */}
