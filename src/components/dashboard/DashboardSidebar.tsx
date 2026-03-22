@@ -10,6 +10,7 @@ import {
   Settings,
   LogOut,
   ChevronRight,
+  Lightbulb,
 } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { NavLink } from "@/components/NavLink";
