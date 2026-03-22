@@ -124,6 +124,13 @@ const PLATFORMS = [
 ];
 
 /* ── Component ──────────────────────────────────────────── */
+interface AiSuggestion {
+  featureId: string;
+  label: string;
+  category: string;
+  reason: string;
+}
+
 export default function QuantumOptimization() {
   const [projectName, setProjectName] = useState("");
   const [projectType, setProjectType] = useState("");
@@ -137,6 +144,10 @@ export default function QuantumOptimization() {
   const [blueprint, setBlueprint] = useState("");
   const [error, setError] = useState("");
   const blueprintRef = useRef<HTMLDivElement>(null);
+
+  // AI recommendation state
+  const [recommending, setRecommending] = useState(false);
+  const [aiSuggestions, setAiSuggestions] = useState<AiSuggestion[]>([]);
 
   const totalSelected = Object.values(selectedFeatures).reduce((sum, arr) => sum + arr.length, 0);
 
@@ -261,9 +272,85 @@ export default function QuantumOptimization() {
     }
   };
 
+  const handleAiRecommend = async () => {
+    setRecommending(true);
+    setAiSuggestions([]);
+    try {
+      // Build current selections summary
+      const currentSelections: Record<string, string[]> = {};
+      for (const [catId, featureIds] of Object.entries(selectedFeatures)) {
+        const cat = FEATURE_CATEGORIES.find((c) => c.id === catId);
+        if (!cat || featureIds.length === 0) continue;
+        currentSelections[cat.title] = featureIds.map((fId) => {
+          const f = cat.features.find((feat) => feat.id === fId);
+          return f ? f.label : fId;
+        });
+      }
+
+      const allAvailable = FEATURE_CATEGORIES.flatMap((cat) =>
+        cat.features
+          .filter((f) => !isFeatureSelected(cat.id, f.id))
+          .map((f) => ({ id: f.id, label: f.label, category: cat.title, categoryId: cat.id }))
+      );
+
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/quantum-recommend`;
+      const resp = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
+          projectName,
+          projectType: PROJECT_TYPES.find((t) => t.id === projectType)?.label || projectType,
+          platforms: selectedPlatforms.map((p) => PLATFORMS.find((pl) => pl.id === p)?.label || p),
+          currentSelections,
+          availableFeatures: allAvailable.map((a) => `${a.label} (${a.category})`),
+          additionalNotes,
+        }),
+      });
+
+      if (!resp.ok) {
+        const errData = await resp.json().catch(() => ({ error: "Unknown error" }));
+        throw new Error(errData.error || `Error ${resp.status}`);
+      }
+
+      const data = await resp.json();
+      const suggestions: AiSuggestion[] = (data.recommendations || []).map((r: any) => {
+        // Match back to our feature catalog
+        const match = allAvailable.find(
+          (a) => a.label.toLowerCase() === r.label?.toLowerCase() || a.id === r.featureId
+        );
+        return {
+          featureId: match?.id || r.featureId || "",
+          label: match?.label || r.label || "",
+          category: match?.categoryId || r.category || "",
+          reason: r.reason || "",
+        };
+      });
+      setAiSuggestions(suggestions.filter((s) => s.featureId && s.label));
+    } catch (e) {
+      console.error("AI recommend error:", e);
+      setError(e instanceof Error ? e.message : "Failed to get recommendations");
+    } finally {
+      setRecommending(false);
+    }
+  };
+
+  const applySuggestion = (suggestion: AiSuggestion) => {
+    // Find the category that contains this feature
+    const cat = FEATURE_CATEGORIES.find((c) => c.id === suggestion.category) ||
+      FEATURE_CATEGORIES.find((c) => c.features.some((f) => f.id === suggestion.featureId));
+    if (cat && !isFeatureSelected(cat.id, suggestion.featureId)) {
+      toggleFeature(cat.id, suggestion.featureId);
+    }
+    setAiSuggestions((prev) => prev.filter((s) => s.featureId !== suggestion.featureId));
+  };
+
   const handleReset = () => {
     setBlueprint("");
     setError("");
+    setAiSuggestions([]);
     setActiveTab("project");
   };
 
@@ -458,6 +545,60 @@ export default function QuantumOptimization() {
                 rows={6}
                 className="bg-background/50"
               />
+            </CardContent>
+          </Card>
+
+          {/* AI Recommendations */}
+          <Card className="dark-slate-purple-card border-primary/20">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Brain className="h-5 w-5 text-primary" />
+                AI-Powered Recommendations
+              </CardTitle>
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2"
+                disabled={recommending || totalSelected === 0}
+                onClick={handleAiRecommend}
+              >
+                {recommending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                {recommending ? "Analyzing…" : "Get AI Suggestions"}
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {aiSuggestions.length === 0 && !recommending && (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  Click "Get AI Suggestions" to receive personalized feature recommendations based on your current selections.
+                </p>
+              )}
+              {recommending && (
+                <div className="flex items-center justify-center gap-3 py-6">
+                  <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                  <span className="text-sm text-muted-foreground">Analyzing your selections and generating recommendations…</span>
+                </div>
+              )}
+              {aiSuggestions.length > 0 && (
+                <div className="space-y-3">
+                  <p className="text-xs text-muted-foreground">Click a suggestion to add it to your selections:</p>
+                  {aiSuggestions.map((suggestion) => (
+                    <button
+                      key={suggestion.featureId}
+                      onClick={() => applySuggestion(suggestion)}
+                      className="w-full flex items-start gap-3 p-3 rounded-lg border border-primary/30 bg-primary/5 hover:bg-primary/10 text-left transition-all"
+                    >
+                      <div className="mt-0.5 flex-shrink-0">
+                        <Sparkles className="h-4 w-4 text-primary" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-foreground">{suggestion.label}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{suggestion.reason}</p>
+                      </div>
+                      <Badge variant="secondary" className="text-xs shrink-0 mt-0.5">+ Add</Badge>
+                    </button>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
 
