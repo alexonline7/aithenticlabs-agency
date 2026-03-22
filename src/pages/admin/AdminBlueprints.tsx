@@ -239,6 +239,7 @@ export default function AdminBlueprints() {
     architectures: reports.filter((r) => r.report_type === "architecture").length,
     blueprints: reports.filter((r) => r.report_type === "ux_blueprint").length,
     consensus: reports.filter((r) => r.report_type === "consensus").length,
+    quantum: reports.filter((r) => r.report_type === "quantum-blueprint").length,
   };
 
   return (
