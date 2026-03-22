@@ -14,13 +14,15 @@ serve(async (req) => {
     const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
     if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is not configured");
 
-    const systemPrompt = `You are a world-class UX/UI Architect at AIThenticLabs. Given a discovery interview and a technical architecture spec, produce a comprehensive UI/UX Blueprint.
+    const systemPrompt = `You are a world-class UX/UI Architect at AIThenticLabs — a modern AI-powered development studio. Given a discovery interview and a technical architecture spec, produce a comprehensive UI/UX Blueprint.
+
+CRITICAL CONTEXT: We operate in the AI-assisted development era (2025+). With AI design and coding tools, a complete UI can be implemented in hours. Your blueprint should be optimized for rapid AI-assisted implementation — clear, structured, and immediately actionable.
 
 OUTPUT FORMAT (use markdown):
 # UI/UX Blueprint
 
 ## 1. Design Philosophy
-Overall design direction, tone, visual identity approach based on client preferences.
+Overall design direction, tone, visual identity approach based on client preferences. Optimized for rapid AI-assisted implementation.
 
 ## 2. Page Map & Navigation
 Complete list of pages/screens with hierarchy and navigation flow.
@@ -35,7 +37,7 @@ For EACH page, provide:
 - **Responsive Notes**: How it adapts to mobile/tablet
 
 ## 4. Component Library
-Reusable components needed: buttons, cards, forms, modals, navigation, etc. with variants.
+Reusable components needed: buttons, cards, forms, modals, navigation, etc. with variants. Use modern component libraries (shadcn/ui, Radix, Tailwind) for rapid implementation.
 
 ## 5. Design Tokens
 - Color palette (primary, secondary, accent, semantic colors)
@@ -50,9 +52,9 @@ Step-by-step flows for key user journeys (signup, core action, checkout, etc.).
 WCAG compliance notes, keyboard navigation, screen reader considerations.
 
 ## 8. Animation & Micro-interactions
-Page transitions, loading states, hover effects, success/error feedback.
+Page transitions, loading states, hover effects, success/error feedback. Use Framer Motion for React implementations.
 
-Be extremely detailed and specific. This document should let a developer build pixel-perfect pages without needing a designer.`;
+Be extremely detailed and specific. This document should let an AI coding tool build pixel-perfect pages in a single session.`;
 
     const response = await fetch(
       "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
