@@ -4,9 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { BrainCircuit, Search, Eye, Loader2, Mail, Calendar } from "lucide-react";
+import AIRecommendationDetailDialog from "@/components/admin/AIRecommendationDetailDialog";
 
 interface Submission {
   id: string;
@@ -152,56 +151,7 @@ export default function AdminAIRecommendations() {
         </div>
       )}
 
-      {/* Detail Dialog */}
-      <Dialog open={!!viewItem} onOpenChange={() => setViewItem(null)}>
-        <DialogContent className="max-w-2xl max-h-[85vh] overflow-hidden [&>button]:opacity-100 [&>button]:text-foreground [&>button]:bg-muted/80 [&>button]:border [&>button]:border-border [&>button]:rounded-full [&>button]:p-1 [&>button]:hover:bg-muted">
-          <DialogHeader className="pr-8">
-            <DialogTitle>{viewItem?.name || viewItem?.email}</DialogTitle>
-          </DialogHeader>
-          {viewItem && (
-            <ScrollArea className="h-[70vh] pr-4">
-              <div className="space-y-4 pb-1">
-                <div className="grid grid-cols-2 gap-3 text-sm">
-                  <div>
-                    <span className="text-muted-foreground">Email:</span>{" "}
-                    <span className="text-foreground">{viewItem.email}</span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Date:</span>{" "}
-                    <span className="text-foreground">
-                      {new Date(viewItem.created_at).toLocaleString()}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Status:</span>{" "}
-                    <Badge variant="outline" className={statusColors[viewItem.status]}>
-                      {viewItem.status}
-                    </Badge>
-                  </div>
-                </div>
-
-                {viewItem.project_description && (
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">Project Description</p>
-                    <p className="text-sm text-foreground bg-muted/50 rounded p-3">
-                      {viewItem.project_description}
-                    </p>
-                  </div>
-                )}
-
-                {Object.keys(viewItem.ai_recommendation || {}).length > 0 && (
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">AI Recommendation Data</p>
-                    <pre className="text-xs text-foreground bg-muted/50 rounded p-3 overflow-auto max-h-60 whitespace-pre-wrap break-words">
-                      {JSON.stringify(viewItem.ai_recommendation, null, 2)}
-                    </pre>
-                  </div>
-                )}
-              </div>
-            </ScrollArea>
-          )}
-        </DialogContent>
-      </Dialog>
+      <AIRecommendationDetailDialog item={viewItem} onClose={() => setViewItem(null)} />
     </div>
   );
 }
