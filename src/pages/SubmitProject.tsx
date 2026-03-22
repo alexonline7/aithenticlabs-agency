@@ -16,6 +16,10 @@ const PROJECT_TYPES = [
   { value: "ecommerce", label: "E-commerce Platform" },
   { value: "saas", label: "SaaS Product" },
   { value: "landing-page", label: "Landing Page / Website" },
+  { value: "ai-tool", label: "AI-Powered Tool" },
+  { value: "dashboard", label: "Dashboard / Analytics" },
+  { value: "marketplace", label: "Marketplace / Platform" },
+  { value: "automation", label: "Workflow Automation" },
   { value: "other", label: "Other" },
 ];
 
