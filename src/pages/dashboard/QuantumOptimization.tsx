@@ -21,7 +21,7 @@ const metrics = [
 ];
 
 const optimizations = [
-  { title: "Image Compression Pipeline", status: "active", improvement: "+34% faster load", severity: "success" },
+  
   { title: "AI Model Caching Layer", status: "active", improvement: "-67ms latency", severity: "success" },
   { title: "Code Splitting Optimization", status: "active", improvement: "-42% bundle size", severity: "success" },
   { title: "Prefetch Strategy", status: "review", improvement: "+18% navigation speed", severity: "warning" },
