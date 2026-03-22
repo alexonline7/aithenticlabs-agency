@@ -166,31 +166,39 @@ export default function SubmitProject() {
 
                 <div className="space-y-2">
                   <Label className="text-slate-300">Project Type <span className="text-xs text-muted-foreground">(select up to 2)</span></Label>
-                  <div className="flex flex-wrap gap-2">
-                    {PROJECT_TYPES.map((t) => {
-                      const isSelected = selectedTypes.includes(t.value);
-                      return (
-                        <button
-                          key={t.value}
-                          type="button"
-                          onClick={() => {
-                            if (isSelected) {
-                              setSelectedTypes(selectedTypes.filter(v => v !== t.value));
-                            } else if (selectedTypes.length < 2) {
-                              setSelectedTypes([...selectedTypes, t.value]);
-                            }
-                          }}
-                          className={`px-3 py-1.5 rounded-full text-sm border transition-all ${
-                            isSelected
-                              ? "bg-deep-gold-500/20 border-deep-gold-500 text-deep-gold-500"
-                              : "border-input text-slate-400 hover:border-slate-500"
-                          } ${!isSelected && selectedTypes.length >= 2 ? "opacity-40 cursor-not-allowed" : ""}`}
-                        >
-                          {t.label}
-                        </button>
-                      );
-                    })}
-                  </div>
+                  <Select
+                    value=""
+                    onValueChange={(val) => {
+                      if (!selectedTypes.includes(val) && selectedTypes.length < 2) {
+                        setSelectedTypes([...selectedTypes, val]);
+                      }
+                    }}
+                  >
+                    <SelectTrigger className="bg-background border-input">
+                      <SelectValue placeholder="Select project type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PROJECT_TYPES.filter(t => !selectedTypes.includes(t.value)).map((t) => (
+                        <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {selectedTypes.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {selectedTypes.map((v) => {
+                        const label = PROJECT_TYPES.find(t => t.value === v)?.label || v;
+                        return (
+                          <span
+                            key={v}
+                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm bg-deep-gold-500/20 border border-deep-gold-500 text-deep-gold-500"
+                          >
+                            {label}
+                            <button type="button" onClick={() => setSelectedTypes(selectedTypes.filter(s => s !== v))} className="ml-1 hover:text-foreground">×</button>
+                          </span>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-2">
