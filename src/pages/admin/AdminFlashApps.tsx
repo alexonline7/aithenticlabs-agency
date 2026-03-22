@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
+// Separator available if needed
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Zap, Search, Eye, Loader2, Code, MonitorSmartphone } from "lucide-react";
+import { Zap, Search, Eye, Loader2, Code, MonitorSmartphone, Clock, Layers, Server, Shield, Palette, Rocket, TestTube, FileCode, Globe, Users, DollarSign, Tag } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
 interface Report {
@@ -19,6 +19,43 @@ interface Report {
   content: string;
   metadata: Record<string, unknown>;
   created_at: string;
+}
+
+const markdownStyles = "max-w-none text-sm text-foreground space-y-4 [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:text-foreground [&_h1]:mt-6 [&_h1]:mb-3 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-foreground [&_h2]:mt-5 [&_h2]:mb-2 [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:text-foreground [&_h3]:mt-4 [&_h3]:mb-2 [&_h4]:text-base [&_h4]:font-semibold [&_h4]:text-foreground [&_h4]:mt-3 [&_h4]:mb-1 [&_p]:text-muted-foreground [&_p]:leading-relaxed [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-1 [&_ul]:text-muted-foreground [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:space-y-1 [&_ol]:text-muted-foreground [&_li]:text-muted-foreground [&_strong]:text-foreground [&_strong]:font-semibold [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-xs [&_code]:text-foreground [&_pre]:bg-muted [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:overflow-x-auto [&_blockquote]:border-l-2 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-muted-foreground [&_table]:w-full [&_table]:border-collapse [&_th]:border [&_th]:border-border [&_th]:bg-muted [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:text-xs [&_th]:font-semibold [&_th]:text-foreground [&_td]:border [&_td]:border-border [&_td]:px-3 [&_td]:py-2 [&_td]:text-xs [&_td]:text-muted-foreground [&_hr]:border-border";
+
+function MetadataField({ icon: Icon, label, value }: { icon: React.ElementType; label: string; value: React.ReactNode }) {
+  if (!value) return null;
+  return (
+    <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 border border-border/50">
+      <Icon className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+      <div className="min-w-0">
+        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-0.5">{label}</p>
+        <div className="text-sm text-foreground">{value as React.ReactNode}</div>
+      </div>
+    </div>
+  );
+}
+
+function estimateTimeline(meta: Record<string, unknown>): string {
+  const features = Array.isArray(meta.features) ? meta.features : [];
+  const tier = String(meta.tier || "");
+  const platforms = Array.isArray(meta.platforms) ? meta.platforms : [];
+
+  let hours = 16; // base MVP
+  hours += features.length * 6;
+  hours += platforms.length > 1 ? platforms.length * 8 : 0;
+  if (meta.includeDesignSystem) hours += 12;
+  if (meta.includeDeployGuide) hours += 8;
+  if (meta.includeApiDocs) hours += 10;
+  if (meta.includeTestSpecs) hours += 14;
+  if (tier === "enterprise") hours += 24;
+  else if (tier === "professional") hours += 12;
+
+  const days = Math.ceil(hours / 8);
+  if (days <= 2) return `${hours} hours (~${days} days) — Sprint delivery`;
+  if (days <= 5) return `${hours} hours (~${days} days) — Standard delivery`;
+  if (days <= 10) return `${hours} hours (~${days} days) — Full-cycle build`;
+  return `${hours} hours (~${days} days) — Enterprise timeline`;
 }
 
 export default function AdminFlashApps() {
@@ -110,46 +147,158 @@ export default function AdminFlashApps() {
                 <TabsTrigger value="user-view" className="gap-1.5"><MonitorSmartphone className="h-3.5 w-3.5" />Standard User Version</TabsTrigger>
                 <TabsTrigger value="system-view" className="gap-1.5"><Code className="h-3.5 w-3.5" />Professional Dev Version</TabsTrigger>
               </TabsList>
+
+              {/* ── Standard User Version ── */}
               <TabsContent value="user-view">
                 <ScrollArea className="max-h-[65vh]">
-                  <div className="prose prose-invert max-w-none text-sm p-4">
+                  <div className={`${markdownStyles} p-4`}>
                     <ReactMarkdown>{typeof viewReport.metadata?.userVersion === "string" ? String(viewReport.metadata.userVersion) : viewReport.content}</ReactMarkdown>
                   </div>
                 </ScrollArea>
               </TabsContent>
+
+              {/* ── Professional Dev Version ── */}
               <TabsContent value="system-view">
                 <ScrollArea className="max-h-[65vh]">
-                  <div className="space-y-4 p-1">
-                    <Card><CardHeader className="pb-2"><CardTitle className="text-sm">Report Metadata</CardTitle></CardHeader>
-                      <CardContent className="text-sm">
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                          <div><p className="text-xs text-muted-foreground">Report ID</p><p className="font-mono text-xs text-foreground break-all">{viewReport.id}</p></div>
-                          <div><p className="text-xs text-muted-foreground">User Email</p><p className="text-foreground">{viewReport.user_email || "Anonymous"}</p></div>
-                          <div><p className="text-xs text-muted-foreground">Report Type</p><p className="text-foreground">{viewReport.report_type}</p></div>
-                          <div><p className="text-xs text-muted-foreground">Content Length</p><p className="text-foreground">{viewReport.content.length.toLocaleString()} chars</p></div>
+                  <div className="space-y-5 p-1">
+
+                    {/* Project Overview Card */}
+                    <Card className="border-primary/20">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm flex items-center gap-2 text-primary">
+                          <Rocket className="h-4 w-4" /> Project Overview & Estimated Timeline
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          <MetadataField icon={FileCode} label="Report ID" value={<span className="font-mono text-xs break-all">{viewReport.id}</span>} />
+                          <MetadataField icon={Users} label="Client" value={viewReport.user_email || "Anonymous"} />
+                          <MetadataField icon={Tag} label="Report Type" value={<Badge variant="outline" className="text-xs">{viewReport.report_type}</Badge>} />
+                          <MetadataField icon={Clock} label="Estimated Dev Timeline" value={
+                            <span className="font-semibold text-primary">{estimateTimeline(viewReport.metadata)}</span>
+                          } />
                         </div>
                       </CardContent>
                     </Card>
-                    {viewReport.metadata && Object.keys(viewReport.metadata).length > 0 && (
-                      <Card><CardHeader className="pb-2"><CardTitle className="text-sm">Full Metadata</CardTitle></CardHeader>
+
+                    {/* Technical Configuration Card */}
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm flex items-center gap-2">
+                          <Server className="h-4 w-4 text-primary" /> Technical Configuration
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          <MetadataField icon={Tag} label="Category" value={String(viewReport.metadata?.category || "—")} />
+                          <MetadataField icon={DollarSign} label="Pricing Tier" value={
+                            <Badge variant="secondary" className="capitalize">{String(viewReport.metadata?.tier || "—")}</Badge>
+                          } />
+                          <MetadataField icon={Globe} label="Target Platforms" value={
+                            Array.isArray(viewReport.metadata?.platforms) ? (
+                              <div className="flex flex-wrap gap-1">
+                                {(viewReport.metadata.platforms as string[]).map((p) => (
+                                  <Badge key={p} variant="outline" className="text-xs">{p}</Badge>
+                                ))}
+                              </div>
+                            ) : "—"
+                          } />
+                          <MetadataField icon={Users} label="Target Audience" value={String(viewReport.metadata?.targetAudience || "General")} />
+                          <MetadataField icon={DollarSign} label="Monetization" value={String(viewReport.metadata?.monetization || "Not specified")} />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Tech Stack Card */}
+                    {viewReport.metadata?.tech != null && typeof viewReport.metadata.tech === "object" && (
+                      <Card>
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-sm flex items-center gap-2">
+                            <Layers className="h-4 w-4 text-primary" /> Tech Stack Specification
+                          </CardTitle>
+                        </CardHeader>
                         <CardContent>
-                          <div className="space-y-3">
-                            {Object.entries(viewReport.metadata).map(([key, value]) => (
-                              <div key={key} className="bg-muted/30 rounded-lg p-3">
-                                <p className="text-xs text-muted-foreground mb-1">{key}</p>
-                                <p className="text-sm text-foreground">{typeof value === "object" ? JSON.stringify(value, null, 2) : String(value)}</p>
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            {Object.entries(viewReport.metadata.tech as Record<string, string>).map(([techKey, techVal]) => (
+                              <div key={techKey} className="p-3 rounded-lg bg-muted/40 border border-border/50 text-center">
+                                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{techKey}</p>
+                                <p className="text-sm font-semibold text-foreground">{techVal}</p>
                               </div>
                             ))}
-                            <Separator />
-                            <details><summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground">Raw JSON</summary>
-                              <pre className="mt-2 bg-muted/20 rounded-lg p-3 text-xs font-mono text-foreground overflow-x-auto whitespace-pre-wrap">{JSON.stringify(viewReport.metadata, null, 2)}</pre>
-                            </details>
                           </div>
                         </CardContent>
                       </Card>
                     )}
-                    <Card><CardHeader className="pb-2"><CardTitle className="text-sm">Professional Developer Specification</CardTitle></CardHeader>
-                      <CardContent><div className="prose prose-invert prose-sm max-w-none"><ReactMarkdown>{typeof viewReport.metadata?.professionalVersion === "string" ? String(viewReport.metadata.professionalVersion) : viewReport.content}</ReactMarkdown></div></CardContent>
+
+                    {/* Features Card */}
+                    {Array.isArray(viewReport.metadata?.features) && (viewReport.metadata.features as string[]).length > 0 && (
+                      <Card>
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-sm flex items-center gap-2">
+                            <Zap className="h-4 w-4 text-primary" /> Requested Feature Modules
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="flex flex-wrap gap-2">
+                            {(viewReport.metadata.features as string[]).map((f) => (
+                              <Badge key={f} variant="secondary" className="text-xs py-1 px-2.5">{f}</Badge>
+                            ))}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {/* Included Specification Extras */}
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm flex items-center gap-2">
+                          <Shield className="h-4 w-4 text-primary" /> Specification Addons Requested
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                          {[
+                            { key: "includeDesignSystem", label: "Design System", icon: Palette },
+                            { key: "includeDeployGuide", label: "Deploy Guide", icon: Rocket },
+                            { key: "includeApiDocs", label: "API Docs", icon: FileCode },
+                            { key: "includeTestSpecs", label: "Test Specs", icon: TestTube },
+                          ].map(({ key, label, icon: AddonIcon }) => (
+                            <div key={key} className={`p-3 rounded-lg border text-center ${viewReport.metadata?.[key] ? "bg-primary/10 border-primary/30" : "bg-muted/20 border-border/30 opacity-50"}`}>
+                              <AddonIcon className={`h-4 w-4 mx-auto mb-1 ${viewReport.metadata?.[key] ? "text-primary" : "text-muted-foreground"}`} />
+                              <p className="text-xs font-medium text-foreground">{label}</p>
+                              <p className={`text-xs mt-0.5 ${viewReport.metadata?.[key] ? "text-primary" : "text-muted-foreground"}`}>
+                                {viewReport.metadata?.[key] ? "Included" : "Not included"}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Full Technical Specification */}
+                    <Card className="border-primary/20">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm flex items-center gap-2 text-primary">
+                          <Code className="h-4 w-4" /> Full Technical Specification
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className={markdownStyles}>
+                          <ReactMarkdown>{typeof viewReport.metadata?.professionalVersion === "string" ? String(viewReport.metadata.professionalVersion) : viewReport.content}</ReactMarkdown>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Raw Metadata */}
+                    <Card>
+                      <CardContent className="pt-4">
+                        <details>
+                          <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground font-medium">Raw Metadata JSON</summary>
+                          <pre className="mt-2 bg-muted/30 rounded-lg p-4 text-xs font-mono text-foreground overflow-x-auto whitespace-pre-wrap border border-border/50">
+                            {JSON.stringify(viewReport.metadata, null, 2)}
+                          </pre>
+                        </details>
+                      </CardContent>
                     </Card>
                   </div>
                 </ScrollArea>
