@@ -52,7 +52,7 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-3">
           {user ? (
             <>
-              <Link to="/projects">
+              <Link to="/dashboard">
                 <Button variant="ghost" className="text-slate-300 hover:text-white">Dashboard</Button>
               </Link>
               <Button
@@ -100,7 +100,7 @@ export default function Navbar() {
           )}
           {user ? (
             <>
-              <Link to="/projects" onClick={() => setOpen(false)}>
+              <Link to="/dashboard" onClick={() => setOpen(false)}>
                 <Button variant="ghost" className="w-full text-slate-300 hover:text-white">Dashboard</Button>
               </Link>
               <Button
