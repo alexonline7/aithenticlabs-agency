@@ -134,6 +134,7 @@ interface AiSuggestion {
 }
 
 export default function QuantumOptimization() {
+  const { user } = useAuth();
   const [projectName, setProjectName] = useState("");
   const [projectType, setProjectType] = useState("");
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
