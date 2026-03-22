@@ -52,6 +52,7 @@ export default function DashboardSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const { user, signOut } = useAuth();
+  const { isAdmin } = useAdminRole();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
