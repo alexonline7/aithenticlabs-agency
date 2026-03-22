@@ -49,7 +49,7 @@ serve(async (req) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "x-goog-api-key": GEMINI_API_KEY!,
+            "Authorization": `Bearer ${GEMINI_API_KEY}`,
           },
           body: JSON.stringify({
             model: "gemini-2.5-flash-preview-04-17",
