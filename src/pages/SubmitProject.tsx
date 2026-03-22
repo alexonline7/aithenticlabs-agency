@@ -16,6 +16,10 @@ const PROJECT_TYPES = [
   { value: "ecommerce", label: "E-commerce Platform" },
   { value: "saas", label: "SaaS Product" },
   { value: "landing-page", label: "Landing Page / Website" },
+  { value: "ai-tool", label: "AI-Powered Tool" },
+  { value: "dashboard", label: "Dashboard / Analytics" },
+  { value: "marketplace", label: "Marketplace / Platform" },
+  { value: "automation", label: "Workflow Automation" },
   { value: "other", label: "Other" },
 ];
 
@@ -25,7 +29,9 @@ export default function SubmitProject() {
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [projectType, setProjectType] = useState(searchParams.get("type") || "");
+  const [selectedTypes, setSelectedTypes] = useState<string[]>(
+    searchParams.get("type") ? searchParams.get("type")!.split(",") : []
+  );
   const [description, setDescription] = useState(searchParams.get("desc") || "");
   const [budget, setBudget] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -45,9 +51,10 @@ export default function SubmitProject() {
       const { data: userData } = await supabase.auth.getUser();
       const userId = userData.user?.id || null;
 
+      const typeLabels = selectedTypes.map(v => PROJECT_TYPES.find(t => t.value === v)?.label || v).join(", ");
       const projectDescription = [
         prefilledTitle ? `Recommended App: ${prefilledTitle}` : "",
-        `Type: ${PROJECT_TYPES.find(t => t.value === projectType)?.label || projectType || "Not specified"}`,
+        `Type: ${typeLabels || "Not specified"}`,
         `Budget: ${budget || "Not specified"}`,
         "",
         description,
@@ -157,34 +164,49 @@ export default function SubmitProject() {
                   </div>
                 </div>
 
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label className="text-slate-300">Project Type</Label>
-                    <Select value={projectType} onValueChange={setProjectType}>
-                      <SelectTrigger className="bg-background border-input">
-                        <SelectValue placeholder="Select type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {PROJECT_TYPES.map((t) => (
-                          <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                <div className="space-y-2">
+                  <Label className="text-slate-300">Project Type <span className="text-xs text-muted-foreground">(select up to 2)</span></Label>
+                  <div className="flex flex-wrap gap-2">
+                    {PROJECT_TYPES.map((t) => {
+                      const isSelected = selectedTypes.includes(t.value);
+                      return (
+                        <button
+                          key={t.value}
+                          type="button"
+                          onClick={() => {
+                            if (isSelected) {
+                              setSelectedTypes(selectedTypes.filter(v => v !== t.value));
+                            } else if (selectedTypes.length < 2) {
+                              setSelectedTypes([...selectedTypes, t.value]);
+                            }
+                          }}
+                          className={`px-3 py-1.5 rounded-full text-sm border transition-all ${
+                            isSelected
+                              ? "bg-deep-gold-500/20 border-deep-gold-500 text-deep-gold-500"
+                              : "border-input text-slate-400 hover:border-slate-500"
+                          } ${!isSelected && selectedTypes.length >= 2 ? "opacity-40 cursor-not-allowed" : ""}`}
+                        >
+                          {t.label}
+                        </button>
+                      );
+                    })}
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-slate-300">Estimated Budget</Label>
-                    <Select value={budget} onValueChange={setBudget}>
-                      <SelectTrigger className="bg-background border-input">
-                        <SelectValue placeholder="Select range" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="under-5k">Under $5,000</SelectItem>
-                        <SelectItem value="5k-15k">$5,000 – $15,000</SelectItem>
-                        <SelectItem value="15k-50k">$15,000 – $50,000</SelectItem>
-                        <SelectItem value="50k+">$50,000+</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-slate-300">Estimated Budget <span className="text-xs text-muted-foreground">(AI-accelerated pricing)</span></Label>
+                  <Select value={budget} onValueChange={setBudget}>
+                    <SelectTrigger className="bg-background border-input">
+                      <SelectValue placeholder="Select range" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="under-1k">Under $1,000</SelectItem>
+                      <SelectItem value="1k-3k">$1,000 – $3,000</SelectItem>
+                      <SelectItem value="3k-8k">$3,000 – $8,000</SelectItem>
+                      <SelectItem value="8k-20k">$8,000 – $20,000</SelectItem>
+                      <SelectItem value="20k+">$20,000+</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="space-y-2">
