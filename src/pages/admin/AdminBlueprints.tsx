@@ -7,7 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { FileText, Search, Eye, Loader2, Filter } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  FileText, Search, Eye, Loader2, Filter, DollarSign, Clock, AlertTriangle,
+  Users, Layers, Target, CheckCircle, Rocket, ArrowRight,
+} from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
 interface Report {
@@ -18,6 +23,19 @@ interface Report {
   content: string;
   metadata: Record<string, unknown>;
   created_at: string;
+}
+
+interface ConsensusExtract {
+  executiveSummary: string;
+  scope: string;
+  costEstimate: string;
+  risks: string;
+  techDecisions: string;
+  roadmap: string;
+  teamComposition: string;
+  successCriteria: string;
+  clientActions: string;
+  nextSteps: string;
 }
 
 const typeLabels: Record<string, string> = {
@@ -33,6 +51,142 @@ const typeBadgeColors: Record<string, string> = {
   ux_blueprint: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
   consensus: "bg-primary/20 text-primary border-primary/30",
 };
+
+function extractConsensusSection(content: string, sectionName: string): string {
+  // Match ## or ### headings containing the section name
+  const patterns = [
+    new RegExp(`##\\s*(?:🏗️\\s*|📋\\s*|💰\\s*|⚠️\\s*|👥\\s*|🔧\\s*|📅\\s*|📊\\s*|✅\\s*|🚀\\s*)?${sectionName}[\\s\\S]*?(?=\\n##\\s|$)`, "i"),
+    new RegExp(`##\\s*${sectionName}[\\s\\S]*?(?=\\n##\\s|$)`, "i"),
+  ];
+
+  for (const pattern of patterns) {
+    const match = content.match(pattern);
+    if (match) {
+      // Remove the heading line itself
+      return match[0].replace(/^##[^\n]*\n/, "").trim();
+    }
+  }
+  return "";
+}
+
+function parseConsensusReport(content: string): ConsensusExtract {
+  return {
+    executiveSummary: extractConsensusSection(content, "Executive Summary"),
+    scope: extractConsensusSection(content, "Project Scope"),
+    costEstimate: extractConsensusSection(content, "Cost Estimate"),
+    risks: extractConsensusSection(content, "Risk Assessment"),
+    techDecisions: extractConsensusSection(content, "Technology Decisions"),
+    roadmap: extractConsensusSection(content, "Implementation Roadmap"),
+    teamComposition: extractConsensusSection(content, "Recommended Team"),
+    successCriteria: extractConsensusSection(content, "Key Metrics"),
+    clientActions: extractConsensusSection(content, "Client Action"),
+    nextSteps: extractConsensusSection(content, "Next Steps"),
+  };
+}
+
+function ConsensusDetailView({ report }: { report: Report }) {
+  const extracted = parseConsensusReport(report.content);
+
+  const sections = [
+    { key: "executiveSummary", label: "Executive Summary", icon: FileText, color: "text-blue-400" },
+    { key: "scope", label: "Scope & Deliverables", icon: Target, color: "text-emerald-400" },
+    { key: "costEstimate", label: "Cost Estimate & Timeline", icon: DollarSign, color: "text-yellow-400" },
+    { key: "techDecisions", label: "Technology Decisions", icon: Layers, color: "text-purple-400" },
+    { key: "roadmap", label: "Implementation Roadmap", icon: Rocket, color: "text-primary" },
+    { key: "teamComposition", label: "Team Composition", icon: Users, color: "text-cyan-400" },
+    { key: "risks", label: "Risk Assessment", icon: AlertTriangle, color: "text-orange-400" },
+    { key: "successCriteria", label: "Success Criteria", icon: CheckCircle, color: "text-green-400" },
+    { key: "clientActions", label: "Client Action Items", icon: ArrowRight, color: "text-pink-400" },
+    { key: "nextSteps", label: "Next Steps", icon: Clock, color: "text-indigo-400" },
+  ] as const;
+
+  const filledSections = sections.filter((s) => extracted[s.key]);
+
+  return (
+    <Tabs defaultValue={filledSections.length > 0 ? filledSections[0].key : "full"}>
+      <TabsList className="flex flex-wrap gap-1 h-auto p-1">
+        {filledSections.map((s) => (
+          <TabsTrigger key={s.key} value={s.key} className="gap-1 text-xs">
+            <s.icon className={`h-3 w-3 ${s.color}`} />
+            {s.label}
+          </TabsTrigger>
+        ))}
+        <TabsTrigger value="full" className="gap-1 text-xs">
+          <FileText className="h-3 w-3" />
+          Full Report
+        </TabsTrigger>
+      </TabsList>
+
+      {filledSections.map((s) => (
+        <TabsContent key={s.key} value={s.key} className="mt-4">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <s.icon className={`h-4 w-4 ${s.color}`} />
+                {s.label}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="prose prose-invert prose-sm max-w-none">
+                <ReactMarkdown>{extracted[s.key]}</ReactMarkdown>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      ))}
+
+      <TabsContent value="full" className="mt-4">
+        <ScrollArea className="max-h-[60vh]">
+          <div className="prose prose-invert prose-sm max-w-none p-4">
+            <ReactMarkdown>{report.content}</ReactMarkdown>
+          </div>
+        </ScrollArea>
+      </TabsContent>
+    </Tabs>
+  );
+}
+
+function QuickInfoCards({ report }: { report: Report }) {
+  const content = report.content;
+
+  // Extract cost range
+  const costMatch = content.match(/\$[\d,]+(?:\s*[–-]\s*\$[\d,]+)?/);
+  // Extract timeline
+  const timelineMatch = content.match(/(\d+\s*[–-]\s*\d+\s*(?:days?|weeks?|sprints?))/i);
+
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+      <Card>
+        <CardContent className="p-3 text-center">
+          <DollarSign className="h-5 w-5 mx-auto text-yellow-400 mb-1" />
+          <p className="text-xs text-muted-foreground">Est. Cost</p>
+          <p className="text-sm font-bold text-foreground">{costMatch?.[0] || "See report"}</p>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardContent className="p-3 text-center">
+          <Clock className="h-5 w-5 mx-auto text-blue-400 mb-1" />
+          <p className="text-xs text-muted-foreground">Timeline</p>
+          <p className="text-sm font-bold text-foreground">{timelineMatch?.[1] || "See report"}</p>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardContent className="p-3 text-center">
+          <Users className="h-5 w-5 mx-auto text-cyan-400 mb-1" />
+          <p className="text-xs text-muted-foreground">Client</p>
+          <p className="text-sm font-bold text-foreground truncate">{report.user_email?.split("@")[0] || "Anonymous"}</p>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardContent className="p-3 text-center">
+          <FileText className="h-5 w-5 mx-auto text-primary mb-1" />
+          <p className="text-xs text-muted-foreground">Report Size</p>
+          <p className="text-sm font-bold text-foreground">{(content.length / 1000).toFixed(1)}k chars</p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
 
 export default function AdminBlueprints() {
   const [reports, setReports] = useState<Report[]>([]);
@@ -64,6 +218,15 @@ export default function AdminBlueprints() {
     return matchesSearch && matchesType;
   });
 
+  // Group reports by project for the consensus-focused view
+  const consensusReports = reports.filter((r) => r.report_type === "consensus");
+  const projectGroups = new Map<string, Report[]>();
+  reports.forEach((r) => {
+    const key = `${r.project_name}__${r.user_email || "anon"}`;
+    if (!projectGroups.has(key)) projectGroups.set(key, []);
+    projectGroups.get(key)!.push(r);
+  });
+
   const stats = {
     total: reports.length,
     interviews: reports.filter((r) => r.report_type === "interview").length,
@@ -80,7 +243,7 @@ export default function AdminBlueprints() {
           Client Blueprints & Reports
         </h1>
         <p className="text-muted-foreground mt-1">
-          View all generated Consensus Reports, Architecture specs, and UX Blueprints.
+          View all generated reports. Consensus Reports contain the complete project specifications developers need.
         </p>
       </div>
 
@@ -101,6 +264,57 @@ export default function AdminBlueprints() {
           </Card>
         ))}
       </div>
+
+      {/* Consensus Reports — Developer Quick View */}
+      {consensusReports.length > 0 && (
+        <Card className="border-primary/30">
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Target className="h-5 w-5 text-primary" />
+              Consensus Reports — Project Specifications for Development
+            </CardTitle>
+            <CardDescription>
+              Each consensus report contains: Executive Summary, Scope & Deliverables, Cost Estimate, Risk Assessment, Team Composition, Technology Decisions, Implementation Roadmap, Success Criteria, Client Action Items, and Next Steps.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {consensusReports.slice(0, 5).map((report) => {
+              const costMatch = report.content.match(/\$[\d,]+(?:\s*[–-]\s*\$[\d,]+)?/);
+              const timelineMatch = report.content.match(/(\d+\s*[–-]\s*\d+\s*(?:days?|weeks?|sprints?))/i);
+              // Find related reports for this project
+              const key = `${report.project_name}__${report.user_email || "anon"}`;
+              const relatedCount = (projectGroups.get(key)?.length || 1) - 1;
+
+              return (
+                <div key={report.id} className="flex items-center justify-between bg-muted/30 rounded-lg p-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h4 className="font-semibold text-foreground truncate">{report.project_name}</h4>
+                      <Badge variant="outline" className="bg-primary/20 text-primary border-primary/30 text-xs">
+                        Consensus
+                      </Badge>
+                      {relatedCount > 0 && (
+                        <Badge variant="outline" className="text-xs text-muted-foreground">
+                          +{relatedCount} related reports
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                      <span>{report.user_email || "Anonymous"}</span>
+                      <span>{new Date(report.created_at).toLocaleDateString()}</span>
+                      {costMatch && <span className="text-yellow-400 font-medium">{costMatch[0]}</span>}
+                      {timelineMatch && <span className="text-blue-400 font-medium">{timelineMatch[1]}</span>}
+                    </div>
+                  </div>
+                  <Button variant="default" size="sm" onClick={() => setViewReport(report)}>
+                    <Eye className="h-4 w-4 mr-1" /> Open Specs
+                  </Button>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
@@ -147,7 +361,7 @@ export default function AdminBlueprints() {
       ) : (
         <div className="space-y-3">
           {filtered.map((report) => (
-            <Card key={report.id} className="hover:border-primary/30 transition-colors">
+            <Card key={report.id} className={`hover:border-primary/30 transition-colors ${report.report_type === "consensus" ? "border-primary/20" : ""}`}>
               <CardContent className="p-4 flex items-center justify-between">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
@@ -171,9 +385,9 @@ export default function AdminBlueprints() {
         </div>
       )}
 
-      {/* View Dialog */}
+      {/* View Dialog — enhanced for consensus reports */}
       <Dialog open={!!viewReport} onOpenChange={() => setViewReport(null)}>
-        <DialogContent className="max-w-4xl max-h-[85vh]">
+        <DialogContent className="max-w-5xl max-h-[90vh]">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               {viewReport?.project_name}
@@ -182,13 +396,24 @@ export default function AdminBlueprints() {
                   {typeLabels[viewReport.report_type]}
                 </Badge>
               )}
+              <span className="text-xs text-muted-foreground ml-auto font-normal">
+                {viewReport && new Date(viewReport.created_at).toLocaleString()}
+              </span>
             </DialogTitle>
           </DialogHeader>
-          <ScrollArea className="max-h-[65vh]">
-            <div className="prose prose-invert prose-sm max-w-none p-4">
-              <ReactMarkdown>{viewReport?.content || ""}</ReactMarkdown>
+
+          {viewReport?.report_type === "consensus" ? (
+            <div>
+              <QuickInfoCards report={viewReport} />
+              <ConsensusDetailView report={viewReport} />
             </div>
-          </ScrollArea>
+          ) : (
+            <ScrollArea className="max-h-[65vh]">
+              <div className="prose prose-invert prose-sm max-w-none p-4">
+                <ReactMarkdown>{viewReport?.content || ""}</ReactMarkdown>
+              </div>
+            </ScrollArea>
+          )}
         </DialogContent>
       </Dialog>
     </div>
