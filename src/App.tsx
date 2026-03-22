@@ -16,6 +16,7 @@ import DashboardSettings from "@/pages/dashboard/DashboardSettings";
 import IdeaToBlueprint from "@/pages/dashboard/IdeaToBlueprint";
 import FlashApps from "@/pages/FlashApps";
 import Projects from "@/pages/Projects";
+import SubmitProject from "@/pages/SubmitProject";
 
 import AdminLayout from "@/components/admin/AdminLayout";
 import AdminBlueprints from "@/pages/admin/AdminBlueprints";
@@ -89,6 +90,7 @@ function App() {
         {/* Public pages */}
         <Route path="/flash-apps" element={<FlashApps />} />
         <Route path="/projects" element={<Projects />} />
+        <Route path="/submit-project" element={<SubmitProject />} />
       </Routes>
     </BrowserRouter>
   );
