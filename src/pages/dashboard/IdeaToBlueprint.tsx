@@ -345,7 +345,15 @@ export default function IdeaToBlueprint() {
       let content = "";
       streamFromFunction("idea-architecture", { interviewSummary: summary },
         (d) => { content += d; setArchitectureSpec(content); },
-        () => { setGenerating(false); saveReport("architecture", content); },
+        async () => {
+          try {
+            await saveReport("architecture", content);
+            setGenerating(false);
+          } catch (err) {
+            setGenerating(false);
+            setGenError(err instanceof Error ? err.message : "Failed to save architecture report");
+          }
+        },
         (err) => { setGenerating(false); setGenError(err); }
       );
     } else if (nextStep === "ux-blueprint") {
