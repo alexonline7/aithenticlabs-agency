@@ -180,9 +180,11 @@ export default function AIRecommendation() {
                         <BarChart3 className="h-4 w-4" /> Est. timeline: {rec.timeline}
                       </div>
                     </div>
-                    <Button className="accent-gradient text-primary-foreground gap-2 shrink-0">
-                      Get Started <ArrowRight className="h-4 w-4" />
-                    </Button>
+                    <Link to={`/submit-project?title=${encodeURIComponent(rec.title)}&desc=${encodeURIComponent(rec.reason)}`}>
+                      <Button className="accent-gradient text-primary-foreground gap-2 shrink-0">
+                        Get Started <ArrowRight className="h-4 w-4" />
+                      </Button>
+                    </Link>
                   </div>
                 </CardContent>
               </Card>
