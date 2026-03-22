@@ -483,6 +483,21 @@ export default function IdeaToBlueprint() {
                       ? "bg-primary text-primary-foreground rounded-br-md"
                       : "bg-muted text-foreground rounded-bl-md"
                   }`}>
+                    {/* Render attachments */}
+                    {msg.attachments && msg.attachments.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {msg.attachments.map((att, idx) => (
+                          att.type === "image" && att.preview ? (
+                            <img key={idx} src={att.preview} alt={att.name} className="max-w-[200px] max-h-[150px] rounded-lg object-cover" />
+                          ) : (
+                            <div key={idx} className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-background/20 text-xs">
+                              <FileText className="w-3 h-3" />
+                              <span className="truncate max-w-[120px]">{att.name}</span>
+                            </div>
+                          )
+                        ))}
+                      </div>
+                    )}
                     {msg.role === "assistant" ? (
                       <div className="prose prose-sm prose-invert max-w-none">
                         <ReactMarkdown>{msg.content}</ReactMarkdown>
