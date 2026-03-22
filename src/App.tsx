@@ -29,6 +29,7 @@ import AdminFlashApps from "@/pages/admin/AdminFlashApps";
 import AdminGeneratedReports from "@/pages/admin/AdminGeneratedReports";
 import AdminQuantum from "@/pages/admin/AdminQuantum";
 import AdminIdeaBlueprint from "@/pages/admin/AdminIdeaBlueprint";
+import AdminAIRecommendations from "@/pages/admin/AdminAIRecommendations";
 
 function App() {
   return (
