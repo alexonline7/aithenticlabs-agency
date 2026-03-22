@@ -211,6 +211,18 @@ const toolSpecs = [
         output: "SSE stream → consensus report markdown",
       },
     ],
+    consensusReportStructure: [
+      "Executive Summary — What we're building, for whom, key differentiators, expected impact (3-4 paragraphs)",
+      "Project Scope & Deliverables — Numbered MVP scope, Phase 1 vs Future Enhancements separation",
+      "Cost Estimate — Table: Phase | Description | Estimated Cost | Timeline (calibrated: $500–$15k, days not months)",
+      "Risk Assessment — Top 5-8 risks table: Risk | Probability | Impact | Mitigation",
+      "Recommended Team Composition — Lean roles for AI-assisted dev (1-2 devs with AI tools vs traditional teams)",
+      "Technology Decisions (Final) — Consolidated tech stack with justifications (React/Next.js, Supabase, Vercel, etc.)",
+      "Implementation Roadmap — Day-by-day or sprint-by-sprint plan, MVP targeting days not months",
+      "Key Metrics & Success Criteria — Measurable KPIs to determine project success",
+      "Client Action Items — What the client must provide/decide before development begins",
+      "Next Steps — Immediate actions to kick off the project, emphasizing speed",
+    ],
     database: [
       "Table: `generated_reports` — stores each step's output",
       "report_type values: interview, architecture, ux_blueprint, consensus",
@@ -416,6 +428,39 @@ export default function AdminToolSpecs() {
                         </div>
                       ))}
                     </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Consensus Report Structure (if available) */}
+              {"consensusReportStructure" in tool && tool.consensusReportStructure && (
+                <Card className="md:col-span-2 border-primary/30">
+                  <CardHeader>
+                    <CardTitle className="text-sm flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-primary" />
+                      Consensus Report Output Structure
+                    </CardTitle>
+                    <CardDescription className="text-xs">
+                      This is the definitive document the dev team uses to build each project. Every consensus report contains these sections:
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ol className="space-y-2">
+                      {tool.consensusReportStructure.map((item: string, i: number) => {
+                        const [title, desc] = item.split(" — ");
+                        return (
+                          <li key={i} className="text-sm flex items-start gap-2">
+                            <span className="bg-primary/20 text-primary text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 mt-0.5">
+                              {i + 1}
+                            </span>
+                            <span>
+                              <span className="font-semibold text-foreground">{title}</span>
+                              {desc && <span className="text-muted-foreground"> — {desc}</span>}
+                            </span>
+                          </li>
+                        );
+                      })}
+                    </ol>
                   </CardContent>
                 </Card>
               )}
