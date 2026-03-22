@@ -1,0 +1,201 @@
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { FileText, Search, Eye, Loader2, Filter, Code, MonitorSmartphone } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+
+interface Report {
+  id: string;
+  user_email: string | null;
+  project_name: string;
+  report_type: string;
+  content: string;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
+const typeLabels: Record<string, string> = {
+  interview: "Discovery Interview",
+  architecture: "Architecture Spec",
+  ux_blueprint: "UX Blueprint",
+  consensus: "Consensus Report",
+  "quantum-blueprint": "Quantum Blueprint",
+  "ai-brief": "AI Brief",
+  "flash-app": "Flash App",
+};
+
+const typeBadgeColors: Record<string, string> = {
+  interview: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+  architecture: "bg-purple-500/20 text-purple-400 border-purple-500/30",
+  ux_blueprint: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+  consensus: "bg-primary/20 text-primary border-primary/30",
+  "quantum-blueprint": "bg-amber-500/20 text-amber-400 border-amber-500/30",
+  "ai-brief": "bg-cyan-500/20 text-cyan-400 border-cyan-500/30",
+  "flash-app": "bg-pink-500/20 text-pink-400 border-pink-500/30",
+};
+
+export default function AdminGeneratedReports() {
+  const [reports, setReports] = useState<Report[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [viewReport, setViewReport] = useState<Report | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const { data, error } = await supabase
+        .from("generated_reports")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (!error && data) setReports(data as Report[]);
+      setLoading(false);
+    })();
+  }, []);
+
+  const filtered = reports.filter((r) => {
+    const matchesSearch = !search || r.project_name.toLowerCase().includes(search.toLowerCase()) || r.user_email?.toLowerCase().includes(search.toLowerCase());
+    const matchesType = typeFilter === "all" || r.report_type === typeFilter;
+    return matchesSearch && matchesType;
+  });
+
+  const typeCounts = reports.reduce((acc, r) => {
+    acc[r.report_type] = (acc[r.report_type] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+          <FileText className="h-6 w-6 text-primary" />
+          Generated Summaries & Reports
+        </h1>
+        <p className="text-muted-foreground mt-1">All generated reports across every tool, with dual User/System views.</p>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card><CardContent className="p-4 text-center"><p className="text-2xl font-bold text-foreground">{reports.length}</p><p className="text-xs text-muted-foreground">Total Reports</p></CardContent></Card>
+        {Object.entries(typeCounts).slice(0, 3).map(([type, count]) => (
+          <Card key={type}><CardContent className="p-4 text-center"><p className="text-2xl font-bold text-primary">{count}</p><p className="text-xs text-muted-foreground">{typeLabels[type] || type}</p></CardContent></Card>
+        ))}
+      </div>
+
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input placeholder="Search by project or email..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10" />
+        </div>
+        <Select value={typeFilter} onValueChange={setTypeFilter}>
+          <SelectTrigger className="w-full sm:w-48"><Filter className="h-4 w-4 mr-2" /><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Types</SelectItem>
+            {Object.keys(typeLabels).map((t) => (
+              <SelectItem key={t} value={t}>{typeLabels[t]}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {loading ? (
+        <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
+      ) : filtered.length === 0 ? (
+        <Card><CardContent className="py-12 text-center"><FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" /><p className="text-muted-foreground">No reports match your filters.</p></CardContent></Card>
+      ) : (
+        <div className="space-y-3">
+          {filtered.map((report) => (
+            <Card key={report.id} className="hover:border-primary/30 transition-colors">
+              <CardContent className="p-4 flex items-center justify-between">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="font-semibold text-foreground truncate">{report.project_name}</h3>
+                    <Badge variant="outline" className={typeBadgeColors[report.report_type] || ""}>{typeLabels[report.report_type] || report.report_type}</Badge>
+                  </div>
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                    <span>{report.user_email || "Anonymous"}</span>
+                    <span>{new Date(report.created_at).toLocaleDateString()}</span>
+                    <span>{report.content.length.toLocaleString()} chars</span>
+                  </div>
+                </div>
+                <Button variant="ghost" size="sm" onClick={() => setViewReport(report)}><Eye className="h-4 w-4 mr-1" /> View</Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      <Dialog open={!!viewReport} onOpenChange={() => setViewReport(null)}>
+        <DialogContent className="max-w-5xl max-h-[90vh]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              {viewReport?.project_name}
+              {viewReport && <Badge variant="outline" className={typeBadgeColors[viewReport.report_type]}>{typeLabels[viewReport.report_type]}</Badge>}
+              <span className="text-xs text-muted-foreground ml-auto font-normal">{viewReport && new Date(viewReport.created_at).toLocaleString()}</span>
+            </DialogTitle>
+          </DialogHeader>
+          {viewReport && (
+            <Tabs defaultValue="user-view">
+              <TabsList className="mb-4">
+                <TabsTrigger value="user-view" className="gap-1.5"><MonitorSmartphone className="h-3.5 w-3.5" />User View</TabsTrigger>
+                <TabsTrigger value="system-view" className="gap-1.5"><Code className="h-3.5 w-3.5" />System View</TabsTrigger>
+              </TabsList>
+              <TabsContent value="user-view">
+                <ScrollArea className="max-h-[65vh]">
+                  <div className="prose prose-invert max-w-none text-sm p-4"><ReactMarkdown>{viewReport.content}</ReactMarkdown></div>
+                </ScrollArea>
+              </TabsContent>
+              <TabsContent value="system-view">
+                <ScrollArea className="max-h-[65vh]">
+                  <div className="space-y-4 p-1">
+                    <Card><CardHeader className="pb-2"><CardTitle className="text-sm">Report Metadata</CardTitle></CardHeader>
+                      <CardContent className="text-sm">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                          <div><p className="text-xs text-muted-foreground">Report ID</p><p className="font-mono text-xs text-foreground break-all">{viewReport.id}</p></div>
+                          <div><p className="text-xs text-muted-foreground">User Email</p><p className="text-foreground">{viewReport.user_email || "Anonymous"}</p></div>
+                          <div><p className="text-xs text-muted-foreground">Report Type</p><p className="text-foreground">{viewReport.report_type}</p></div>
+                          <div><p className="text-xs text-muted-foreground">Content Length</p><p className="text-foreground">{viewReport.content.length.toLocaleString()} chars</p></div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    {viewReport.metadata && Object.keys(viewReport.metadata).length > 0 && (
+                      <Card><CardHeader className="pb-2"><CardTitle className="text-sm">Full Metadata</CardTitle></CardHeader>
+                        <CardContent>
+                          <div className="space-y-3">
+                            {Object.entries(viewReport.metadata).map(([key, value]) => (
+                              <div key={key} className="bg-muted/30 rounded-lg p-3">
+                                <p className="text-xs text-muted-foreground mb-1">{key}</p>
+                                {typeof value === "object" ? (
+                                  <pre className="text-xs font-mono text-foreground whitespace-pre-wrap">{JSON.stringify(value, null, 2)}</pre>
+                                ) : (
+                                  <p className="text-sm text-foreground">{String(value)}</p>
+                                )}
+                              </div>
+                            ))}
+                            <Separator />
+                            <details><summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground">Raw JSON</summary>
+                              <pre className="mt-2 bg-muted/20 rounded-lg p-3 text-xs font-mono text-foreground overflow-x-auto whitespace-pre-wrap">{JSON.stringify(viewReport.metadata, null, 2)}</pre>
+                            </details>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+                    <Card><CardHeader className="pb-2"><CardTitle className="text-sm">Full Generated Content</CardTitle></CardHeader>
+                      <CardContent><div className="prose prose-invert prose-sm max-w-none"><ReactMarkdown>{viewReport.content}</ReactMarkdown></div></CardContent>
+                    </Card>
+                  </div>
+                </ScrollArea>
+              </TabsContent>
+            </Tabs>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
