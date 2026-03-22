@@ -152,8 +152,8 @@ export default function AdminIdeaBlueprint() {
                 <TabsTrigger value="system-view" className="gap-1.5"><Code className="h-3.5 w-3.5" />Professional Dev Version</TabsTrigger>
               </TabsList>
               <TabsContent value="user-view">
-                <ScrollArea className="max-h-[65vh]">
-                  <div className="prose prose-invert max-w-none text-sm p-4">
+                <ScrollArea className="h-[65vh]">
+                  <div className="prose prose-invert max-w-none text-sm p-4 [&_*]:text-foreground [&_h1]:text-foreground [&_h2]:text-foreground [&_h3]:text-foreground [&_h4]:text-foreground [&_strong]:text-foreground [&_p]:text-muted-foreground [&_li]:text-muted-foreground">
                     <ReactMarkdown>{typeof viewReport.metadata?.userVersion === "string" ? String(viewReport.metadata.userVersion) : viewReport.content}</ReactMarkdown>
                   </div>
                 </ScrollArea>
