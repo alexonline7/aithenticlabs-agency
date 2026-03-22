@@ -245,18 +245,44 @@ export default function IdeaToBlueprint() {
     );
   };
 
-  const handleSend = () => {
-    if (!input.trim() || isTyping) return;
-    const userMsg: ChatMessage = { id: crypto.randomUUID(), role: "user", content: input.trim() };
+  const handleSend = async () => {
+    if ((!input.trim() && attachments.length === 0) || isTyping) return;
+    
+    const currentAttachments = [...attachments];
+    const messageContent = await buildMessageContent(input.trim(), currentAttachments);
+    
+    const userMsg: ChatMessage = {
+      id: crypto.randomUUID(),
+      role: "user",
+      content: typeof messageContent === "string" ? messageContent : input.trim() || `Shared ${currentAttachments.length} file(s)`,
+      attachments: currentAttachments.map((a) => ({
+        type: a.type,
+        name: a.file.name,
+        preview: a.type === "image" ? a.preview : undefined,
+      })),
+    };
     const newMessages = [...messages, userMsg];
     setMessages(newMessages);
     setInput("");
+    setAttachments([]);
     setIsTyping(true);
+
+    // Build API messages with multimodal content for the current message
+    const apiMessages = await Promise.all(
+      newMessages.map(async (m) => {
+        // For the just-sent message, use the already-built content
+        if (m.id === userMsg.id) {
+          return { role: m.role, content: messageContent };
+        }
+        // For previous messages, just send text
+        return { role: m.role, content: m.content };
+      })
+    );
 
     let assistantContent = "";
     streamFromFunction(
       "idea-interview",
-      { messages: newMessages.map((m) => ({ role: m.role, content: m.content })) },
+      { messages: apiMessages },
       (delta) => {
         assistantContent += delta;
         setMessages((prev) => {
