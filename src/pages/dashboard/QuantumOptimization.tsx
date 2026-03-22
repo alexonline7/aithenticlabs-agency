@@ -166,9 +166,16 @@ export default function QuantumOptimization() {
       )
     );
 
+    // Advance Prefetch Strategy → active
+    setOptimizations((prev) =>
+      prev.map((o) =>
+        o.title === "Prefetch Strategy" ? { ...o, status: "active", severity: "success" } : o
+      )
+    );
+
     setOptimizations((prev) => [
       ...prev,
-      { title: "WebSocket Connection Pool", status: "pending", improvement: `+${randomBetween(15, 35)}% throughput`, severity: "info" },
+      { title: "WebSocket Connection Pool", status: "active", improvement: `+${randomBetween(15, 35)}% throughput`, severity: "info" },
     ]);
 
     /* Phase 5 – Final Report */
@@ -178,6 +185,11 @@ export default function QuantumOptimization() {
       await delay(90);
     }
     setPhases((prev) => prev.map((ph, i) => (i === 4 ? { ...ph, progress: 100 } : ph)));
+
+    // Mark all optimizations as completed
+    setOptimizations((prev) =>
+      prev.map((o) => ({ ...o, status: "completed" as const, severity: "success" as const }))
+    );
 
     setScanning(false);
     setScanComplete(true);
