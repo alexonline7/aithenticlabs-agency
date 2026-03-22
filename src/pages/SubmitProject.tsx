@@ -177,7 +177,7 @@ export default function SubmitProject() {
                     <SelectTrigger className="bg-background border-input">
                       <SelectValue placeholder="Select project type" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent position="item-aligned" className="z-50">
                       {PROJECT_TYPES.filter(t => !selectedTypes.includes(t.value)).map((t) => (
                         <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
                       ))}
