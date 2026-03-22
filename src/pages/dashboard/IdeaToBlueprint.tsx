@@ -382,7 +382,15 @@ export default function IdeaToBlueprint() {
       }
       streamFromFunction("idea-consensus", body,
         (d) => { content += d; setConsensusReport(content); },
-        () => { setGenerating(false); saveReport("consensus", content); },
+        async () => {
+          try {
+            await saveReport("consensus", content);
+            setGenerating(false);
+          } catch (err) {
+            setGenerating(false);
+            setGenError(err instanceof Error ? err.message : "Failed to save consensus report");
+          }
+        },
         (err) => { setGenerating(false); setGenError(err); }
       );
     }
