@@ -416,6 +416,70 @@ export default function AdminBlueprints() {
               <QuickInfoCards report={viewReport} />
               <ConsensusDetailView report={viewReport} />
             </div>
+          ) : viewReport?.report_type === "quantum-blueprint" ? (
+            <div>
+              <QuickInfoCards report={viewReport} />
+              {/* Quantum metadata: project type, platforms, features, notes */}
+              {viewReport.metadata && (
+                <div className="space-y-3 mb-4">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {viewReport.metadata.projectType && (
+                      <Card>
+                        <CardContent className="p-3">
+                          <p className="text-xs text-muted-foreground mb-1">Project Type</p>
+                          <p className="text-sm font-semibold text-foreground">{String(viewReport.metadata.projectType)}</p>
+                        </CardContent>
+                      </Card>
+                    )}
+                    {Array.isArray(viewReport.metadata.platforms) && (
+                      <Card>
+                        <CardContent className="p-3">
+                          <p className="text-xs text-muted-foreground mb-1">Platforms</p>
+                          <div className="flex flex-wrap gap-1">
+                            {(viewReport.metadata.platforms as string[]).map((p) => (
+                              <Badge key={p} variant="secondary" className="text-xs">{p}</Badge>
+                            ))}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+                    {viewReport.metadata.additionalNotes && (
+                      <Card>
+                        <CardContent className="p-3">
+                          <p className="text-xs text-muted-foreground mb-1">Client Notes</p>
+                          <p className="text-sm text-foreground">{String(viewReport.metadata.additionalNotes)}</p>
+                        </CardContent>
+                      </Card>
+                    )}
+                  </div>
+                  {viewReport.metadata.selectedFeatures && typeof viewReport.metadata.selectedFeatures === "object" && (
+                    <Card>
+                      <CardContent className="p-3">
+                        <p className="text-xs text-muted-foreground mb-2">Selected Advanced Features</p>
+                        <div className="space-y-2">
+                          {Object.entries(viewReport.metadata.selectedFeatures as Record<string, string[]>).map(([category, features]) => (
+                            <div key={category}>
+                              <p className="text-xs font-medium text-primary mb-1">{category}</p>
+                              <div className="flex flex-wrap gap-1">
+                                {features.map((f) => (
+                                  <Badge key={f} variant="outline" className="text-xs">{f}</Badge>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+                  <Separator />
+                </div>
+              )}
+              <ScrollArea className="max-h-[50vh]">
+                <div className="prose prose-invert prose-sm max-w-none p-4">
+                  <ReactMarkdown>{viewReport.content}</ReactMarkdown>
+                </div>
+              </ScrollArea>
+            </div>
           ) : (
             <ScrollArea className="max-h-[65vh]">
               <div className="prose prose-invert prose-sm max-w-none p-4">
