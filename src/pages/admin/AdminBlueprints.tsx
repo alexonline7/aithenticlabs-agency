@@ -43,6 +43,9 @@ const typeLabels: Record<string, string> = {
   architecture: "Architecture Spec",
   ux_blueprint: "UX Blueprint",
   consensus: "Consensus Report",
+  "quantum-blueprint": "Quantum Blueprint",
+  "ai-brief": "AI Brief",
+  "flash-app": "Flash App",
 };
 
 const typeBadgeColors: Record<string, string> = {
@@ -50,6 +53,9 @@ const typeBadgeColors: Record<string, string> = {
   architecture: "bg-purple-500/20 text-purple-400 border-purple-500/30",
   ux_blueprint: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
   consensus: "bg-primary/20 text-primary border-primary/30",
+  "quantum-blueprint": "bg-amber-500/20 text-amber-400 border-amber-500/30",
+  "ai-brief": "bg-cyan-500/20 text-cyan-400 border-cyan-500/30",
+  "flash-app": "bg-pink-500/20 text-pink-400 border-pink-500/30",
 };
 
 function extractConsensusSection(content: string, sectionName: string): string {
@@ -233,6 +239,7 @@ export default function AdminBlueprints() {
     architectures: reports.filter((r) => r.report_type === "architecture").length,
     blueprints: reports.filter((r) => r.report_type === "ux_blueprint").length,
     consensus: reports.filter((r) => r.report_type === "consensus").length,
+    quantum: reports.filter((r) => r.report_type === "quantum-blueprint").length,
   };
 
   return (
@@ -255,6 +262,7 @@ export default function AdminBlueprints() {
           { label: "Architecture", value: stats.architectures, color: "text-purple-400" },
           { label: "UX Blueprints", value: stats.blueprints, color: "text-emerald-400" },
           { label: "Consensus", value: stats.consensus, color: "text-primary" },
+          { label: "Quantum", value: stats.quantum, color: "text-amber-400" },
         ].map((s) => (
           <Card key={s.label}>
             <CardContent className="p-4 text-center">
@@ -338,6 +346,7 @@ export default function AdminBlueprints() {
             <SelectItem value="architecture">Architecture</SelectItem>
             <SelectItem value="ux_blueprint">UX Blueprints</SelectItem>
             <SelectItem value="consensus">Consensus</SelectItem>
+            <SelectItem value="quantum-blueprint">Quantum Blueprint</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -406,6 +415,73 @@ export default function AdminBlueprints() {
             <div>
               <QuickInfoCards report={viewReport} />
               <ConsensusDetailView report={viewReport} />
+            </div>
+          ) : viewReport?.report_type === "quantum-blueprint" ? (
+            <div>
+              <QuickInfoCards report={viewReport} />
+              {/* Quantum metadata: project type, platforms, features, notes */}
+              {viewReport.metadata && (() => {
+                const meta = viewReport.metadata as Record<string, unknown>;
+                return (
+                <div className="space-y-3 mb-4">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {!!meta.projectType && (
+                      <Card>
+                        <CardContent className="p-3">
+                          <p className="text-xs text-muted-foreground mb-1">Project Type</p>
+                          <p className="text-sm font-semibold text-foreground">{String(meta.projectType)}</p>
+                        </CardContent>
+                      </Card>
+                    )}
+                    {Array.isArray(meta.platforms) && (
+                      <Card>
+                        <CardContent className="p-3">
+                          <p className="text-xs text-muted-foreground mb-1">Platforms</p>
+                          <div className="flex flex-wrap gap-1">
+                            {(meta.platforms as string[]).map((p: string) => (
+                              <Badge key={p} variant="secondary" className="text-xs">{p}</Badge>
+                            ))}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+                    {!!meta.additionalNotes && (
+                      <Card>
+                        <CardContent className="p-3">
+                          <p className="text-xs text-muted-foreground mb-1">Client Notes</p>
+                          <p className="text-sm text-foreground">{String(meta.additionalNotes)}</p>
+                        </CardContent>
+                      </Card>
+                    )}
+                  </div>
+                  {!!meta.selectedFeatures && typeof meta.selectedFeatures === "object" && (
+                    <Card>
+                      <CardContent className="p-3">
+                        <p className="text-xs text-muted-foreground mb-2">Selected Advanced Features</p>
+                        <div className="space-y-2">
+                          {Object.entries(meta.selectedFeatures as Record<string, string[]>).map(([category, features]) => (
+                            <div key={category}>
+                              <p className="text-xs font-medium text-primary mb-1">{category}</p>
+                              <div className="flex flex-wrap gap-1">
+                                {features.map((f: string) => (
+                                  <Badge key={f} variant="outline" className="text-xs">{f}</Badge>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+                  <Separator />
+                </div>
+                );
+              })()}
+              <ScrollArea className="max-h-[50vh]">
+                <div className="prose prose-invert prose-sm max-w-none p-4">
+                  <ReactMarkdown>{viewReport.content}</ReactMarkdown>
+                </div>
+              </ScrollArea>
             </div>
           ) : (
             <ScrollArea className="max-h-[65vh]">
