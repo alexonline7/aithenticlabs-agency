@@ -295,6 +295,9 @@ export default function FlashAppsGenerator() {
             includeDeployGuide,
             includeApiDocs,
             includeTestSpecs,
+            userVersion: briefRef.current,
+            professionalVersion: briefRef.current,
+            generatedByTool: "flashapps-generator",
           },
         });
 

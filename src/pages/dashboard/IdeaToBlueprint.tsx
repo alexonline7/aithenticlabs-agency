@@ -298,7 +298,36 @@ export default function IdeaToBlueprint() {
       },
       () => {
         setIsTyping(false);
-        if (assistantContent.includes("[INTERVIEW_COMPLETE]")) setInterviewComplete(true);
+        if (assistantContent.includes("[INTERVIEW_COMPLETE]")) {
+          setInterviewComplete(true);
+          const cleanAssistant = assistantContent.replace("[INTERVIEW_COMPLETE]", "");
+          const transcript = [...newMessages, { id: "assistant-final", role: "assistant", content: cleanAssistant }]
+            .map((m) => `${m.role === "user" ? "Client" : "Consultant"}: ${m.content}`)
+            .join("\n\n");
+
+          void (async () => {
+            if (!user) return;
+            const projectTitle = newMessages.find((m) => m.role === "user")?.content?.slice(0, 80) || "Idea Blueprint";
+            const { error: insertError } = await supabase.from("generated_reports").insert({
+              user_id: user.id,
+              user_email: user.email,
+              project_name: projectTitle,
+              report_type: "interview",
+              content: cleanAssistant,
+              metadata: {
+                scope,
+                pipelineStep: "interview",
+                interviewTranscript: transcript,
+                userVersion: cleanAssistant,
+                professionalVersion: transcript,
+                generatedByTool: "idea-blueprint",
+              },
+            });
+            if (insertError) {
+              setGenError(`Failed to save interview: ${insertError.message}`);
+            }
+          })();
+        }
       },
       (err) => { setIsTyping(false); setGenError(err); }
     );
@@ -327,13 +356,20 @@ export default function IdeaToBlueprint() {
         throw new Error("Your session expired before saving. Please sign in again and retry.");
       }
 
+      const projectTitle = messages.find((m) => m.role === "user")?.content?.slice(0, 80) || "Idea Blueprint";
       const { error: insertError } = await supabase.from("generated_reports").insert({
         user_id: user.id,
         user_email: user.email,
-        project_name: messages[1]?.content?.slice(0, 80) || "Idea Blueprint",
+        project_name: projectTitle,
         report_type: reportType,
         content,
-        metadata: { scope, pipelineStep: reportType },
+        metadata: {
+          scope,
+          pipelineStep: reportType,
+          userVersion: content,
+          professionalVersion: content,
+          generatedByTool: "idea-blueprint",
+        },
       });
 
       if (insertError) {

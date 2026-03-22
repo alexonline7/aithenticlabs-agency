@@ -78,7 +78,7 @@ export default function AdminGeneratedReports() {
           <FileText className="h-6 w-6 text-primary" />
           Generated Summaries & Reports
         </h1>
-        <p className="text-muted-foreground mt-1">All generated reports across every tool, with dual User/System views.</p>
+        <p className="text-muted-foreground mt-1">All generated reports across every tool, each with a Standard User version and a Professional Developer version.</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -143,12 +143,14 @@ export default function AdminGeneratedReports() {
           {viewReport && (
             <Tabs defaultValue="user-view">
               <TabsList className="mb-4">
-                <TabsTrigger value="user-view" className="gap-1.5"><MonitorSmartphone className="h-3.5 w-3.5" />User View</TabsTrigger>
-                <TabsTrigger value="system-view" className="gap-1.5"><Code className="h-3.5 w-3.5" />System View</TabsTrigger>
+                <TabsTrigger value="user-view" className="gap-1.5"><MonitorSmartphone className="h-3.5 w-3.5" />Standard User Version</TabsTrigger>
+                <TabsTrigger value="system-view" className="gap-1.5"><Code className="h-3.5 w-3.5" />Professional Dev Version</TabsTrigger>
               </TabsList>
               <TabsContent value="user-view">
                 <ScrollArea className="max-h-[65vh]">
-                  <div className="prose prose-invert max-w-none text-sm p-4"><ReactMarkdown>{viewReport.content}</ReactMarkdown></div>
+                  <div className="prose prose-invert max-w-none text-sm p-4">
+                    <ReactMarkdown>{typeof viewReport.metadata?.userVersion === "string" ? String(viewReport.metadata.userVersion) : viewReport.content}</ReactMarkdown>
+                  </div>
                 </ScrollArea>
               </TabsContent>
               <TabsContent value="system-view">
@@ -186,8 +188,8 @@ export default function AdminGeneratedReports() {
                         </CardContent>
                       </Card>
                     )}
-                    <Card><CardHeader className="pb-2"><CardTitle className="text-sm">Full Generated Content</CardTitle></CardHeader>
-                      <CardContent><div className="prose prose-invert prose-sm max-w-none"><ReactMarkdown>{viewReport.content}</ReactMarkdown></div></CardContent>
+                    <Card><CardHeader className="pb-2"><CardTitle className="text-sm">Professional Developer Specification</CardTitle></CardHeader>
+                      <CardContent><div className="prose prose-invert prose-sm max-w-none"><ReactMarkdown>{typeof viewReport.metadata?.professionalVersion === "string" ? String(viewReport.metadata.professionalVersion) : viewReport.content}</ReactMarkdown></div></CardContent>
                     </Card>
                   </div>
                 </ScrollArea>
