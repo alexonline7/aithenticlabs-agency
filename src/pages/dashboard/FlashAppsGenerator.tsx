@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
@@ -128,6 +129,7 @@ const previousGenerations = [
 /* ═══════════════════════════════════════════════════════════ */
 
 export default function FlashAppsGenerator() {
+  const { user } = useAuth();
   // ── wizard state
   const [activeTab, setActiveTab] = useState("configure");
   const [appName, setAppName] = useState("");
@@ -271,28 +273,33 @@ export default function FlashAppsGenerator() {
 
       // Save to database
       if (briefRef.current) {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          await supabase.from("generated_reports").insert({
-            user_id: user.id,
-            user_email: user.email,
-            project_name: appName,
-            report_type: "ai-brief",
-            content: briefRef.current,
-            metadata: {
-              category: appCategories.find((c) => c.id === selectedCategory)?.label || selectedCategory,
-              tier: selectedTier,
-              platforms: selectedPlatforms,
-              features: selectedFeatures.map((fId) => featureModules.find((f) => f.id === fId)?.label || fId),
-              tech: selectedTech,
-              targetAudience,
-              monetization,
-              includeDesignSystem,
-              includeDeployGuide,
-              includeApiDocs,
-              includeTestSpecs,
-            },
-          });
+        if (!user) {
+          throw new Error("Your session expired before saving. Please sign in again and retry.");
+        }
+
+        const { error: insertError } = await supabase.from("generated_reports").insert({
+          user_id: user.id,
+          user_email: user.email,
+          project_name: appName,
+          report_type: "ai-brief",
+          content: briefRef.current,
+          metadata: {
+            category: appCategories.find((c) => c.id === selectedCategory)?.label || selectedCategory,
+            tier: selectedTier,
+            platforms: selectedPlatforms,
+            features: selectedFeatures.map((fId) => featureModules.find((f) => f.id === fId)?.label || fId),
+            tech: selectedTech,
+            targetAudience,
+            monetization,
+            includeDesignSystem,
+            includeDeployGuide,
+            includeApiDocs,
+            includeTestSpecs,
+          },
+        });
+
+        if (insertError) {
+          throw new Error(`Failed to save brief: ${insertError.message}`);
         }
       }
     } catch (err) {

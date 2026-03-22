@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -120,6 +121,7 @@ async function streamFromFunction(
 }
 
 export default function IdeaToBlueprint() {
+  const { user } = useAuth();
   const [scope, setScope] = useState<Scope | null>(null);
   const [currentStep, setCurrentStep] = useState<PipelineStep>("scope");
 
@@ -320,16 +322,22 @@ export default function IdeaToBlueprint() {
     const summary = getInterviewSummary();
 
     const saveReport = async (reportType: string, content: string) => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user && content) {
-        await supabase.from("generated_reports").insert({
-          user_id: user.id,
-          user_email: user.email,
-          project_name: messages[1]?.content?.slice(0, 80) || "Idea Blueprint",
-          report_type: reportType,
-          content,
-          metadata: { scope, pipelineStep: reportType },
-        });
+      if (!content) return;
+      if (!user) {
+        throw new Error("Your session expired before saving. Please sign in again and retry.");
+      }
+
+      const { error: insertError } = await supabase.from("generated_reports").insert({
+        user_id: user.id,
+        user_email: user.email,
+        project_name: messages[1]?.content?.slice(0, 80) || "Idea Blueprint",
+        report_type: reportType,
+        content,
+        metadata: { scope, pipelineStep: reportType },
+      });
+
+      if (insertError) {
+        throw new Error(`Failed to save ${reportType}: ${insertError.message}`);
       }
     };
 
@@ -337,14 +345,30 @@ export default function IdeaToBlueprint() {
       let content = "";
       streamFromFunction("idea-architecture", { interviewSummary: summary },
         (d) => { content += d; setArchitectureSpec(content); },
-        () => { setGenerating(false); saveReport("architecture", content); },
+        async () => {
+          try {
+            await saveReport("architecture", content);
+            setGenerating(false);
+          } catch (err) {
+            setGenerating(false);
+            setGenError(err instanceof Error ? err.message : "Failed to save architecture report");
+          }
+        },
         (err) => { setGenerating(false); setGenError(err); }
       );
     } else if (nextStep === "ux-blueprint") {
       let content = "";
       streamFromFunction("idea-ux-blueprint", { interviewSummary: summary, architectureSpec },
         (d) => { content += d; setUxBlueprint(content); },
-        () => { setGenerating(false); saveReport("ux_blueprint", content); },
+        async () => {
+          try {
+            await saveReport("ux_blueprint", content);
+            setGenerating(false);
+          } catch (err) {
+            setGenerating(false);
+            setGenError(err instanceof Error ? err.message : "Failed to save UX blueprint report");
+          }
+        },
         (err) => { setGenerating(false); setGenError(err); }
       );
     } else if (nextStep === "consensus") {
@@ -358,7 +382,15 @@ export default function IdeaToBlueprint() {
       }
       streamFromFunction("idea-consensus", body,
         (d) => { content += d; setConsensusReport(content); },
-        () => { setGenerating(false); saveReport("consensus", content); },
+        async () => {
+          try {
+            await saveReport("consensus", content);
+            setGenerating(false);
+          } catch (err) {
+            setGenerating(false);
+            setGenError(err instanceof Error ? err.message : "Failed to save consensus report");
+          }
+        },
         (err) => { setGenerating(false); setGenError(err); }
       );
     }
