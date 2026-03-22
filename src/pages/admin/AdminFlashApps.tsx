@@ -219,10 +219,10 @@ export default function AdminFlashApps() {
                         </CardHeader>
                         <CardContent>
                           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            {Object.entries(viewReport.metadata.tech as Record<string, string>).map(([key, value]) => (
-                              <div key={key} className="p-3 rounded-lg bg-muted/40 border border-border/50 text-center">
-                                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{key}</p>
-                                <p className="text-sm font-semibold text-foreground">{value}</p>
+                            {Object.entries(viewReport.metadata.tech as Record<string, string>).map(([techKey, techVal]) => (
+                              <div key={techKey} className="p-3 rounded-lg bg-muted/40 border border-border/50 text-center">
+                                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{techKey}</p>
+                                <p className="text-sm font-semibold text-foreground">{techVal}</p>
                               </div>
                             ))}
                           </div>
