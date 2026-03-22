@@ -272,9 +272,85 @@ export default function QuantumOptimization() {
     }
   };
 
+  const handleAiRecommend = async () => {
+    setRecommending(true);
+    setAiSuggestions([]);
+    try {
+      // Build current selections summary
+      const currentSelections: Record<string, string[]> = {};
+      for (const [catId, featureIds] of Object.entries(selectedFeatures)) {
+        const cat = FEATURE_CATEGORIES.find((c) => c.id === catId);
+        if (!cat || featureIds.length === 0) continue;
+        currentSelections[cat.title] = featureIds.map((fId) => {
+          const f = cat.features.find((feat) => feat.id === fId);
+          return f ? f.label : fId;
+        });
+      }
+
+      const allAvailable = FEATURE_CATEGORIES.flatMap((cat) =>
+        cat.features
+          .filter((f) => !isFeatureSelected(cat.id, f.id))
+          .map((f) => ({ id: f.id, label: f.label, category: cat.title, categoryId: cat.id }))
+      );
+
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/quantum-recommend`;
+      const resp = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
+          projectName,
+          projectType: PROJECT_TYPES.find((t) => t.id === projectType)?.label || projectType,
+          platforms: selectedPlatforms.map((p) => PLATFORMS.find((pl) => pl.id === p)?.label || p),
+          currentSelections,
+          availableFeatures: allAvailable.map((a) => `${a.label} (${a.category})`),
+          additionalNotes,
+        }),
+      });
+
+      if (!resp.ok) {
+        const errData = await resp.json().catch(() => ({ error: "Unknown error" }));
+        throw new Error(errData.error || `Error ${resp.status}`);
+      }
+
+      const data = await resp.json();
+      const suggestions: AiSuggestion[] = (data.recommendations || []).map((r: any) => {
+        // Match back to our feature catalog
+        const match = allAvailable.find(
+          (a) => a.label.toLowerCase() === r.label?.toLowerCase() || a.id === r.featureId
+        );
+        return {
+          featureId: match?.id || r.featureId || "",
+          label: match?.label || r.label || "",
+          category: match?.categoryId || r.category || "",
+          reason: r.reason || "",
+        };
+      });
+      setAiSuggestions(suggestions.filter((s) => s.featureId && s.label));
+    } catch (e) {
+      console.error("AI recommend error:", e);
+      setError(e instanceof Error ? e.message : "Failed to get recommendations");
+    } finally {
+      setRecommending(false);
+    }
+  };
+
+  const applySuggestion = (suggestion: AiSuggestion) => {
+    // Find the category that contains this feature
+    const cat = FEATURE_CATEGORIES.find((c) => c.id === suggestion.category) ||
+      FEATURE_CATEGORIES.find((c) => c.features.some((f) => f.id === suggestion.featureId));
+    if (cat && !isFeatureSelected(cat.id, suggestion.featureId)) {
+      toggleFeature(cat.id, suggestion.featureId);
+    }
+    setAiSuggestions((prev) => prev.filter((s) => s.featureId !== suggestion.featureId));
+  };
+
   const handleReset = () => {
     setBlueprint("");
     setError("");
+    setAiSuggestions([]);
     setActiveTab("project");
   };
 
