@@ -86,6 +86,7 @@ export default function AdminQuantum() {
                       <span>{report.user_email || "Anonymous"}</span>
                       <span>{new Date(report.created_at).toLocaleDateString()}</span>
                       {Array.isArray(meta.platforms) && <span>{(meta.platforms as string[]).join(", ")}</span>}
+
                     </div>
                   </div>
                   <Button variant="ghost" size="sm" onClick={() => setViewReport(report)}><Eye className="h-4 w-4 mr-1" /> View</Button>
