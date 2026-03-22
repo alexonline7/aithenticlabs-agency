@@ -109,12 +109,14 @@ export default function AdminQuantum() {
           {viewReport && (
             <Tabs defaultValue="user-view">
               <TabsList className="mb-4">
-                <TabsTrigger value="user-view" className="gap-1.5"><MonitorSmartphone className="h-3.5 w-3.5" />User View</TabsTrigger>
-                <TabsTrigger value="system-view" className="gap-1.5"><Code className="h-3.5 w-3.5" />System View</TabsTrigger>
+                <TabsTrigger value="user-view" className="gap-1.5"><MonitorSmartphone className="h-3.5 w-3.5" />Standard User Version</TabsTrigger>
+                <TabsTrigger value="system-view" className="gap-1.5"><Code className="h-3.5 w-3.5" />Professional Dev Version</TabsTrigger>
               </TabsList>
               <TabsContent value="user-view">
                 <ScrollArea className="max-h-[65vh]">
-                  <div className="prose prose-invert max-w-none text-sm p-4"><ReactMarkdown>{viewReport.content}</ReactMarkdown></div>
+                  <div className="prose prose-invert max-w-none text-sm p-4">
+                    <ReactMarkdown>{typeof viewReport.metadata?.userVersion === "string" ? String(viewReport.metadata.userVersion) : viewReport.content}</ReactMarkdown>
+                  </div>
                 </ScrollArea>
               </TabsContent>
               <TabsContent value="system-view">
@@ -179,8 +181,8 @@ export default function AdminQuantum() {
                       );
                     })()}
 
-                    <Card><CardHeader className="pb-2"><CardTitle className="text-sm">Full Generated Content</CardTitle></CardHeader>
-                      <CardContent><div className="prose prose-invert prose-sm max-w-none"><ReactMarkdown>{viewReport.content}</ReactMarkdown></div></CardContent>
+                    <Card><CardHeader className="pb-2"><CardTitle className="text-sm">Professional Developer Specification</CardTitle></CardHeader>
+                      <CardContent><div className="prose prose-invert prose-sm max-w-none"><ReactMarkdown>{typeof viewReport.metadata?.professionalVersion === "string" ? String(viewReport.metadata.professionalVersion) : viewReport.content}</ReactMarkdown></div></CardContent>
                     </Card>
                   </div>
                 </ScrollArea>
