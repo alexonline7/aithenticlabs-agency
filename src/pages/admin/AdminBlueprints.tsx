@@ -346,6 +346,7 @@ export default function AdminBlueprints() {
             <SelectItem value="architecture">Architecture</SelectItem>
             <SelectItem value="ux_blueprint">UX Blueprints</SelectItem>
             <SelectItem value="consensus">Consensus</SelectItem>
+            <SelectItem value="quantum-blueprint">Quantum Blueprint</SelectItem>
           </SelectContent>
         </Select>
       </div>
