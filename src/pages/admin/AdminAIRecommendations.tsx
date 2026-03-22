@@ -4,9 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { BrainCircuit, Search, Eye, Loader2, Mail, Calendar } from "lucide-react";
+import AIRecommendationDetailDialog from "@/components/admin/AIRecommendationDetailDialog";
 
 interface Submission {
   id: string;
