@@ -24,6 +24,10 @@ import AdminClients from "@/pages/admin/AdminClients";
 import AdminSubmissions from "@/pages/admin/AdminSubmissions";
 import AdminProjects from "@/pages/admin/AdminProjects";
 import AdminAnalytics from "@/pages/admin/AdminAnalytics";
+import AdminFlashApps from "@/pages/admin/AdminFlashApps";
+import AdminGeneratedReports from "@/pages/admin/AdminGeneratedReports";
+import AdminQuantum from "@/pages/admin/AdminQuantum";
+import AdminIdeaBlueprint from "@/pages/admin/AdminIdeaBlueprint";
 
 function App() {
   return (
