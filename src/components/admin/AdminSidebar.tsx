@@ -1,0 +1,89 @@
+import { useNavigate } from "react-router-dom";
+import {
+  FileText,
+  Users,
+  KanbanSquare,
+  BarChart3,
+  ArrowLeft,
+  ShieldAlert,
+  Sparkles,
+} from "lucide-react";
+import { NavLink } from "@/components/NavLink";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarFooter,
+  SidebarHeader,
+  useSidebar,
+} from "@/components/ui/sidebar";
+
+const adminItems = [
+  { title: "Blueprints & Reports", url: "/admin", icon: FileText },
+  { title: "Submissions & Leads", url: "/admin/submissions", icon: Users },
+  { title: "Project Board", url: "/admin/projects", icon: KanbanSquare },
+  { title: "Analytics & Metrics", url: "/admin/analytics", icon: BarChart3 },
+];
+
+export default function AdminSidebar() {
+  const { state } = useSidebar();
+  const collapsed = state === "collapsed";
+  const navigate = useNavigate();
+
+  return (
+    <Sidebar collapsible="icon">
+      <SidebarHeader className="p-4">
+        <div className="flex items-center gap-2 font-bold font-bricolage text-lg">
+          <ShieldAlert className="h-6 w-6 text-primary shrink-0" />
+          {!collapsed && (
+            <>
+              <span className="gradient-text">Admin</span>
+              <span className="text-sidebar-foreground">Panel</span>
+            </>
+          )}
+        </div>
+      </SidebarHeader>
+
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Management</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {adminItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <NavLink
+                      to={item.url}
+                      end={item.url === "/admin"}
+                      className="flex items-center gap-2 px-2 py-1.5 rounded-md text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
+                      activeClassName="bg-sidebar-accent text-primary font-medium"
+                    >
+                      <item.icon className="h-4 w-4 shrink-0" />
+                      {!collapsed && <span>{item.title}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarFooter className="p-4">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton onClick={() => navigate("/dashboard")}>
+              <ArrowLeft className="h-4 w-4 shrink-0" />
+              {!collapsed && <span>Back to Dashboard</span>}
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
+    </Sidebar>
+  );
+}
