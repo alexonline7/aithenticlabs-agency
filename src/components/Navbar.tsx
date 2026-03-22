@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Sparkles, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 const navLinks = [
   { label: "Services", href: "#services" },
@@ -14,6 +15,15 @@ const navLinks = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  const [signingOut, setSigningOut] = useState(false);
+
+  const handleSignOut = async () => {
+    setSigningOut(true);
+    await signOut();
+    setOpen(false);
+    setSigningOut(false);
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 glass-effect">
@@ -40,14 +50,33 @@ export default function Navbar() {
         </div>
 
         <div className="hidden md:flex items-center gap-3">
-          <Link to="/auth">
-            <Button variant="ghost" className="text-slate-300 hover:text-white">Sign In</Button>
-          </Link>
-          <Link to="/auth">
-            <Button className="bg-gradient-to-r from-deep-gold-500 to-electric-blue-500 text-charcoal-900 font-bold hover:opacity-90">
-              Get AI Recommendation
-            </Button>
-          </Link>
+          {user ? (
+            <>
+              <Link to="/projects">
+                <Button variant="ghost" className="text-slate-300 hover:text-white">Dashboard</Button>
+              </Link>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={signingOut}
+                onClick={handleSignOut}
+                className="border-slate-700/50 bg-slate-800/40 text-slate-200 hover:bg-slate-700/50"
+              >
+                {signingOut ? "Signing out..." : "Sign Out"}
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link to="/auth">
+                <Button variant="ghost" className="text-slate-300 hover:text-white">Sign In</Button>
+              </Link>
+              <Link to="/auth">
+                <Button className="bg-gradient-to-r from-deep-gold-500 to-electric-blue-500 text-charcoal-900 font-bold hover:opacity-90">
+                  Get AI Recommendation
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile toggle */}
@@ -69,11 +98,28 @@ export default function Navbar() {
               </a>
             )
           )}
-          <Link to="/auth" onClick={() => setOpen(false)}>
-            <Button className="w-full bg-gradient-to-r from-deep-gold-500 to-electric-blue-500 text-charcoal-900 font-bold mt-2">
-              Get AI Recommendation
-            </Button>
-          </Link>
+          {user ? (
+            <>
+              <Link to="/projects" onClick={() => setOpen(false)}>
+                <Button variant="ghost" className="w-full text-slate-300 hover:text-white">Dashboard</Button>
+              </Link>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={signingOut}
+                onClick={handleSignOut}
+                className="w-full border-slate-700/50 bg-slate-800/40 text-slate-200 hover:bg-slate-700/50"
+              >
+                {signingOut ? "Signing out..." : "Sign Out"}
+              </Button>
+            </>
+          ) : (
+            <Link to="/auth" onClick={() => setOpen(false)}>
+              <Button className="w-full bg-gradient-to-r from-deep-gold-500 to-electric-blue-500 text-charcoal-900 font-bold mt-2">
+                Get AI Recommendation
+              </Button>
+            </Link>
+          )}
         </div>
       )}
     </nav>
