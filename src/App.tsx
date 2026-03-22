@@ -19,6 +19,8 @@ import Projects from "@/pages/Projects";
 
 import AdminLayout from "@/components/admin/AdminLayout";
 import AdminBlueprints from "@/pages/admin/AdminBlueprints";
+import AdminToolSpecs from "@/pages/admin/AdminToolSpecs";
+import AdminClients from "@/pages/admin/AdminClients";
 import AdminSubmissions from "@/pages/admin/AdminSubmissions";
 import AdminProjects from "@/pages/admin/AdminProjects";
 import AdminAnalytics from "@/pages/admin/AdminAnalytics";
