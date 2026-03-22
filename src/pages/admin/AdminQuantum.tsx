@@ -138,7 +138,7 @@ export default function AdminQuantum() {
                         <Card><CardHeader className="pb-2"><CardTitle className="text-sm">Quantum Configuration</CardTitle></CardHeader>
                           <CardContent className="space-y-3">
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                              {meta.projectType && (
+                              {!!meta.projectType && (
                                 <div className="bg-muted/30 rounded-lg p-3">
                                   <p className="text-xs text-muted-foreground mb-1">Project Type</p>
                                   <p className="text-sm font-semibold text-foreground">{String(meta.projectType)}</p>
