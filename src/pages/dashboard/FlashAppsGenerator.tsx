@@ -280,13 +280,16 @@ export default function FlashAppsGenerator() {
 
       // Save to database
       if (briefRef.current) {
-        if (!user) {
+        const { data: userData, error: userError } = await supabase.auth.getUser();
+        const currentUser = userData.user ?? user;
+
+        if (userError || !currentUser) {
           throw new Error("Your session expired before saving. Please sign in again and retry.");
         }
 
         const { error: insertError } = await supabase.from("generated_reports").insert({
-          user_id: user.id,
-          user_email: user.email,
+          user_id: currentUser.id,
+          user_email: currentUser.email ?? null,
           project_name: appName,
           report_type: "ai-brief",
           content: briefRef.current,

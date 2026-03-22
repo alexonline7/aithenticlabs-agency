@@ -277,7 +277,10 @@ export default function QuantumOptimization() {
       }
       // Save to database
       if (accumulated) {
-        if (!user) {
+        const { data: userData, error: userError } = await supabase.auth.getUser();
+        const currentUser = userData.user ?? user;
+
+        if (userError || !currentUser) {
           throw new Error("Your session expired before saving. Please sign in again and retry.");
         }
 
@@ -292,8 +295,8 @@ export default function QuantumOptimization() {
         }
 
         const { error: insertError } = await supabase.from("generated_reports").insert({
-          user_id: user.id,
-          user_email: user.email,
+          user_id: currentUser.id,
+          user_email: currentUser.email ?? null,
           project_name: projectName,
           report_type: "quantum-blueprint",
           content: accumulated,
