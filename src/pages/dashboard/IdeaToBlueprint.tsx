@@ -10,7 +10,7 @@ import ReactMarkdown from "react-markdown";
 import {
   MessageSquare, Brain, Palette, FileCheck, Send, ArrowRight,
   CheckCircle2, Loader2, Lightbulb, Cpu, Paintbrush, ClipboardCheck,
-  RotateCcw, ChevronDown,
+  RotateCcw, ChevronDown, Paperclip, X, Image, FileText,
 } from "lucide-react";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -19,10 +19,18 @@ const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 type Scope = "interview-only" | "interview-report" | "full-pipeline";
 type PipelineStep = "scope" | "interview" | "architecture" | "ux-blueprint" | "consensus";
 
+interface Attachment {
+  id: string;
+  file: File;
+  preview?: string; // data URL for images
+  type: "image" | "document";
+}
+
 interface ChatMessage {
   id: string;
   role: "user" | "assistant";
   content: string;
+  attachments?: { type: "image" | "document"; name: string; preview?: string }[];
 }
 
 const SCOPE_OPTIONS = [
@@ -119,7 +127,9 @@ export default function IdeaToBlueprint() {
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [interviewComplete, setInterviewComplete] = useState(false);
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Generation state
   const [architectureSpec, setArchitectureSpec] = useState("");
@@ -132,6 +142,70 @@ export default function IdeaToBlueprint() {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
+
+  useEffect(() => {
+    if (outputRef.current) outputRef.current.scrollTop = outputRef.current.scrollHeight;
+  }, [architectureSpec, uxBlueprint, consensusReport]);
+
+  // File upload helpers
+  const fileToBase64 = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    const newAttachments: Attachment[] = [];
+    for (const file of files) {
+      const isImage = file.type.startsWith("image/");
+      const att: Attachment = {
+        id: crypto.randomUUID(),
+        file,
+        type: isImage ? "image" : "document",
+      };
+      if (isImage) {
+        att.preview = await fileToBase64(file);
+      }
+      newAttachments.push(att);
+    }
+    setAttachments((prev) => [...prev, ...newAttachments]);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const removeAttachment = (id: string) => {
+    setAttachments((prev) => prev.filter((a) => a.id !== id));
+  };
+
+  const buildMessageContent = async (text: string, atts: Attachment[]) => {
+    if (atts.length === 0) return text;
+
+    const parts: any[] = [];
+    if (text.trim()) {
+      parts.push({ type: "text", text });
+    }
+    for (const att of atts) {
+      if (att.type === "image") {
+        const dataUrl = att.preview || (await fileToBase64(att.file));
+        parts.push({ type: "image_url", image_url: { url: dataUrl } });
+      } else {
+        // For documents, read as text if possible
+        const docText = await att.file.text();
+        parts.push({
+          type: "document_text",
+          text: `[Uploaded document: ${att.file.name}]\n\n${docText.slice(0, 50000)}`,
+        });
+      }
+    }
+    if (!text.trim() && atts.length > 0) {
+      parts.unshift({ type: "text", text: `I'm sharing ${atts.length} file(s) for you to analyze.` });
+    }
+    return parts;
+  };
 
   useEffect(() => {
     if (outputRef.current) outputRef.current.scrollTop = outputRef.current.scrollHeight;
@@ -171,18 +245,44 @@ export default function IdeaToBlueprint() {
     );
   };
 
-  const handleSend = () => {
-    if (!input.trim() || isTyping) return;
-    const userMsg: ChatMessage = { id: crypto.randomUUID(), role: "user", content: input.trim() };
+  const handleSend = async () => {
+    if ((!input.trim() && attachments.length === 0) || isTyping) return;
+    
+    const currentAttachments = [...attachments];
+    const messageContent = await buildMessageContent(input.trim(), currentAttachments);
+    
+    const userMsg: ChatMessage = {
+      id: crypto.randomUUID(),
+      role: "user",
+      content: typeof messageContent === "string" ? messageContent : input.trim() || `Shared ${currentAttachments.length} file(s)`,
+      attachments: currentAttachments.map((a) => ({
+        type: a.type,
+        name: a.file.name,
+        preview: a.type === "image" ? a.preview : undefined,
+      })),
+    };
     const newMessages = [...messages, userMsg];
     setMessages(newMessages);
     setInput("");
+    setAttachments([]);
     setIsTyping(true);
+
+    // Build API messages with multimodal content for the current message
+    const apiMessages = await Promise.all(
+      newMessages.map(async (m) => {
+        // For the just-sent message, use the already-built content
+        if (m.id === userMsg.id) {
+          return { role: m.role, content: messageContent };
+        }
+        // For previous messages, just send text
+        return { role: m.role, content: m.content };
+      })
+    );
 
     let assistantContent = "";
     streamFromFunction(
       "idea-interview",
-      { messages: newMessages.map((m) => ({ role: m.role, content: m.content })) },
+      { messages: apiMessages },
       (delta) => {
         assistantContent += delta;
         setMessages((prev) => {
@@ -383,6 +483,21 @@ export default function IdeaToBlueprint() {
                       ? "bg-primary text-primary-foreground rounded-br-md"
                       : "bg-muted text-foreground rounded-bl-md"
                   }`}>
+                    {/* Render attachments */}
+                    {msg.attachments && msg.attachments.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {msg.attachments.map((att, idx) => (
+                          att.type === "image" && att.preview ? (
+                            <img key={idx} src={att.preview} alt={att.name} className="max-w-[200px] max-h-[150px] rounded-lg object-cover" />
+                          ) : (
+                            <div key={idx} className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-background/20 text-xs">
+                              <FileText className="w-3 h-3" />
+                              <span className="truncate max-w-[120px]">{att.name}</span>
+                            </div>
+                          )
+                        ))}
+                      </div>
+                    )}
                     {msg.role === "assistant" ? (
                       <div className="prose prose-sm prose-invert max-w-none">
                         <ReactMarkdown>{msg.content}</ReactMarkdown>
@@ -416,7 +531,53 @@ export default function IdeaToBlueprint() {
                 <p className="text-sm text-green-400">✨ Interview complete! You can review the conversation above.</p>
               </div>
             )}
+            {/* Attachment previews */}
+            {attachments.length > 0 && (
+              <div className="mb-3 flex flex-wrap gap-2">
+                {attachments.map((att) => (
+                  <div key={att.id} className="relative group">
+                    {att.type === "image" && att.preview ? (
+                      <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-border">
+                        <img src={att.preview} alt={att.file.name} className="w-full h-full object-cover" />
+                        <button
+                          onClick={() => removeAttachment(att.id)}
+                          className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-border bg-muted text-xs">
+                        <FileText className="w-3.5 h-3.5 text-muted-foreground" />
+                        <span className="truncate max-w-[100px]">{att.file.name}</span>
+                        <button onClick={() => removeAttachment(att.id)} className="ml-1 text-muted-foreground hover:text-destructive">
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
             <div className="flex gap-2">
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept="image/*,.pdf,.txt,.doc,.docx,.md,.csv,.json"
+                onChange={handleFileSelect}
+                className="hidden"
+              />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isTyping}
+                className="shrink-0 h-11 w-11 text-muted-foreground hover:text-foreground"
+                title="Attach image or document"
+              >
+                <Paperclip className="w-4 h-4" />
+              </Button>
               <Textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -425,7 +586,7 @@ export default function IdeaToBlueprint() {
                 className="min-h-[44px] max-h-32 resize-none bg-muted border-border"
                 disabled={isTyping}
               />
-              <Button onClick={handleSend} disabled={!input.trim() || isTyping} size="icon" className="shrink-0 h-11 w-11">
+              <Button onClick={handleSend} disabled={(!input.trim() && attachments.length === 0) || isTyping} size="icon" className="shrink-0 h-11 w-11">
                 <Send className="w-4 h-4" />
               </Button>
             </div>
