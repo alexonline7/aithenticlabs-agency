@@ -420,48 +420,50 @@ export default function AdminBlueprints() {
             <div>
               <QuickInfoCards report={viewReport} />
               {/* Quantum metadata: project type, platforms, features, notes */}
-              {viewReport.metadata && (
+              {viewReport.metadata && (() => {
+                const meta = viewReport.metadata as Record<string, unknown>;
+                return (
                 <div className="space-y-3 mb-4">
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {viewReport.metadata.projectType && (
+                    {meta.projectType && (
                       <Card>
                         <CardContent className="p-3">
                           <p className="text-xs text-muted-foreground mb-1">Project Type</p>
-                          <p className="text-sm font-semibold text-foreground">{String(viewReport.metadata.projectType)}</p>
+                          <p className="text-sm font-semibold text-foreground">{String(meta.projectType)}</p>
                         </CardContent>
                       </Card>
                     )}
-                    {Array.isArray(viewReport.metadata.platforms) && (
+                    {Array.isArray(meta.platforms) && (
                       <Card>
                         <CardContent className="p-3">
                           <p className="text-xs text-muted-foreground mb-1">Platforms</p>
                           <div className="flex flex-wrap gap-1">
-                            {(viewReport.metadata.platforms as string[]).map((p) => (
+                            {(meta.platforms as string[]).map((p: string) => (
                               <Badge key={p} variant="secondary" className="text-xs">{p}</Badge>
                             ))}
                           </div>
                         </CardContent>
                       </Card>
                     )}
-                    {viewReport.metadata.additionalNotes && (
+                    {meta.additionalNotes && (
                       <Card>
                         <CardContent className="p-3">
                           <p className="text-xs text-muted-foreground mb-1">Client Notes</p>
-                          <p className="text-sm text-foreground">{String(viewReport.metadata.additionalNotes)}</p>
+                          <p className="text-sm text-foreground">{String(meta.additionalNotes)}</p>
                         </CardContent>
                       </Card>
                     )}
                   </div>
-                  {viewReport.metadata.selectedFeatures && typeof viewReport.metadata.selectedFeatures === "object" && (
+                  {meta.selectedFeatures && typeof meta.selectedFeatures === "object" && (
                     <Card>
                       <CardContent className="p-3">
                         <p className="text-xs text-muted-foreground mb-2">Selected Advanced Features</p>
                         <div className="space-y-2">
-                          {Object.entries(viewReport.metadata.selectedFeatures as Record<string, string[]>).map(([category, features]) => (
+                          {Object.entries(meta.selectedFeatures as Record<string, string[]>).map(([category, features]) => (
                             <div key={category}>
                               <p className="text-xs font-medium text-primary mb-1">{category}</p>
                               <div className="flex flex-wrap gap-1">
-                                {features.map((f) => (
+                                {features.map((f: string) => (
                                   <Badge key={f} variant="outline" className="text-xs">{f}</Badge>
                                 ))}
                               </div>
@@ -473,7 +475,8 @@ export default function AdminBlueprints() {
                   )}
                   <Separator />
                 </div>
-              )}
+                );
+              })()}
               <ScrollArea className="max-h-[50vh]">
                 <div className="prose prose-invert prose-sm max-w-none p-4">
                   <ReactMarkdown>{viewReport.content}</ReactMarkdown>
