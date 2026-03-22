@@ -203,12 +203,19 @@ export default function FlashAppsGenerator() {
     const BRIEF_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-brief`;
 
     try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+        apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+      };
+
+      if (sessionData.session?.access_token) {
+        headers.Authorization = `Bearer ${sessionData.session.access_token}`;
+      }
+
       const resp = await fetch(BRIEF_URL, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-        },
+        headers,
         body: JSON.stringify({
           appName,
           appDescription,
@@ -273,13 +280,16 @@ export default function FlashAppsGenerator() {
 
       // Save to database
       if (briefRef.current) {
-        if (!user) {
+        const { data: userData, error: userError } = await supabase.auth.getUser();
+        const currentUser = userData.user ?? user;
+
+        if (userError || !currentUser) {
           throw new Error("Your session expired before saving. Please sign in again and retry.");
         }
 
         const { error: insertError } = await supabase.from("generated_reports").insert({
-          user_id: user.id,
-          user_email: user.email,
+          user_id: currentUser.id,
+          user_email: currentUser.email ?? null,
           project_name: appName,
           report_type: "ai-brief",
           content: briefRef.current,

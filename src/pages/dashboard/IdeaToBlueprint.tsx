@@ -75,12 +75,19 @@ async function streamFromFunction(
   onError: (msg: string) => void
 ) {
   try {
+    const { data: sessionData } = await supabase.auth.getSession();
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      apikey: SUPABASE_KEY,
+    };
+
+    if (sessionData.session?.access_token) {
+      headers.Authorization = `Bearer ${sessionData.session.access_token}`;
+    }
+
     const resp = await fetch(`${SUPABASE_URL}/functions/v1/${fnName}`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${SUPABASE_KEY}`,
-      },
+      headers,
       body: JSON.stringify(body),
     });
 
@@ -306,11 +313,18 @@ export default function IdeaToBlueprint() {
             .join("\n\n");
 
           void (async () => {
-            if (!user) return;
+            const { data: userData, error: userError } = await supabase.auth.getUser();
+            const currentUser = userData.user ?? user;
+
+            if (userError || !currentUser) {
+              setGenError("Your session expired before saving. Please sign in again and retry.");
+              return;
+            }
+
             const projectTitle = newMessages.find((m) => m.role === "user")?.content?.slice(0, 80) || "Idea Blueprint";
             const { error: insertError } = await supabase.from("generated_reports").insert({
-              user_id: user.id,
-              user_email: user.email,
+              user_id: currentUser.id,
+              user_email: currentUser.email ?? null,
               project_name: projectTitle,
               report_type: "interview",
               content: cleanAssistant,
@@ -352,14 +366,18 @@ export default function IdeaToBlueprint() {
 
     const saveReport = async (reportType: string, content: string) => {
       if (!content) return;
-      if (!user) {
+
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      const currentUser = userData.user ?? user;
+
+      if (userError || !currentUser) {
         throw new Error("Your session expired before saving. Please sign in again and retry.");
       }
 
       const projectTitle = messages.find((m) => m.role === "user")?.content?.slice(0, 80) || "Idea Blueprint";
       const { error: insertError } = await supabase.from("generated_reports").insert({
-        user_id: user.id,
-        user_email: user.email,
+        user_id: currentUser.id,
+        user_email: currentUser.email ?? null,
         project_name: projectTitle,
         report_type: reportType,
         content,

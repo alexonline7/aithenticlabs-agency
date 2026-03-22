@@ -195,12 +195,19 @@ export default function QuantumOptimization() {
       }
 
       const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/quantum-spec`;
+      const { data: sessionData } = await supabase.auth.getSession();
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+        apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+      };
+
+      if (sessionData.session?.access_token) {
+        headers.Authorization = `Bearer ${sessionData.session.access_token}`;
+      }
+
       const resp = await fetch(url, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-        },
+        headers,
         body: JSON.stringify({
           projectName,
           projectType: PROJECT_TYPES.find((t) => t.id === projectType)?.label || projectType,
@@ -270,7 +277,10 @@ export default function QuantumOptimization() {
       }
       // Save to database
       if (accumulated) {
-        if (!user) {
+        const { data: userData, error: userError } = await supabase.auth.getUser();
+        const currentUser = userData.user ?? user;
+
+        if (userError || !currentUser) {
           throw new Error("Your session expired before saving. Please sign in again and retry.");
         }
 
@@ -285,8 +295,8 @@ export default function QuantumOptimization() {
         }
 
         const { error: insertError } = await supabase.from("generated_reports").insert({
-          user_id: user.id,
-          user_email: user.email,
+          user_id: currentUser.id,
+          user_email: currentUser.email ?? null,
           project_name: projectName,
           report_type: "quantum-blueprint",
           content: accumulated,
