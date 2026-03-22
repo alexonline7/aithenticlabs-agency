@@ -29,7 +29,9 @@ export default function SubmitProject() {
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [projectType, setProjectType] = useState(searchParams.get("type") || "");
+  const [selectedTypes, setSelectedTypes] = useState<string[]>(
+    searchParams.get("type") ? searchParams.get("type")!.split(",") : []
+  );
   const [description, setDescription] = useState(searchParams.get("desc") || "");
   const [budget, setBudget] = useState("");
   const [submitting, setSubmitting] = useState(false);
