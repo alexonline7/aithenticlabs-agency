@@ -71,8 +71,8 @@ serve(async (req) => {
         });
       }
 
-      return new Response(JSON.stringify({ error: `AI provider error (${response.status})` }), {
-        status: 500,
+      return new Response(JSON.stringify({ error: `AI provider error (${response.status}): ${errorText.slice(0, 200)}` }), {
+        status: response.status,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
