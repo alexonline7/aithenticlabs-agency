@@ -295,6 +295,9 @@ export default function QuantumOptimization() {
             platforms: selectedPlatforms.map((p) => PLATFORMS.find((pl) => pl.id === p)?.label || p),
             selectedFeatures: featureMap,
             additionalNotes,
+            userVersion: accumulated,
+            professionalVersion: accumulated,
+            generatedByTool: "quantum-optimization",
           },
         });
 
