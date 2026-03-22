@@ -36,11 +36,23 @@ const adminItems = [
   { title: "Analytics & Metrics", url: "/admin/analytics", icon: BarChart3 },
 ];
 
-const toolItems = [
-  { title: "FlashApps Generator", url: "/admin/flash-apps", icon: Zap },
-  { title: "Generated Reports", url: "/admin/reports", icon: FileText },
-  { title: "Quantum Optimization", url: "/admin/quantum", icon: Cpu },
-  { title: "Idea → Blueprint", url: "/admin/idea-blueprint", icon: Lightbulb },
+const specificationSections = [
+  {
+    label: "FlashApps Specs",
+    item: { title: "FlashApps Generator", url: "/admin/flash-apps", icon: Zap },
+  },
+  {
+    label: "Summaries & Reports Specs",
+    item: { title: "Generated Summaries & Reports", url: "/admin/reports", icon: FileText },
+  },
+  {
+    label: "Quantum Specs",
+    item: { title: "Quantum Optimization", url: "/admin/quantum", icon: Cpu },
+  },
+  {
+    label: "Idea → Action Plan Specs",
+    item: { title: "Idea → Action Plan", url: "/admin/idea-blueprint", icon: Lightbulb },
+  },
 ];
 
 export default function AdminSidebar() {
@@ -86,27 +98,27 @@ export default function AdminSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup>
-          <SidebarGroupLabel>Tools (Dual View)</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {toolItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
+        {specificationSections.map((section) => (
+          <SidebarGroup key={section.label}>
+            <SidebarGroupLabel>{section.label}</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
                   <SidebarMenuButton asChild>
                     <NavLink
-                      to={item.url}
+                      to={section.item.url}
                       className="flex items-center gap-2 px-2 py-1.5 rounded-md text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
                       activeClassName="bg-sidebar-accent text-primary font-medium"
                     >
-                      <item.icon className="h-4 w-4 shrink-0" />
-                      {!collapsed && <span>{item.title}</span>}
+                      <section.item.icon className="h-4 w-4 shrink-0" />
+                      {!collapsed && <span>{section.item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
       </SidebarContent>
 
       <SidebarFooter className="p-4">
