@@ -93,6 +93,7 @@ function App() {
         <Route path="/flash-apps" element={<FlashApps />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/submit-project" element={<SubmitProject />} />
+        <Route path="/ai-recommendation" element={<AIRecommendationPublic />} />
       </Routes>
     </BrowserRouter>
   );
