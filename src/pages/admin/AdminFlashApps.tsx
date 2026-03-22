@@ -30,7 +30,7 @@ function MetadataField({ icon: Icon, label, value }: { icon: React.ElementType; 
       <Icon className="h-4 w-4 text-primary mt-0.5 shrink-0" />
       <div className="min-w-0">
         <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-0.5">{label}</p>
-        <div className="text-sm text-foreground">{value}</div>
+        <div className="text-sm text-foreground">{value as React.ReactNode}</div>
       </div>
     </div>
   );
