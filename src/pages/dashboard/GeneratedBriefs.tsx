@@ -49,7 +49,9 @@ export default function GeneratedBriefs() {
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (!error && data) {
+      if (error) {
+        setFetchError(error.message);
+      } else if (data) {
         setReports(data as Report[]);
       }
       setLoading(false);
