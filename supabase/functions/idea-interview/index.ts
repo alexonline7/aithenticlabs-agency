@@ -28,6 +28,7 @@ IMPORTANT RULES:
 - Include a special marker **[INTERVIEW_COMPLETE]** at the end of your message when the interview is done
 - If the user seems unsure, offer examples and suggestions
 - Keep responses concise (2-4 sentences max per turn, plus 1 question)
+- When the user shares images or documents, analyze them carefully and reference specific details you see. Describe what you observe and how it relates to their project vision.
 
 Start by warmly greeting the client and asking about their business.`;
 
@@ -39,11 +40,44 @@ serve(async (req) => {
     const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
     if (!ANTHROPIC_API_KEY) throw new Error("ANTHROPIC_API_KEY is not configured");
 
-    // Convert messages to Anthropic format (separate system from messages)
-    const userMessages = messages.filter((m: any) => m.role !== "system").map((m: any) => ({
-      role: m.role,
-      content: m.content,
-    }));
+    // Convert messages to Anthropic format, preserving multimodal content
+    const userMessages = messages.filter((m: any) => m.role !== "system").map((m: any) => {
+      // If content is an array (multimodal), convert to Anthropic format
+      if (Array.isArray(m.content)) {
+        const anthropicContent = m.content.map((part: any) => {
+          if (part.type === "text") {
+            return { type: "text", text: part.text };
+          }
+          if (part.type === "image_url") {
+            const url = part.image_url.url;
+            // Extract base64 data and media type from data URL
+            const match = url.match(/^data:(image\/[^;]+);base64,(.+)$/);
+            if (match) {
+              return {
+                type: "image",
+                source: {
+                  type: "base64",
+                  media_type: match[1],
+                  data: match[2],
+                },
+              };
+            }
+            // If it's a regular URL, use URL source
+            return {
+              type: "image",
+              source: { type: "url", url },
+            };
+          }
+          // For document content sent as text
+          if (part.type === "document_text") {
+            return { type: "text", text: part.text };
+          }
+          return { type: "text", text: String(part.text || "") };
+        });
+        return { role: m.role, content: anthropicContent };
+      }
+      return { role: m.role, content: m.content };
+    });
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -97,7 +131,6 @@ serve(async (req) => {
             try {
               const parsed = JSON.parse(data);
               if (parsed.type === "content_block_delta" && parsed.delta?.text) {
-                // Re-emit as OpenAI-compatible format
                 const chunk = JSON.stringify({
                   choices: [{ delta: { content: parsed.delta.text } }],
                 });

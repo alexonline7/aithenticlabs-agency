@@ -10,7 +10,7 @@ import ReactMarkdown from "react-markdown";
 import {
   MessageSquare, Brain, Palette, FileCheck, Send, ArrowRight,
   CheckCircle2, Loader2, Lightbulb, Cpu, Paintbrush, ClipboardCheck,
-  RotateCcw, ChevronDown,
+  RotateCcw, ChevronDown, Paperclip, X, Image, FileText,
 } from "lucide-react";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -19,10 +19,18 @@ const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 type Scope = "interview-only" | "interview-report" | "full-pipeline";
 type PipelineStep = "scope" | "interview" | "architecture" | "ux-blueprint" | "consensus";
 
+interface Attachment {
+  id: string;
+  file: File;
+  preview?: string; // data URL for images
+  type: "image" | "document";
+}
+
 interface ChatMessage {
   id: string;
   role: "user" | "assistant";
   content: string;
+  attachments?: { type: "image" | "document"; name: string; preview?: string }[];
 }
 
 const SCOPE_OPTIONS = [
