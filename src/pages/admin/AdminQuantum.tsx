@@ -80,7 +80,7 @@ export default function AdminQuantum() {
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="font-semibold text-foreground truncate">{report.project_name}</h3>
                       <Badge variant="outline" className="bg-amber-500/20 text-amber-400 border-amber-500/30 text-xs">Quantum</Badge>
-                      {meta.projectType && <Badge variant="secondary" className="text-xs">{String(meta.projectType)}</Badge>}
+                      {!!meta.projectType && <Badge variant="secondary" className="text-xs">{String(meta.projectType)}</Badge>}
                     </div>
                     <div className="flex items-center gap-4 text-xs text-muted-foreground">
                       <span>{report.user_email || "Anonymous"}</span>
