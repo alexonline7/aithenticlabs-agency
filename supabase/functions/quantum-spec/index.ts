@@ -459,14 +459,17 @@ ${LAYER_1_FOUNDATION}
 ${LAYER_2_QUANTUM_ENGINE}
 ${LAYER_3_INNOVATION}
 ${PRICING_INTELLIGENCE}
+${MONETIZATION_LEVERAGE}
 ${TREND_ENGINE}
 ${NICHE_SPECIALIZATION}
+${ORIGINALITY_ENFORCEMENT}
+${ADMIN_SCALE_OPS}
 ${QA_LAYER}
 ${TECH_STACK_INTELLIGENCE}
 
-Apply Layer 1 (Foundation), Layer 2 (Synthesis), Layer 3 (Innovation), Pricing Intelligence, Trend Engine, and Niche Specialization with full depth. Run QA before outputting.
+Apply all intelligence layers with full depth. Enforce originality, monetization leverage, and admin/scale operations. Run QA before outputting.
 
-CRITICAL: You MUST output ALL 9 sections with significant depth plus additional sections. Section 6 MUST include specific pricing tiers with dollar amounts. Include Adjacent Opportunities after the main sections.
+CRITICAL: You MUST output ALL 9 sections with significant depth. Section 6 MUST include the Revenue Architecture Table with specific pricing tiers and answer all 7 monetization questions. Section 4 MUST include admin features with specific metrics and controls. Apply anti-template test. Include Adjacent Opportunities.
 
 # 🏗️ [App Name] — Premium Blueprint
 ${STRUCTURED_OUTPUT}
@@ -483,7 +486,7 @@ Additionally, after the 9 sections:
 - Partnership opportunities
 
 ## 🔮 Adjacent Opportunities
-3 trend-inspired app variations this niche professional should also consider, with concept, innovation angle, and revenue potential.
+3 trend-inspired app variations with concept, innovation angle, and revenue potential.
 
 ## 📊 Market Research Playbook
 - Tools and methods for ongoing niche research and concept timing
