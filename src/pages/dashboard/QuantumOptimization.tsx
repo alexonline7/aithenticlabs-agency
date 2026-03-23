@@ -221,7 +221,7 @@ export default function QuantumOptimization() {
           mode,
         }),
       });
-      if (!resp.ok) { const e = await resp.json().catch(() => ({ error: \`Error \${resp.status}\` })); throw new Error(e.error); }
+      if (!resp.ok) { const e = await resp.json().catch(() => ({ error: `Error ${resp.status}` })); throw new Error(e.error); }
 
       const reader = resp.body!.getReader();
       const dec = new TextDecoder();
