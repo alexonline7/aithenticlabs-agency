@@ -45,6 +45,7 @@ import {
   Atom,
   Crown,
   Flame,
+  AlertCircle,
 } from "lucide-react";
 
 /* ── Niche Categories ───────────────────────────────────── */
@@ -895,17 +896,29 @@ export default function QuantumOptimization() {
             </CardContent>
           </Card>
 
-          <div className="flex justify-between">
-            <Button variant="outline" onClick={() => setStep("niche")} className="gap-2">
-              <ChevronLeft className="h-4 w-4" /> Back
-            </Button>
-            <Button
-              className="accent-gradient text-primary-foreground gap-2 font-semibold"
-              disabled={!projectType || selectedPlatforms.length === 0}
-              onClick={() => setStep("features")}
-            >
-              Next: Features <ChevronRight className="h-4 w-4" />
-            </Button>
+          <div className="space-y-2">
+            {(!projectType || selectedPlatforms.length === 0) && (
+              <p className="text-xs text-muted-foreground text-right flex items-center justify-end gap-1">
+                <AlertCircle className="h-3 w-3" />
+                {!projectType && selectedPlatforms.length === 0
+                  ? "Select a project type and at least one platform to continue"
+                  : !projectType
+                  ? "Select a project type to continue"
+                  : "Select at least one platform to continue"}
+              </p>
+            )}
+            <div className="flex justify-between">
+              <Button variant="outline" onClick={() => setStep("niche")} className="gap-2">
+                <ChevronLeft className="h-4 w-4" /> Back
+              </Button>
+              <Button
+                className="accent-gradient text-primary-foreground gap-2 font-semibold"
+                disabled={!projectType || selectedPlatforms.length === 0}
+                onClick={() => setStep("features")}
+              >
+                Next: Features <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       )}
