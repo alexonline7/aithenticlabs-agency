@@ -5,7 +5,7 @@ import {
   MessageSquare,
   FileText,
   Zap,
-  Rocket,
+  
   Brain,
   Sparkles,
   Settings,
@@ -39,7 +39,7 @@ const mainItems = [
 
 const advancedItems = [
   { title: "Quantum Generation", url: "/dashboard/quantum-optimization", icon: Zap },
-  { title: "Deployment Tracker", url: "/dashboard/deployment-tracker", icon: Rocket },
+  
 ];
 
 const toolItems = [
