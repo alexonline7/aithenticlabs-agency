@@ -266,7 +266,7 @@ export default function QuantumOptimization() {
 
   const sectionCoverage = useMemo(() => {
     if (!blueprint.trim()) return SECTION_LABELS.map((l) => ({ label: l, found: false }));
-    return SECTION_LABELS.map((label) => ({ label, found: new RegExp(`##\\s+(?:\\d+\\.\\s*)?${label.replace(/[.*+?^${}()|[\]\\]/g, "\$&")}`, "im").test(blueprint) }));
+    return SECTION_LABELS.map((label) => ({ label, found: new RegExp("##\\s+(?:\\d+\\.\\s*)?" + label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "im").test(blueprint) }));
   }, [blueprint]);
   const sectionsFound = sectionCoverage.filter((s) => s.found).length;
 
