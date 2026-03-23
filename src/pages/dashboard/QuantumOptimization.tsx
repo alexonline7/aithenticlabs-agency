@@ -251,7 +251,7 @@ export default function QuantumOptimization() {
           report_type: "quantum-blueprint", content: acc,
           metadata: { niche: nicheLabel, mode, modeLabel: modeConfig?.label, appIdea, professionalType, workflowProblem, targetCustomer, desiredOutcome, projectType: PROJECT_TYPES.find((t) => t.id === projectType)?.label || projectType, platforms: platforms.map((p) => PLATFORMS.find((pl) => pl.id === p)?.label || p), selectedFeatures: featureMap, additionalNotes: notes, strictEnforcement: strict, generatedByTool: "quantum-optimization" },
         });
-        if (ie) throw new Error(\`Save failed: \${ie.message}\`);
+        if (ie) throw new Error(`Save failed: ${ie.message}`);
       }
       setPhase("result");
     } catch (e) { setError(e instanceof Error ? e.message : "Generation failed"); setPhase("result"); } finally { setGenEnd(Date.now()); setGenerating(false); }
