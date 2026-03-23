@@ -94,7 +94,7 @@ export default function Index() {
                 Start a Project <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
-            <Link to="/auth">
+            <Link to="/ai-recommendation">
               <Button variant="outline" className="h-12 px-8 text-lg border-deep-gold-500/30 text-deep-gold-500 hover:bg-deep-gold-500/10">
                 Get AI Recommendation <Sparkles className="ml-2 h-5 w-5" />
               </Button>
