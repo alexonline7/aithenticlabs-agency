@@ -45,6 +45,7 @@ import {
   Atom,
   Crown,
   Flame,
+  AlertCircle,
 } from "lucide-react";
 
 /* ── Niche Categories ───────────────────────────────────── */
