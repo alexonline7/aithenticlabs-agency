@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -209,34 +209,166 @@ const STEPS = [
 ] as const;
 type StepKey = typeof STEPS[number]["key"];
 
-/* ── Quantum Phases — mirrors all intelligence layers ─── */
-const QUANTUM_PHASES = [
-  { at: 100, text: "Initializing Quantum Engine…", icon: CircuitBoard },
-  { at: 92, text: "Activating Tool Personality — 5 expert minds engaged…", icon: Crown },
-  { at: 84, text: "Layer 1: Foundation Logic — analyzing structure & business model…", icon: Briefcase },
-  { at: 76, text: "Layer 1: Foundation Logic — mapping user flow & pricing…", icon: DollarSign },
-  { at: 68, text: "Layer 2: Quantum Synthesis — orchestrating multi-model reasoning…", icon: Brain },
-  { at: 60, text: "Layer 2: Quantum Synthesis — assembling blueprint sections…", icon: Blocks },
-  { at: 52, text: "Layer 3: Innovation — detecting opportunities & injecting originality…", icon: Sparkles },
-  { at: 44, text: "Layer 3: Innovation — applying 2025–2026 tech trends…", icon: TrendingUp },
-  { at: 36, text: "Layer 4: Scale — adding automation, admin & growth systems…", icon: Settings },
-  { at: 28, text: "Pricing Intelligence — generating revenue architecture…", icon: DollarSign },
-  { at: 22, text: "Niche Specialization — tailoring to industry workflows…", icon: Crosshair },
-  { at: 16, text: "Buildability Check — verifying MVP & implementation order…", icon: Wrench },
-  { at: 10, text: "Originality Filter — running anti-template test…", icon: Fingerprint },
-  { at: 5, text: "Quality Assurance Gate — 7-criteria evaluation (min 7/10)…", icon: ShieldCheck },
-  { at: 2, text: "Final Synthesis — premium blueprint packaging…", icon: Rocket },
+interface QuantumPhase {
+  id: string;
+  text: string;
+  icon: React.ElementType;
+  layerId?: string;
+}
+
+const QUANTUM_CORE_PHASES: QuantumPhase[] = [
+  { id: "init", text: "Initializing Quantum Engine…", icon: CircuitBoard },
+  { id: "personality", text: "Activating Tool Personality — 5 expert minds engaged…", icon: Crown },
+  { id: "final-synthesis", text: "Final Synthesis — premium blueprint packaging…", icon: Rocket },
 ];
+
+const QUANTUM_LAYER_PHASES: QuantumPhase[] = [
+  { id: "foundation", layerId: "foundation", text: "Layer 1: Foundation Logic — analyzing structure, pricing, and core flow…", icon: Briefcase },
+  { id: "quantum-engine", layerId: "quantum-engine", text: "Layer 2: Quantum Synthesis — orchestrating multi-model reasoning…", icon: Brain },
+  { id: "innovation", layerId: "innovation", text: "Layer 3: Innovation — injecting trend timing and differentiation…", icon: Sparkles },
+  { id: "scale", layerId: "scale", text: "Layer 4: Scale — mapping automation, admin, and growth systems…", icon: Settings },
+  { id: "pricing", layerId: "pricing", text: "Pricing Intelligence — generating tier architecture and commercial logic…", icon: DollarSign },
+  { id: "monetization", layerId: "monetization", text: "Monetization Leverage — defining retention and expansion mechanics…", icon: Gem },
+  { id: "trend-engine", layerId: "trend-engine", text: "Trend Engine — detecting adjacent opportunities and timing signals…", icon: TrendingUp },
+  { id: "niche", layerId: "niche", text: "Niche Specialization — tailoring workflows and domain language…", icon: Crosshair },
+  { id: "originality", layerId: "originality", text: "Originality Filter — running anti-template differentiation checks…", icon: Fingerprint },
+  { id: "buildability", layerId: "buildability", text: "Buildability Gate — validating MVP, dependency path, and implementation order…", icon: Wrench },
+  { id: "qa", layerId: "qa", text: "Quality Assurance Gate — applying 7-criteria viability scoring…", icon: ShieldCheck },
+];
+
+const getModePhases = (mode: string) => {
+  const activeLayerIds = Array.from(new Set(MODE_LAYERS[mode] || MODE_LAYERS["premium-blueprint"]));
+  const activeLayerPhases = QUANTUM_LAYER_PHASES.filter((phase) => phase.layerId && activeLayerIds.includes(phase.layerId));
+  return [QUANTUM_CORE_PHASES[0], QUANTUM_CORE_PHASES[1], ...activeLayerPhases, QUANTUM_CORE_PHASES[2]];
+};
+
+type ValidationResult = { id: string; label: string; passed: boolean; evidence: string[]; critical: boolean };
+type ValidationGroupResult = { id: string; title: string; description: string; passed: number; total: number; checks: ValidationResult[] };
+type ValidationSummary = { groups: ValidationGroupResult[]; totalPassed: number; totalChecks: number; criticalFailures: ValidationResult[] };
+
+type RegexEvidence = { pattern: RegExp; hint: string };
+
+const STRICT_ENFORCEMENT_APPENDIX = [
+  "Strict enforcement requirements:",
+  "- Include a sensible MVP with exactly what ships in 1-3 days.",
+  "- Provide a clear implementation order (Day 1, Day 2, Day 3, Week 2).",
+  "- Include stack recommendations and dependency manifest with costs.",
+  "- Explicitly split ship-now vs delay-later scope.",
+  "- Identify the single highest-leverage feature to build first.",
+  "- Keep the tone sharp, premium, visionary, commercially intelligent, and technically grounded.",
+].join("\n");
+
+const runRegexValidation = (checks: { id: string; label: string; critical?: boolean; evidence: RegexEvidence[] }[], text: string): ValidationResult[] =>
+  checks.map((check) => {
+    const evidence = check.evidence.filter((item) => item.pattern.test(text)).map((item) => item.hint);
+    return {
+      id: check.id,
+      label: check.label,
+      passed: evidence.length > 0,
+      evidence,
+      critical: check.critical !== false,
+    };
+  });
+
+const SECTION_LABELS = [
+  "App Identity",
+  "Strategic Concept",
+  "Core System",
+  "Feature Architecture",
+  "Technical Architecture",
+  "Business Model",
+  "Launch Logic",
+  "Expansion Logic",
+  "Execution Summary",
+];
+
+const buildValidationSummary = (blueprintContent: string): ValidationSummary => {
+  const normalized = blueprintContent.trim();
+
+  if (!normalized) {
+    return { groups: [], totalPassed: 0, totalChecks: 0, criticalFailures: [] };
+  }
+
+  const buildabilityChecks = runRegexValidation([
+    { id: "mvp", label: "Sensible MVP defined", evidence: [{ pattern: /\bmvp\b|minimum viable/i, hint: "MVP" }] },
+    { id: "order", label: "Implementation order included", evidence: [{ pattern: /implementation order|day\s*1|phase\s*1|roadmap|timeline/i, hint: "Implementation order" }] },
+    { id: "stack", label: "Stack recommendations included", evidence: [{ pattern: /tech stack|stack recommendation|frontend|backend|database|api/i, hint: "Tech stack" }] },
+    { id: "dependencies", label: "Dependencies and services listed", evidence: [{ pattern: /dependencies|third-party|integrations|services|api key/i, hint: "Dependencies" }] },
+    { id: "ship-now-vs-later", label: "Ship now vs delay split included", evidence: [{ pattern: /ship[-\s]?fast|ship now|can wait|delay|later phase|week\s*2/i, hint: "Ship now vs delay" }] },
+    { id: "leverage", label: "Highest leverage first identified", evidence: [{ pattern: /highest leverage|what to build first|build first|keystone/i, hint: "Highest leverage" }] },
+  ], normalized);
+
+  const personalityChecks = runRegexValidation([
+    { id: "commercial", label: "Commercial intelligence language present", evidence: [{ pattern: /pricing|revenue|upsell|retention|ltv|cac|margin/i, hint: "Commercial terms" }] },
+    { id: "technical", label: "Technically grounded decisions present", evidence: [{ pattern: /architecture|schema|api|database|auth|infrastructure/i, hint: "Technical grounding" }] },
+    { id: "visionary", label: "Visionary market language present", evidence: [{ pattern: /category|moat|trend|first[-\s]?mover|expansion|market shift/i, hint: "Visionary framing" }] },
+    { id: "decisive", label: "Sharp and decisive tone present", evidence: [{ pattern: /must|prioritize|launch|execute|deploy|non-negotiable/i, hint: "Decisive phrasing" }] },
+  ], normalized);
+
+  const structureEvidence = SECTION_LABELS.filter((label) => new RegExp(label, "i").test(normalized));
+  const synthesisChecks: ValidationResult[] = [
+    {
+      id: "structure",
+      label: "Structured blueprint sections coverage (>= 7/9)",
+      passed: structureEvidence.length >= 7,
+      evidence: structureEvidence,
+      critical: true,
+    },
+    ...runRegexValidation([
+      { id: "trend-originality", label: "Trend + originality logic included", evidence: [{ pattern: /trend|originality|anti-template|innovation/i, hint: "Trend/originality" }] },
+      { id: "qa", label: "QA gate/evaluation logic included", evidence: [{ pattern: /quality assurance|qa|criteria|evaluation/i, hint: "QA logic" }] },
+      { id: "scale", label: "Scale and automation logic included", evidence: [{ pattern: /scale|automation|admin|operations|growth systems/i, hint: "Scale logic" }] },
+      { id: "niche", label: "Niche specialization logic included", evidence: [{ pattern: /niche|industry|domain workflow|specialization/i, hint: "Niche logic" }] },
+    ], normalized),
+  ];
+
+  const groups: ValidationGroupResult[] = [
+    {
+      id: "buildability",
+      title: "Buildability Proof",
+      description: "Validates MVP realism, implementation order, and shipping leverage.",
+      checks: buildabilityChecks,
+      passed: buildabilityChecks.filter((check) => check.passed).length,
+      total: buildabilityChecks.length,
+    },
+    {
+      id: "personality",
+      title: "Personality Proof",
+      description: "Verifies strategist + architect + founder tone signals in output.",
+      checks: personalityChecks,
+      passed: personalityChecks.filter((check) => check.passed).length,
+      total: personalityChecks.length,
+    },
+    {
+      id: "synthesis",
+      title: "Final Synthesis Proof",
+      description: "Checks if output is coherent, layered, and structurally complete.",
+      checks: synthesisChecks,
+      passed: synthesisChecks.filter((check) => check.passed).length,
+      total: synthesisChecks.length,
+    },
+  ];
+
+  const allChecks = groups.flatMap((group) => group.checks);
+  return {
+    groups,
+    totalPassed: allChecks.filter((check) => check.passed).length,
+    totalChecks: allChecks.length,
+    criticalFailures: allChecks.filter((check) => check.critical && !check.passed),
+  };
+};
 
 /* ══════════════════════════════════════════════════════════
    QUANTUM COUNTDOWN
    ══════════════════════════════════════════════════════════ */
 function QuantumCountdown({ onComplete, mode }: { onComplete: () => void; mode: string }) {
   const [progress, setProgress] = useState(0);
-  const [phase, setPhase] = useState(QUANTUM_PHASES[0]);
+  const [phaseIndex, setPhaseIndex] = useState(0);
   const modeConfig = GENERATION_MODES.find((m) => m.id === mode);
   const duration = mode === "instant-concept" ? 8 : mode === "premium-blueprint" ? 12 : mode === "build-ready" ? 14 : 15;
-  const activeLayers = MODE_LAYERS[mode] || MODE_LAYERS["premium-blueprint"];
+  const activeLayers = Array.from(new Set(MODE_LAYERS[mode] || MODE_LAYERS["premium-blueprint"]));
+  const phases = useMemo(() => getModePhases(mode), [mode]);
+  const activePhase = phases[Math.min(phaseIndex, phases.length - 1)] || phases[0];
 
   useEffect(() => {
     const totalTicks = duration * 10;
@@ -245,15 +377,15 @@ function QuantumCountdown({ onComplete, mode }: { onComplete: () => void; mode: 
       tick++;
       const pct = Math.min((tick / totalTicks) * 100, 100);
       setProgress(pct);
-      const currentPhase = [...QUANTUM_PHASES].reverse().find((p) => pct >= 100 - p.at);
-      if (currentPhase) setPhase(currentPhase);
+      const currentPhaseIndex = Math.min(Math.floor((pct / 100) * phases.length), phases.length - 1);
+      setPhaseIndex(currentPhaseIndex);
       if (tick >= totalTicks) {
         clearInterval(interval);
         onComplete();
       }
     }, 100);
     return () => clearInterval(interval);
-  }, [onComplete, duration]);
+  }, [onComplete, duration, phases.length]);
 
   return (
     <div className="flex flex-col items-center justify-center gap-6 py-12">
@@ -269,8 +401,8 @@ function QuantumCountdown({ onComplete, mode }: { onComplete: () => void; mode: 
           {Math.max(0, Math.ceil(duration - (progress / 100) * duration))}s
         </p>
         <div className="flex items-center gap-2 justify-center text-muted-foreground text-sm animate-pulse">
-          <phase.icon className="h-4 w-4 text-primary" />
-          <span>{phase.text}</span>
+          <activePhase.icon className="h-4 w-4 text-primary" />
+          <span>{activePhase.text}</span>
         </div>
         {modeConfig && (
           <Badge variant="outline" className="border-primary/40 text-primary text-xs mt-1">
@@ -284,6 +416,37 @@ function QuantumCountdown({ onComplete, mode }: { onComplete: () => void; mode: 
         <div className="flex justify-between text-xs text-muted-foreground">
           <span>Quantum Processing</span>
           <span>{Math.round(progress)}%</span>
+        </div>
+      </div>
+
+      <div className="w-full max-w-3xl rounded-xl border border-border/30 bg-card/20 p-3">
+        <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">Live Workflow Execution</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {phases.map((item, index) => {
+            const isDone = index < phaseIndex;
+            const isActive = index === phaseIndex;
+            return (
+              <div
+                key={item.id}
+                className={`flex items-center gap-2 rounded-md px-2 py-1.5 border transition-all ${
+                  isDone
+                    ? "border-primary/30 bg-primary/10"
+                    : isActive
+                      ? "border-primary/20 bg-primary/5"
+                      : "border-border/20 bg-muted/10"
+                }`}
+              >
+                {isDone ? (
+                  <CheckCircle className="h-3.5 w-3.5 text-primary shrink-0" />
+                ) : isActive ? (
+                  <Loader2 className="h-3.5 w-3.5 text-primary animate-spin shrink-0" />
+                ) : (
+                  <div className="h-3.5 w-3.5 rounded-full border border-border/50 shrink-0" />
+                )}
+                <span className={`text-[11px] leading-snug ${isDone || isActive ? "text-foreground" : "text-muted-foreground"}`}>{item.text}</span>
+              </div>
+            );
+          })}
         </div>
       </div>
 
