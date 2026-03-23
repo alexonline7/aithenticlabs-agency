@@ -196,6 +196,131 @@ You MUST deeply specialize every output for the target niche. Generic outputs ar
 `;
 
 /* ══════════════════════════════════════════════════════════
+   ORIGINALITY ENFORCEMENT — Anti-template intelligence
+   ══════════════════════════════════════════════════════════ */
+
+const ORIGINALITY_ENFORCEMENT = `
+## ORIGINALITY ENFORCEMENT LAYER
+This layer runs as a FILTER on every output. It REJECTS and REWRITES generic patterns.
+
+### BANNED PATTERNS — If you catch yourself writing any of these, STOP and rewrite:
+- ❌ "Dashboard with analytics" → ✅ Describe WHICH metrics, WHY they matter, and WHAT decisions they drive
+- ❌ "AI-powered features" → ✅ Name the SPECIFIC AI capability, the MODEL it uses, and the USER OUTCOME it produces
+- ❌ "User management" → ✅ Describe the EXACT user roles, permissions, and what each role can DO
+- ❌ "Notifications system" → ✅ Specify WHICH events trigger notifications, WHAT channels (email/SMS/push/in-app), and WHY the user cares
+- ❌ "Admin panel" → ✅ Describe SPECIFIC admin workflows: what they monitor, what they configure, what decisions the admin makes
+- ❌ "Settings page" → ✅ List the EXACT settings with defaults and why each exists
+- ❌ "Integration with third-party services" → ✅ Name the SPECIFIC services and WHY each integration creates value
+- ❌ "Scalable architecture" → ✅ Describe the SPECIFIC scaling strategy: what bottleneck, what solution, what threshold triggers scaling
+- ❌ "Modern tech stack" → ✅ Name EXACT technologies with VERSION NUMBERS and JUSTIFICATION for each choice
+- ❌ "Seamless user experience" → ✅ Describe the SPECIFIC interaction: what the user clicks, sees, and feels
+
+### ORIGINALITY REQUIREMENTS:
+1. **Distinctive Workflows:** Every app must have at least ONE workflow that is genuinely unique — not found in any existing competitor. Describe it in detail.
+2. **Premium Differentiation:** Identify what makes this a $299+ product vs a free template. The answer must be specific and defensible.
+3. **Smart Automation:** Every app must include at least 2 automations that save the user measurable time (e.g., "auto-generates weekly client reports from tracked data, saving ~3 hours/week").
+4. **Strategic Leverage:** Identify the ONE feature that, once built, makes everything else in the app more valuable. This is the "keystone feature."
+5. **Clear User Value:** For every feature, answer "so what?" — what does the user GET from this that they couldn't get before?
+6. **Technical Plausibility:** Never recommend a feature that requires technology beyond current capability. If suggesting AI, specify which model and confirm it can actually do the task.
+7. **Market Advantage:** Every concept must include a "why now" — what market shift, technology advance, or behavioral change makes this the right time?
+
+### ANTI-TEMPLATE TEST:
+Before outputting, check: "If I replaced the app name with a different app, would this blueprint still make sense?" If YES, it's too generic. Rewrite with niche-specific details until the answer is NO.
+`;
+
+/* ══════════════════════════════════════════════════════════
+   ADMIN & SCALE OPERATIONS — Operational intelligence
+   ══════════════════════════════════════════════════════════ */
+
+const ADMIN_SCALE_OPS = `
+## ADMIN & OPERATIONAL SCALE INTELLIGENCE
+When the concept warrants it, generate SPECIFIC operational subsystems. These are not buzzwords — they are concrete system designs.
+
+### Admin Dashboard Logic (include when app has >1 user role):
+- **Metrics Panel:** Specify exactly which KPIs are displayed (e.g., "Daily active patients, appointment completion rate, revenue per provider, average wait time")
+- **User Management:** Exact actions admins can take (suspend, role-change, impersonate for support, export data)
+- **Content/Config Control:** What can be configured without code changes (pricing, feature flags, email templates, notification rules)
+- **Audit Log:** Every sensitive action logged with who, what, when, and rollback capability
+
+### Client Management Logic (include for B2B or service-based apps):
+- **Client Lifecycle:** Onboarding → Active → At-risk → Churned pipeline with automated triggers at each stage
+- **Health Score:** Composite score from usage frequency, feature adoption, support tickets, billing status
+- **Communication Hub:** Centralized client communications with templates, scheduling, and history
+- **Contract/Billing:** Subscription status, invoice history, upgrade/downgrade flows, payment failure handling
+
+### Support/Help Desk Logic (include for apps with paying users):
+- **Tiered Support:** Self-service (knowledge base + AI chat) → Ticket system → Live chat → Priority escalation
+- **AI-First Support:** AI chatbot trained on product docs handles 80% of queries; human handoff for complex issues
+- **Feedback Loop:** Support tickets auto-tagged, analyzed for patterns, feed into product roadmap prioritization
+
+### Update Automation Logic (include for SaaS/platform apps):
+- **Feature Flags:** Gradual rollout system with percentage-based or cohort-based targeting
+- **Changelog:** Auto-generated from git commits/PRs, filtered for user-facing changes
+- **In-App Announcements:** Contextual announcements shown when user visits relevant feature area
+- **Migration System:** Data migration scripts for schema changes, with rollback capability
+
+### Usage Tracking Logic (include always):
+- **Event Tracking:** Specify 10-15 key events to track (not "track everything" — be specific about which events matter for business decisions)
+- **Cohort Analysis:** Group users by signup date, plan tier, feature adoption for retention analysis
+- **Revenue Attribution:** Track which features drive upgrades, which drive churn
+- **Quota/Limits:** Usage metering for rate-limited or usage-based features with clear UI for users approaching limits
+
+### Service Delivery Logic (include for service-based apps):
+- **Delivery Pipeline:** Steps from order/request to completed delivery with status tracking
+- **Quality Gates:** Checkpoints where work is reviewed before advancing (automated + manual)
+- **SLA Tracking:** Time-based commitments with automated alerts when approaching deadline
+- **Client Handoff:** Deliverable packaging, approval workflow, feedback collection
+`;
+
+/* ══════════════════════════════════════════════════════════
+   MONETIZATION & LEVERAGE — Founder-level thinking
+   ══════════════════════════════════════════════════════════ */
+
+const MONETIZATION_LEVERAGE = `
+## MONETIZATION & LEVERAGE INTELLIGENCE
+Think like a founder and product strategist, not a feature generator. Every concept must have a clear, compelling money story.
+
+### For EVERY generated concept, Section 6 (Business Model) MUST answer ALL of these:
+
+1. **How Money Is Made:** The PRIMARY revenue mechanism. Be specific: "Monthly subscription starting at $49/mo" not "subscription model."
+2. **Who Pays:** The SPECIFIC buyer persona. "The clinic owner who manages 3-5 providers" not "healthcare professionals."
+3. **Why They Pay:** The PAIN being eliminated and the VALUE being created. Quantify: "Saves 12 hours/week of manual scheduling → worth $600/month at $50/hr admin cost → $49/mo is a no-brainer."
+4. **What Increases Retention:** The SPECIFIC features that make leaving painful:
+   - Data lock-in (years of patient records, client history)
+   - Workflow dependency (team relies on it daily)
+   - Integration depth (connected to 5+ other tools)
+   - Community/network (colleagues are on the same platform)
+5. **What Creates Recurring Revenue:** Why users KEEP paying, not just START paying:
+   - Ongoing data value that grows over time
+   - Regular need (weekly/daily usage patterns)
+   - Evolving AI that gets smarter with use
+   - Expanding team that adds seats
+6. **What Can Be Upsold:** The SPECIFIC upgrade triggers:
+   - Usage limits ("You've hit 100 patients, upgrade for unlimited")
+   - Feature gates ("AI document analysis available on Pro")
+   - Team expansion ("Add team members for $15/seat/month")
+   - White-label ("Remove our branding for $99/mo extra")
+   - API access ("Build custom integrations on Enterprise")
+   - Priority support ("Get <1hr response time for $49/mo")
+7. **What Makes It Commercially Strong:** The STRUCTURAL advantage:
+   - High switching cost once adopted
+   - Network effects that compound value
+   - Compounding data advantage (AI gets better with more usage)
+   - Platform potential (third-party apps/integrations ecosystem)
+   - Regulatory moat (compliance features competitors lack)
+
+### Revenue Architecture Template (use for Premium/Build-Ready/Market-Domination modes):
+| Tier | Price | Key Features | Target User | Upgrade Trigger |
+|------|-------|-------------|-------------|-----------------|
+| Free/Starter | $0 or $X | [features] | [who] | [what makes them upgrade] |
+| Professional | $XX/mo | [features] | [who] | [what makes them upgrade] |
+| Enterprise | $XXX/mo | [features] | [who] | [what makes them expand] |
+
+### Monetization Confidence Check:
+Before outputting pricing, verify: "Would a [niche] professional look at this pricing and think 'that's fair for what I get'?" If the value isn't obviously worth 5-10x the price, strengthen the value proposition or lower the price.
+`;
+
+/* ══════════════════════════════════════════════════════════
    TECH STACK RECOMMENDATION INTELLIGENCE
    ══════════════════════════════════════════════════════════ */
 
@@ -314,13 +439,15 @@ const MODE_PROMPTS: Record<string, string> = {
 ${LAYER_1_FOUNDATION}
 ${LAYER_2_QUANTUM_ENGINE}
 ${PRICING_INTELLIGENCE}
+${MONETIZATION_LEVERAGE}
 ${NICHE_SPECIALIZATION}
+${ORIGINALITY_ENFORCEMENT}
 ${QA_LAYER}
 ${TECH_STACK_INTELLIGENCE}
 
-Apply Layer 1 (Foundation), Layer 2 (Synthesis), Pricing Intelligence, and Niche Specialization at high speed. Run QA before outputting. Prioritize strategic sharpness over depth.
+Apply Foundation, Synthesis, Pricing, Monetization, Niche Specialization, and Originality Enforcement at high speed. Run QA before outputting. Prioritize strategic sharpness over depth.
 
-CRITICAL: You MUST output ALL 9 sections. Keep each concise (2-4 bullet points) but never skip one. Be bold and specific — no filler. Pricing in Section 6 MUST include specific dollar amounts.
+CRITICAL: You MUST output ALL 9 sections. Keep each concise (2-4 bullet points) but never skip one. Be bold and specific — no filler. Pricing in Section 6 MUST include specific dollar amounts and answer all 7 monetization questions. Apply the anti-template test before outputting.
 
 # 🚀 [App Name] — Instant Concept
 ${STRUCTURED_OUTPUT}
@@ -332,14 +459,17 @@ ${LAYER_1_FOUNDATION}
 ${LAYER_2_QUANTUM_ENGINE}
 ${LAYER_3_INNOVATION}
 ${PRICING_INTELLIGENCE}
+${MONETIZATION_LEVERAGE}
 ${TREND_ENGINE}
 ${NICHE_SPECIALIZATION}
+${ORIGINALITY_ENFORCEMENT}
+${ADMIN_SCALE_OPS}
 ${QA_LAYER}
 ${TECH_STACK_INTELLIGENCE}
 
-Apply Layer 1 (Foundation), Layer 2 (Synthesis), Layer 3 (Innovation), Pricing Intelligence, Trend Engine, and Niche Specialization with full depth. Run QA before outputting.
+Apply all intelligence layers with full depth. Enforce originality, monetization leverage, and admin/scale operations. Run QA before outputting.
 
-CRITICAL: You MUST output ALL 9 sections with significant depth plus additional sections. Section 6 MUST include specific pricing tiers with dollar amounts. Include Adjacent Opportunities after the main sections.
+CRITICAL: You MUST output ALL 9 sections with significant depth. Section 6 MUST include the Revenue Architecture Table with specific pricing tiers and answer all 7 monetization questions. Section 4 MUST include admin features with specific metrics and controls. Apply anti-template test. Include Adjacent Opportunities.
 
 # 🏗️ [App Name] — Premium Blueprint
 ${STRUCTURED_OUTPUT}
@@ -356,7 +486,7 @@ Additionally, after the 9 sections:
 - Partnership opportunities
 
 ## 🔮 Adjacent Opportunities
-3 trend-inspired app variations this niche professional should also consider, with concept, innovation angle, and revenue potential.
+3 trend-inspired app variations with concept, innovation angle, and revenue potential.
 
 ## 📊 Market Research Playbook
 - Tools and methods for ongoing niche research and concept timing
@@ -370,14 +500,17 @@ ${LAYER_2_QUANTUM_ENGINE}
 ${LAYER_3_INNOVATION}
 ${LAYER_4_SCALE}
 ${PRICING_INTELLIGENCE}
+${MONETIZATION_LEVERAGE}
 ${TREND_ENGINE}
 ${NICHE_SPECIALIZATION}
+${ORIGINALITY_ENFORCEMENT}
+${ADMIN_SCALE_OPS}
 ${QA_LAYER}
 ${TECH_STACK_INTELLIGENCE}
 
-Apply ALL 4 intelligence layers plus Pricing, Trend Engine, Niche Specialization, and QA with maximum technical depth. This document goes directly to developers.
+Apply ALL intelligence layers with maximum technical depth. Enforce originality, monetization leverage, and generate specific admin/scale operations. This document goes directly to developers.
 
-CRITICAL: You MUST output ALL 9 sections with maximum technical depth, plus additional implementation sections. Include code snippets, SQL schemas, specific version numbers. Section 6 MUST include specific pricing tiers with dollar amounts and Stripe integration approach.
+CRITICAL: You MUST output ALL 9 sections with maximum technical depth. Section 4 MUST include specific admin dashboard metrics, client management flows, and support system design from the Admin & Scale Operations layer. Section 6 MUST include the Revenue Architecture Table and answer all 7 monetization questions. Apply anti-template test rigorously — every feature must pass the "so what?" test.
 
 # ⚡ [App Name] — Build-Ready Scope
 ${STRUCTURED_OUTPUT}
@@ -394,10 +527,16 @@ RESTful endpoints with methods, paths, request/response shapes, auth requirement
 ### Phase 2: Enhancement (Day 2-3) — second-priority features with specs
 ### Phase 3: Polish & Deploy (Day 3) — final integrations, testing, deployment
 
-## 13. DevOps & Monitoring
+## 13. Admin & Operations Architecture
+- Admin dashboard with specific KPI panels and management controls
+- Client lifecycle management with health scoring
+- Support system architecture (AI-first with human escalation)
+- Usage tracking with specific events and cohort analysis
+
+## 14. DevOps & Monitoring
 CI/CD pipeline, logging, APM, alerting, scaling triggers.
 
-## 14. Testing Strategy
+## 15. Testing Strategy
 Unit, integration, E2E approach with specific tools and coverage targets.
 
 ## 🔮 Adjacent Opportunities
@@ -412,14 +551,17 @@ ${LAYER_2_QUANTUM_ENGINE}
 ${LAYER_3_INNOVATION}
 ${LAYER_4_SCALE}
 ${PRICING_INTELLIGENCE}
+${MONETIZATION_LEVERAGE}
 ${TREND_ENGINE}
 ${NICHE_SPECIALIZATION}
+${ORIGINALITY_ENFORCEMENT}
+${ADMIN_SCALE_OPS}
 ${QA_LAYER}
 ${TECH_STACK_INTELLIGENCE}
 
-Apply ALL intelligence layers at MAXIMUM depth and strategic aggression. This blueprint is designed to dominate a market. Push every recommendation to its most ambitious, specific, and defensible version. Run QA at maximum strictness — reject and rewrite any section below 8/10 quality.
+Apply ALL intelligence layers at MAXIMUM depth and strategic aggression. Enforce originality at the highest level — every feature must pass the anti-template test. Monetization must answer all 7 questions with specific dollar amounts. Admin/Scale must include complete operational subsystem designs. Run QA at maximum strictness (8/10 threshold). This blueprint dominates markets.
 
-CRITICAL: You MUST output ALL 9 sections with MAXIMUM depth, plus all additional deep-dive sections. Section 6 MUST include specific pricing tiers with exact dollar amounts, revenue projections, and Stripe/billing implementation approach.
+CRITICAL: You MUST output ALL 9 sections with MAXIMUM depth, plus all additional deep-dive sections. Section 4 MUST distinguish between user/admin/AI/automation/quality features with SPECIFIC descriptions (banned: generic dashboards, vague AI claims). Section 6 MUST include the Revenue Architecture Table with exact prices, answer all 7 monetization questions, and include revenue projections.
 
 # 👑 [App Name] — Market Domination Blueprint
 ${STRUCTURED_OUTPUT}
@@ -442,22 +584,30 @@ Additionally:
 - Real-time systems (WebSocket, live collaboration, presence)
 
 ## 13. Revenue Engine
-- Pricing architecture (Freemium → Pro → Enterprise) with exact feature gates and price points
+- Revenue Architecture Table with exact feature gates, prices, target users, upgrade triggers
 - Setup fee logic: when to charge $0 vs $500-2000 for white-glove onboarding
 - Month 1-12 revenue projections with assumptions
 - Expansion revenue: marketplace, API monetization, white-label licensing
+- Retention mechanics: what makes leaving painful, what creates compounding value
 
-## 14. Viral & Scale Systems
+## 14. Admin & Operations Command Center
+- Admin dashboard with specific KPI panels, user management, and config controls
+- Client lifecycle management with health scoring and automated triggers
+- Support architecture: AI chatbot → ticket system → live chat → priority escalation
+- Update automation: feature flags, changelog, in-app announcements, migration system
+- Usage analytics: specific events to track, cohort analysis, revenue attribution
+
+## 15. Viral & Scale Systems
 - Built-in growth loops and referral mechanics with specific implementation
 - Network effects and platform play strategy
 - International expansion and localization architecture
 
-## 15. Investment-Ready Metrics
+## 16. Investment-Ready Metrics
 - KPIs, tracking infrastructure, and analytics dashboard specs
 - Unit economics: LTV/CAC modeling, payback period, margin targets
 
 ## 🔮 Adjacent Opportunities
-5 trend-inspired app concepts this niche professional should consider, each with concept, "why now" trend driver, innovation angle, revenue potential, and first-mover positioning.
+5 trend-inspired app concepts with concept, "why now" trend driver, innovation angle, revenue potential, and first-mover positioning.
 
 ## 📊 Market Research Playbook
 - Specific tools for ongoing niche research (Reddit, G2, competitor analysis)
