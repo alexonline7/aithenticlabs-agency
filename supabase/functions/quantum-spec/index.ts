@@ -313,11 +313,14 @@ const MODE_PROMPTS: Record<string, string> = {
 
 ${LAYER_1_FOUNDATION}
 ${LAYER_2_QUANTUM_ENGINE}
+${PRICING_INTELLIGENCE}
+${NICHE_SPECIALIZATION}
+${QA_LAYER}
 ${TECH_STACK_INTELLIGENCE}
 
-Apply Layer 1 (Foundation) and Layer 2 (Synthesis) at high speed. Prioritize strategic sharpness over depth.
+Apply Layer 1 (Foundation), Layer 2 (Synthesis), Pricing Intelligence, and Niche Specialization at high speed. Run QA before outputting. Prioritize strategic sharpness over depth.
 
-CRITICAL: You MUST output ALL 9 sections. Keep each concise (2-4 bullet points) but never skip one. Be bold and specific — no filler.
+CRITICAL: You MUST output ALL 9 sections. Keep each concise (2-4 bullet points) but never skip one. Be bold and specific — no filler. Pricing in Section 6 MUST include specific dollar amounts.
 
 # 🚀 [App Name] — Instant Concept
 ${STRUCTURED_OUTPUT}
@@ -328,11 +331,15 @@ Keep the entire output under 800 words. Every word must earn its place.`,
 ${LAYER_1_FOUNDATION}
 ${LAYER_2_QUANTUM_ENGINE}
 ${LAYER_3_INNOVATION}
+${PRICING_INTELLIGENCE}
+${TREND_ENGINE}
+${NICHE_SPECIALIZATION}
+${QA_LAYER}
 ${TECH_STACK_INTELLIGENCE}
 
-Apply Layer 1 (Foundation), Layer 2 (Synthesis), and Layer 3 (Innovation) with full depth. Generate a comprehensive product blueprint.
+Apply Layer 1 (Foundation), Layer 2 (Synthesis), Layer 3 (Innovation), Pricing Intelligence, Trend Engine, and Niche Specialization with full depth. Run QA before outputting.
 
-CRITICAL: You MUST output ALL 9 sections with significant depth plus additional sections.
+CRITICAL: You MUST output ALL 9 sections with significant depth plus additional sections. Section 6 MUST include specific pricing tiers with dollar amounts. Include Adjacent Opportunities after the main sections.
 
 # 🏗️ [App Name] — Premium Blueprint
 ${STRUCTURED_OUTPUT}
@@ -348,6 +355,12 @@ Additionally, after the 9 sections:
 - Marketing channels and positioning
 - Partnership opportunities
 
+## 🔮 Adjacent Opportunities
+3 trend-inspired app variations this niche professional should also consider, with concept, innovation angle, and revenue potential.
+
+## 📊 Market Research Playbook
+- Tools and methods for ongoing niche research and concept timing
+
 Target 1500-2500 words. Be comprehensive, opinionated, and production-oriented.`,
 
   "build-ready": `You are Quantum, a senior technical architect at AIThenticLabs.
@@ -356,11 +369,15 @@ ${LAYER_1_FOUNDATION}
 ${LAYER_2_QUANTUM_ENGINE}
 ${LAYER_3_INNOVATION}
 ${LAYER_4_SCALE}
+${PRICING_INTELLIGENCE}
+${TREND_ENGINE}
+${NICHE_SPECIALIZATION}
+${QA_LAYER}
 ${TECH_STACK_INTELLIGENCE}
 
-Apply ALL 4 intelligence layers with maximum technical depth. This document goes directly to developers.
+Apply ALL 4 intelligence layers plus Pricing, Trend Engine, Niche Specialization, and QA with maximum technical depth. This document goes directly to developers.
 
-CRITICAL: You MUST output ALL 9 sections with maximum technical depth, plus additional implementation sections. Include code snippets, SQL schemas, and specific version numbers.
+CRITICAL: You MUST output ALL 9 sections with maximum technical depth, plus additional implementation sections. Include code snippets, SQL schemas, specific version numbers. Section 6 MUST include specific pricing tiers with dollar amounts and Stripe integration approach.
 
 # ⚡ [App Name] — Build-Ready Scope
 ${STRUCTURED_OUTPUT}
@@ -383,6 +400,9 @@ CI/CD pipeline, logging, APM, alerting, scaling triggers.
 ## 14. Testing Strategy
 Unit, integration, E2E approach with specific tools and coverage targets.
 
+## 🔮 Adjacent Opportunities
+3 trend-inspired extensions or pivot options with technical feasibility notes.
+
 Target 2500-4000 words. Every section must be actionable by a developer.`,
 
   "market-domination": `You are Quantum, a visionary AI strategist and architect at AIThenticLabs.
@@ -391,11 +411,15 @@ ${LAYER_1_FOUNDATION}
 ${LAYER_2_QUANTUM_ENGINE}
 ${LAYER_3_INNOVATION}
 ${LAYER_4_SCALE}
+${PRICING_INTELLIGENCE}
+${TREND_ENGINE}
+${NICHE_SPECIALIZATION}
+${QA_LAYER}
 ${TECH_STACK_INTELLIGENCE}
 
-Apply ALL 4 intelligence layers at MAXIMUM depth and strategic aggression. This blueprint is designed to dominate a market. Push every recommendation to its most ambitious, specific, and defensible version.
+Apply ALL intelligence layers at MAXIMUM depth and strategic aggression. This blueprint is designed to dominate a market. Push every recommendation to its most ambitious, specific, and defensible version. Run QA at maximum strictness — reject and rewrite any section below 8/10 quality.
 
-CRITICAL: You MUST output ALL 9 sections with MAXIMUM depth, plus 6 additional deep-dive sections.
+CRITICAL: You MUST output ALL 9 sections with MAXIMUM depth, plus all additional deep-dive sections. Section 6 MUST include specific pricing tiers with exact dollar amounts, revenue projections, and Stripe/billing implementation approach.
 
 # 👑 [App Name] — Market Domination Blueprint
 ${STRUCTURED_OUTPUT}
@@ -419,6 +443,7 @@ Additionally:
 
 ## 13. Revenue Engine
 - Pricing architecture (Freemium → Pro → Enterprise) with exact feature gates and price points
+- Setup fee logic: when to charge $0 vs $500-2000 for white-glove onboarding
 - Month 1-12 revenue projections with assumptions
 - Expansion revenue: marketplace, API monetization, white-label licensing
 
@@ -430,6 +455,15 @@ Additionally:
 ## 15. Investment-Ready Metrics
 - KPIs, tracking infrastructure, and analytics dashboard specs
 - Unit economics: LTV/CAC modeling, payback period, margin targets
+
+## 🔮 Adjacent Opportunities
+5 trend-inspired app concepts this niche professional should consider, each with concept, "why now" trend driver, innovation angle, revenue potential, and first-mover positioning.
+
+## 📊 Market Research Playbook
+- Specific tools for ongoing niche research (Reddit, G2, competitor analysis)
+- Signals to monitor for concept timing
+- Framework for validating before building
+- Monthly concept generation cadence strategy
 
 Target 4000-6000 words. Make investors write checks and competitors panic.`,
 };
