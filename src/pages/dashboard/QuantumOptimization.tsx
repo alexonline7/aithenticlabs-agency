@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Progress } from "@/components/ui/progress";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import ReactMarkdown from "react-markdown";
 import {
   Zap, Brain, Shield, Globe, Cpu, Wifi, Eye, BarChart3, Lock, Cloud,
@@ -245,6 +247,9 @@ const getModePhases = (mode: string) => {
 type ValidationResult = { id: string; label: string; passed: boolean; evidence: string[]; critical: boolean };
 type ValidationGroupResult = { id: string; title: string; description: string; passed: number; total: number; checks: ValidationResult[] };
 type ValidationSummary = { groups: ValidationGroupResult[]; totalPassed: number; totalChecks: number; criticalFailures: ValidationResult[] };
+type SectionCoverageItem = { label: string; found: boolean };
+type BlueprintEvidenceMap = { buildability: string[]; personality: string[]; synthesis: string[] };
+type WorkflowProofItem = { id: string; label: string; passed: boolean; evidence: string };
 
 type RegexEvidence = { pattern: RegExp; hint: string };
 
@@ -257,6 +262,106 @@ const STRICT_ENFORCEMENT_APPENDIX = [
   "- Identify the single highest-leverage feature to build first.",
   "- Keep the tone sharp, premium, visionary, commercially intelligent, and technically grounded.",
 ].join("\n");
+
+const ENFORCEMENT_RULES = [
+  "Sensible MVP (1–3 day scope)",
+  "Implementation order (Day 1 / Day 2 / Day 3 / Week 2)",
+  "Stack recommendations and dependency manifest",
+  "Ship-now vs delay-later decisions",
+  "Highest-leverage-first execution logic",
+  "Sharp premium strategist/founder/architect tone",
+];
+
+const escapeRegex = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const getSectionCoverage = (blueprintContent: string): SectionCoverageItem[] => {
+  const normalized = blueprintContent.trim();
+  if (!normalized) {
+    return SECTION_LABELS.map((label) => ({ label, found: false }));
+  }
+
+  return SECTION_LABELS.map((label) => {
+    const pattern = new RegExp(`^##\\s+(?:\\d+\\.\\s*)?${escapeRegex(label)}`, "im");
+    return { label, found: pattern.test(normalized) };
+  });
+};
+
+const extractEvidenceLines = (blueprintContent: string, patterns: RegExp[], limit = 4) => {
+  const lines = blueprintContent
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
+
+  const matches: string[] = [];
+  for (const line of lines) {
+    if (patterns.some((pattern) => pattern.test(line))) {
+      matches.push(line.replace(/^[-*]\s*/, ""));
+    }
+    if (matches.length >= limit) break;
+  }
+  return matches;
+};
+
+const extractBlueprintEvidence = (blueprintContent: string): BlueprintEvidenceMap => {
+  if (!blueprintContent.trim()) {
+    return { buildability: [], personality: [], synthesis: [] };
+  }
+
+  return {
+    buildability: extractEvidenceLines(blueprintContent, [/\bmvp\b/i, /day\s*1|phase\s*1|implementation/i, /dependenc|third-party|integrations/i, /ship\s*now|delay|can wait/i]),
+    personality: extractEvidenceLines(blueprintContent, [/pricing|revenue|retention|upsell|margin/i, /architecture|api|schema|database/i, /category|moat|market|trend/i]),
+    synthesis: extractEvidenceLines(blueprintContent, [/execution summary/i, /launch logic/i, /expansion logic/i, /quality|qa|criteria/i]),
+  };
+};
+
+const buildWorkflowProof = (params: {
+  projectName: string;
+  appIdea: string;
+  nicheLabel: string;
+  sectionCoverage: SectionCoverageItem[];
+  validationSummary: ValidationSummary;
+}) => {
+  const { projectName, appIdea, nicheLabel, sectionCoverage, validationSummary } = params;
+  const sectionCount = sectionCoverage.filter((section) => section.found).length;
+  const criticalFailures = validationSummary.criticalFailures.length;
+
+  const steps: WorkflowProofItem[] = [
+    {
+      id: "step-1",
+      label: "1) App concept captured",
+      passed: Boolean(projectName.trim() && (appIdea.trim() || nicheLabel.trim())),
+      evidence: projectName ? `Project: ${projectName}` : "Project name missing",
+    },
+    {
+      id: "step-2",
+      label: "2) Niche/value analysis executed",
+      passed: sectionCoverage.some((section) => section.label === "Strategic Concept" && section.found),
+      evidence: sectionCoverage.some((section) => section.label === "Strategic Concept" && section.found)
+        ? "Strategic Concept section present"
+        : "Strategic Concept section missing",
+    },
+    {
+      id: "step-3",
+      label: "3) Structured blueprint assembled",
+      passed: sectionCount >= 7,
+      evidence: `${sectionCount}/9 required core sections found`,
+    },
+    {
+      id: "step-4",
+      label: "4) Strategic + technical + monetization outputs present",
+      passed: validationSummary.groups.length > 0 && validationSummary.groups.every((group) => group.passed >= Math.ceil(group.total * 0.5)),
+      evidence: `${validationSummary.totalPassed}/${validationSummary.totalChecks} validation checks passed`,
+    },
+    {
+      id: "step-5",
+      label: "5) Refinement/regeneration path available",
+      passed: true,
+      evidence: criticalFailures > 0 ? "Strict regeneration available for missing critical checks" : "Regeneration controls available",
+    },
+  ];
+
+  return steps;
+};
 
 const runRegexValidation = (checks: { id: string; label: string; critical?: boolean; evidence: RegexEvidence[] }[], text: string): ValidationResult[] =>
   checks.map((check) => {
@@ -583,6 +688,11 @@ export default function QuantumOptimization() {
   const [showCountdown, setShowCountdown] = useState(false);
   const [blueprint, setBlueprint] = useState("");
   const [error, setError] = useState("");
+  const [strictModeEnabled, setStrictModeEnabled] = useState(true);
+  const [generationAttempt, setGenerationAttempt] = useState(0);
+  const [lastRunStrict, setLastRunStrict] = useState(false);
+  const [generationStartedAt, setGenerationStartedAt] = useState<number | null>(null);
+  const [generationCompletedAt, setGenerationCompletedAt] = useState<number | null>(null);
   const blueprintRef = useRef<HTMLDivElement>(null);
 
   // AI recommendations
@@ -615,8 +725,12 @@ export default function QuantumOptimization() {
   const canGenerate = projectName.trim() && (selectedNiche || appIdea.trim()) && generationMode;
 
   /* ── Generate Blueprint ─────────────────────────────── */
-  const handleGenerate = async (strictEnforcement = false) => {
+  const handleGenerate = async (strictEnforcement = strictModeEnabled) => {
     if (!canGenerate) return;
+    setGenerationAttempt((prev) => prev + 1);
+    setLastRunStrict(strictEnforcement);
+    setGenerationStartedAt(Date.now());
+    setGenerationCompletedAt(null);
     setGenerating(true);
     setBlueprint("");
     setError("");
@@ -745,6 +859,7 @@ export default function QuantumOptimization() {
     } catch (e) {
       setError(e instanceof Error ? e.message : "Generation failed");
     } finally {
+      setGenerationCompletedAt(Date.now());
       setGenerating(false);
     }
   };
@@ -804,6 +919,7 @@ export default function QuantumOptimization() {
     setProjectType(""); setSelectedPlatforms(["web"]); setSelectedFeatures({});
     setAdditionalNotes(""); setAppIdea(""); setProfessionalType("");
     setWorkflowProblem(""); setTargetCustomer(""); setDesiredOutcome("");
+    setGenerationAttempt(0); setLastRunStrict(false); setGenerationStartedAt(null); setGenerationCompletedAt(null);
     setGenerationMode("premium-blueprint"); setInputMode("quick");
   };
 
@@ -812,7 +928,30 @@ export default function QuantumOptimization() {
   };
 
   const activeLayers = Array.from(new Set(MODE_LAYERS[generationMode] || MODE_LAYERS["premium-blueprint"]));
+  const activeLayerSet = useMemo(() => new Set(activeLayers), [activeLayers]);
   const validationSummary = useMemo(() => buildValidationSummary(blueprint), [blueprint]);
+  const sectionCoverage = useMemo(() => getSectionCoverage(blueprint), [blueprint]);
+  const blueprintEvidence = useMemo(() => extractBlueprintEvidence(blueprint), [blueprint]);
+  const workflowProof = useMemo(() => buildWorkflowProof({
+    projectName,
+    appIdea,
+    nicheLabel,
+    sectionCoverage,
+    validationSummary,
+  }), [projectName, appIdea, nicheLabel, sectionCoverage, validationSummary]);
+  const readinessChecklist = useMemo(() => {
+    return [
+      { id: "intent", label: "App intent captured", passed: Boolean(projectName.trim() && (appIdea.trim() || selectedNiche)) },
+      { id: "niche", label: "Niche/professional target defined", passed: Boolean(nicheLabel.trim() || professionalType.trim() || targetCustomer.trim()) },
+      { id: "problem", label: "Problem/outcome direction present", passed: Boolean(workflowProblem.trim() || desiredOutcome.trim()) },
+      { id: "mode", label: "Generation mode selected", passed: Boolean(generationMode) },
+      { id: "stack", label: "Project type/platform context set", passed: Boolean(projectType || selectedPlatforms.length > 0) },
+    ];
+  }, [projectName, appIdea, selectedNiche, nicheLabel, professionalType, targetCustomer, workflowProblem, desiredOutcome, generationMode, projectType, selectedPlatforms.length]);
+  const readinessScore = readinessChecklist.filter((item) => item.passed).length;
+  const generationDurationSeconds = generationStartedAt && generationCompletedAt
+    ? Math.max((generationCompletedAt - generationStartedAt) / 1000, 0).toFixed(1)
+    : null;
   const hasCriticalFailures = validationSummary.criticalFailures.length > 0;
 
   /* ══════════════════════════════════════════════════════
@@ -839,7 +978,7 @@ export default function QuantumOptimization() {
                 <Badge variant="outline" className="border-primary/30 text-primary text-xs">
                   <Crown className="h-3 w-3 mr-1" />11 Intelligence Layers
                 </Badge>
-                <Badge variant="outline" className="border-amber-500/30 text-amber-400 text-xs">
+                <Badge variant="outline" className="border-primary/30 text-primary text-xs">
                   <ShieldCheck className="h-3 w-3 mr-1" />QA Enforced
                 </Badge>
               </div>
@@ -870,14 +1009,37 @@ export default function QuantumOptimization() {
 
           {/* Intelligence Layer Strip */}
           <div className="mt-6 pt-5 border-t border-border/20">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-2.5">Active Intelligence Modules</p>
-            <div className="flex flex-wrap gap-1.5">
-              {INTELLIGENCE_LAYERS.map((layer) => (
-                <div key={layer.id} className="flex items-center gap-1 px-2 py-1 rounded-md bg-card/30 border border-border/20">
-                  <layer.icon className={`h-3 w-3 ${layer.color}`} />
-                  <span className="text-[10px] text-muted-foreground font-medium">{layer.shortLabel}</span>
-                </div>
-              ))}
+            <div className="flex items-center justify-between gap-3 flex-wrap mb-2.5">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Active Intelligence Modules</p>
+              <Badge variant="outline" className="text-[10px] border-primary/30 text-primary">
+                {activeLayers.length} active in {GENERATION_MODES.find((mode) => mode.id === generationMode)?.label}
+              </Badge>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+              {INTELLIGENCE_LAYERS.map((layer) => {
+                const isActive = activeLayerSet.has(layer.id);
+                return (
+                  <div
+                    key={layer.id}
+                    className={`rounded-lg border p-2.5 transition-all ${
+                      isActive
+                        ? "border-primary/40 bg-primary/10"
+                        : "border-border/20 bg-card/20"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-1.5">
+                        <layer.icon className={`h-3.5 w-3.5 ${layer.color}`} />
+                        <span className={`text-[11px] font-semibold ${isActive ? "text-foreground" : "text-muted-foreground"}`}>{layer.shortLabel}</span>
+                      </div>
+                      <Badge variant={isActive ? "default" : "outline"} className="text-[9px] px-1.5 py-0">
+                        {isActive ? "ON" : "OFF"}
+                      </Badge>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">{layer.description}</p>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -1139,6 +1301,52 @@ export default function QuantumOptimization() {
             })}
           </div>
 
+          <Card className="dark-slate-purple-card border-primary/20">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Workflow className="h-4 w-4 text-primary" />
+                Quantum Workflow Enforcement
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-start justify-between gap-4 rounded-lg border border-border/30 bg-card/20 p-3">
+                <div>
+                  <Label className="text-sm font-semibold text-foreground">Strict buildability + personality enforcement</Label>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    When enabled, generation enforces MVP realism, implementation order, dependencies, and highest-leverage-first strategy.
+                  </p>
+                </div>
+                <Switch checked={strictModeEnabled} onCheckedChange={setStrictModeEnabled} />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                {ENFORCEMENT_RULES.map((rule) => (
+                  <div key={rule} className="flex items-center gap-2 rounded-md border border-border/30 bg-muted/10 px-2 py-1.5">
+                    <CheckCircle className={`h-3.5 w-3.5 ${strictModeEnabled ? "text-primary" : "text-muted-foreground"}`} />
+                    <span className="text-xs text-foreground">{rule}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="rounded-lg border border-border/30 bg-muted/10 p-3">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-xs font-semibold text-foreground">Input Readiness</p>
+                  <Badge variant="outline" className="text-[10px] border-border/50">
+                    {readinessScore}/{readinessChecklist.length}
+                  </Badge>
+                </div>
+                <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                  {readinessChecklist.map((item) => (
+                    <div key={item.id} className="flex items-center gap-2 text-[11px]">
+                      {item.passed ? <CheckCircle className="h-3.5 w-3.5 text-primary" /> : <Shield className="h-3.5 w-3.5 text-muted-foreground" />}
+                      <span className={item.passed ? "text-foreground" : "text-muted-foreground"}>{item.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Quick config: project type + platforms */}
           <Card className="dark-slate-purple-card">
             <CardHeader className="pb-3">
@@ -1218,7 +1426,7 @@ export default function QuantumOptimization() {
               <Button
                 className="accent-gradient text-primary-foreground gap-2 font-bold text-base px-6"
                 disabled={!canGenerate || generating}
-                    onClick={() => handleGenerate()}
+                    onClick={() => handleGenerate(strictModeEnabled)}
               >
                 <Zap className="h-5 w-5" />
                 Generate {GENERATION_MODES.find((m) => m.id === generationMode)?.label}
@@ -1331,7 +1539,7 @@ export default function QuantumOptimization() {
                     <ChevronLeft className="h-4 w-4" /> Back
                   </Button>
                   <Button className="accent-gradient text-primary-foreground gap-2 font-bold text-base px-6"
-                    disabled={!canGenerate || generating} onClick={() => handleGenerate()}>
+                    disabled={!canGenerate || generating} onClick={() => handleGenerate(strictModeEnabled)}>
                     <Zap className="h-5 w-5" />
                     Generate {GENERATION_MODES.find((m) => m.id === generationMode)?.label}
                   </Button>
@@ -1433,6 +1641,21 @@ export default function QuantumOptimization() {
                       </Badge>
                     </div>
 
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      <div className="rounded-md border border-border/30 bg-muted/10 p-2">
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Run</p>
+                        <p className="text-sm font-semibold text-foreground">Attempt #{generationAttempt || 1}</p>
+                      </div>
+                      <div className="rounded-md border border-border/30 bg-muted/10 p-2">
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Enforcement</p>
+                        <p className="text-sm font-semibold text-foreground">{lastRunStrict ? "Strict" : "Standard"}</p>
+                      </div>
+                      <div className="rounded-md border border-border/30 bg-muted/10 p-2">
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Generation Time</p>
+                        <p className="text-sm font-semibold text-foreground">{generationDurationSeconds ? `${generationDurationSeconds}s` : "—"}</p>
+                      </div>
+                    </div>
+
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
                       {validationSummary.groups.map((group) => (
                         <div key={group.id} className="rounded-lg border border-border/30 bg-muted/10 p-3">
@@ -1463,6 +1686,56 @@ export default function QuantumOptimization() {
                               </div>
                             ))}
                           </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                      <div className="rounded-lg border border-border/30 bg-muted/10 p-3">
+                        <p className="text-xs font-semibold text-foreground mb-2">Core Blueprint Sections</p>
+                        <div className="space-y-1.5">
+                          {sectionCoverage.map((section) => (
+                            <div key={section.label} className="flex items-center justify-between gap-2 text-[11px]">
+                              <span className={section.found ? "text-foreground" : "text-muted-foreground"}>{section.label}</span>
+                              {section.found ? <CheckCircle className="h-3.5 w-3.5 text-primary" /> : <Shield className="h-3.5 w-3.5 text-muted-foreground" />}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="rounded-lg border border-border/30 bg-muted/10 p-3">
+                        <p className="text-xs font-semibold text-foreground mb-2">Core User Workflow Proof</p>
+                        <div className="space-y-1.5">
+                          {workflowProof.map((item) => (
+                            <div key={item.id} className="rounded-md border border-border/20 bg-card/30 p-2">
+                              <div className="flex items-center justify-between gap-2">
+                                <p className={`text-[11px] font-medium ${item.passed ? "text-foreground" : "text-muted-foreground"}`}>{item.label}</p>
+                                {item.passed ? <CheckCircle className="h-3.5 w-3.5 text-primary" /> : <Shield className="h-3.5 w-3.5 text-muted-foreground" />}
+                              </div>
+                              <p className="text-[10px] text-muted-foreground mt-0.5">{item.evidence}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+                      {([
+                        { key: "buildability", title: "Buildability Evidence", lines: blueprintEvidence.buildability },
+                        { key: "personality", title: "Personality Evidence", lines: blueprintEvidence.personality },
+                        { key: "synthesis", title: "Synthesis Evidence", lines: blueprintEvidence.synthesis },
+                      ] as const).map((bucket) => (
+                        <div key={bucket.key} className="rounded-lg border border-border/30 bg-muted/10 p-3">
+                          <p className="text-xs font-semibold text-foreground mb-2">{bucket.title}</p>
+                          {bucket.lines.length > 0 ? (
+                            <ul className="space-y-1">
+                              {bucket.lines.map((line, index) => (
+                                <li key={`${bucket.key}-${index}`} className="text-[11px] text-muted-foreground leading-relaxed">• {line}</li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <p className="text-[11px] text-muted-foreground">No direct evidence detected in this run.</p>
+                          )}
                         </div>
                       ))}
                     </div>
