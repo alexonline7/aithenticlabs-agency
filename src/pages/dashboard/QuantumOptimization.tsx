@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Progress } from "@/components/ui/progress";
 import ReactMarkdown from "react-markdown";
 import {
   Zap,
@@ -32,9 +33,133 @@ import {
   Bot,
   Gauge,
   Layers,
+  Rocket,
+  Target,
+  TrendingUp,
+  Users,
+  Lightbulb,
+  Timer,
+  ArrowRight,
+  CircuitBoard,
+  MessageSquare,
 } from "lucide-react";
 
-/* ── Feature categories ─────────────────────────────────── */
+/* ── Strategy Phases ────────────────────────────────────── */
+const STRATEGY_PHASES = [
+  {
+    phase: 1,
+    title: "Foundation",
+    subtitle: "Build the infrastructure, flow, and business model",
+    color: "from-primary/20 to-primary/5",
+    borderColor: "border-primary/30",
+    icon: Layers,
+    items: [
+      "Minimalist AI-focused design",
+      "AI Chat Assistant decision layer",
+      "Payment & hosting flow",
+      "Pricing: $149–$399",
+    ],
+  },
+  {
+    phase: 2,
+    title: "Launch Platform & Flow",
+    subtitle: "Quantum AI Engine — Sub-15 Second Generation",
+    color: "from-secondary/20 to-secondary/5",
+    borderColor: "border-secondary/30",
+    icon: Rocket,
+    items: [
+      "Revolutionary quantum-speed app generation in 8–15 seconds",
+      "Quantum AI orchestration",
+      "Multi-model ensemble (GPT-5, Claude, Gemini)",
+      "Instant deployment pipeline",
+      "Real-time quality assurance",
+    ],
+  },
+  {
+    phase: 3,
+    title: "Trend Creation & Market Innovation",
+    subtitle: "Be the originator, not follower",
+    color: "from-[hsl(271,81%,56%)]/20 to-[hsl(271,81%,56%)]/5",
+    borderColor: "border-[hsl(271,81%,56%)]/30",
+    icon: TrendingUp,
+    items: [
+      "Trend prediction agents",
+      "Original app concepts monthly",
+      "Market research automation",
+      "Innovation showcase",
+    ],
+  },
+  {
+    phase: 4,
+    title: "Automation & Scale",
+    subtitle: "Full automation and client management",
+    color: "from-green-500/20 to-green-500/5",
+    borderColor: "border-green-500/30",
+    icon: Cpu,
+    items: [
+      "Admin dashboard",
+      "Client management",
+      "AI help desk",
+      "Update automation",
+    ],
+  },
+];
+
+const TECH_STACK = [
+  {
+    title: "Chat Assistant",
+    subtitle: "OpenAI + Gemini + Mistral",
+    description: "Dynamic conversation, niche recognition, project scoping",
+    icon: MessageSquare,
+    color: "text-primary",
+  },
+  {
+    title: "Agent Coordination",
+    subtitle: "LangSmith + LangGraph",
+    description: "Turns user input into apps, runs QA and deployment",
+    icon: CircuitBoard,
+    color: "text-secondary",
+  },
+  {
+    title: "Frontend / UI",
+    subtitle: "Next.js + Tailwind",
+    description: "Fast, clean, responsive design",
+    icon: Monitor,
+    color: "text-[hsl(271,81%,56%)]",
+  },
+  {
+    title: "Backend / Storage",
+    subtitle: "Supabase / Firebase",
+    description: "Lightweight database with auth",
+    icon: Database,
+    color: "text-green-400",
+  },
+  {
+    title: "AI Templates",
+    subtitle: "You + OpenAI",
+    description: "Custom pre-built frameworks",
+    icon: Bot,
+    color: "text-amber-400",
+  },
+  {
+    title: "Hosting & Deployment",
+    subtitle: "Cloud Platforms + GitHub",
+    description: "Easy client or agency hosting",
+    icon: Cloud,
+    color: "text-blue-400",
+  },
+];
+
+const EXPECTED_OUTCOMES = [
+  "Launch the world's first quantum AI web app agency",
+  "Deliver full web apps in 8–15 seconds with quantum generation",
+  "Serve niche pros with ultra-original apps at light speed",
+  "Lead the quantum revolution, don't follow outdated methods",
+  "Monetize with quantum speed: instant delivery, immediate value",
+  "Harness quantum AI ensemble: GPT-5 + Claude + Gemini simultaneously",
+];
+
+/* ── Feature categories (for generator) ─────────────────── */
 interface FeatureItem {
   id: string;
   label: string;
@@ -140,7 +265,7 @@ export default function QuantumOptimization() {
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [selectedFeatures, setSelectedFeatures] = useState<Record<string, string[]>>({});
   const [additionalNotes, setAdditionalNotes] = useState("");
-  const [activeTab, setActiveTab] = useState("project");
+  const [activeTab, setActiveTab] = useState("overview");
 
   // Generation state
   const [generating, setGenerating] = useState(false);
@@ -183,7 +308,6 @@ export default function QuantumOptimization() {
     setActiveTab("blueprint");
 
     try {
-      // Build human-readable feature map
       const featureMap: Record<string, string[]> = {};
       for (const [catId, featureIds] of Object.entries(selectedFeatures)) {
         const cat = FEATURE_CATEGORIES.find((c) => c.id === catId);
@@ -257,7 +381,6 @@ export default function QuantumOptimization() {
         }
       }
 
-      // Final flush
       if (buffer.trim()) {
         for (let raw of buffer.split("\n")) {
           if (!raw) continue;
@@ -275,7 +398,7 @@ export default function QuantumOptimization() {
           } catch {}
         }
       }
-      // Save to database
+
       if (accumulated) {
         const { data: userData, error: userError } = await supabase.auth.getUser();
         const currentUser = userData.user ?? user;
@@ -284,11 +407,11 @@ export default function QuantumOptimization() {
           throw new Error("Your session expired before saving. Please sign in again and retry.");
         }
 
-        const featureMap: Record<string, string[]> = {};
+        const saveFeatureMap: Record<string, string[]> = {};
         for (const [catId, featureIds] of Object.entries(selectedFeatures)) {
           const cat = FEATURE_CATEGORIES.find((c) => c.id === catId);
           if (!cat || featureIds.length === 0) continue;
-          featureMap[cat.title] = featureIds.map((fId) => {
+          saveFeatureMap[cat.title] = featureIds.map((fId) => {
             const f = cat.features.find((feat) => feat.id === fId);
             return f ? f.label : fId;
           });
@@ -303,7 +426,7 @@ export default function QuantumOptimization() {
           metadata: {
             projectType: PROJECT_TYPES.find((t) => t.id === projectType)?.label || projectType,
             platforms: selectedPlatforms.map((p) => PLATFORMS.find((pl) => pl.id === p)?.label || p),
-            selectedFeatures: featureMap,
+            selectedFeatures: saveFeatureMap,
             additionalNotes,
             userVersion: accumulated,
             professionalVersion: accumulated,
@@ -326,7 +449,6 @@ export default function QuantumOptimization() {
     setRecommending(true);
     setAiSuggestions([]);
     try {
-      // Build current selections summary
       const currentSelections: Record<string, string[]> = {};
       for (const [catId, featureIds] of Object.entries(selectedFeatures)) {
         const cat = FEATURE_CATEGORIES.find((c) => c.id === catId);
@@ -367,7 +489,6 @@ export default function QuantumOptimization() {
 
       const data = await resp.json();
       const suggestions: AiSuggestion[] = (data.recommendations || []).map((r: any) => {
-        // Match back to our feature catalog
         const match = allAvailable.find(
           (a) => a.label.toLowerCase() === r.label?.toLowerCase() || a.id === r.featureId
         );
@@ -388,7 +509,6 @@ export default function QuantumOptimization() {
   };
 
   const applySuggestion = (suggestion: AiSuggestion) => {
-    // Find the category that contains this feature
     const cat = FEATURE_CATEGORIES.find((c) => c.id === suggestion.category) ||
       FEATURE_CATEGORIES.find((c) => c.features.some((f) => f.id === suggestion.featureId));
     if (cat && !isFeatureSelected(cat.id, suggestion.featureId)) {
@@ -401,52 +521,153 @@ export default function QuantumOptimization() {
     setBlueprint("");
     setError("");
     setAiSuggestions([]);
-    setActiveTab("project");
+    setActiveTab("overview");
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold font-bricolage flex items-center gap-2">
-            <Zap className="h-8 w-8 text-primary" />
-            Quantum Optimization
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Advanced specification generator for cutting-edge projects
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Badge variant="secondary" className="text-xs">
-            {totalSelected} features selected
+    <div className="space-y-8 animate-fade-in">
+      {/* ── Hero Section ──────────────────────────────────── */}
+      <div className="relative overflow-hidden rounded-2xl dark-slate-purple-card p-8 sm:p-12">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 pointer-events-none" />
+        <div className="absolute top-4 right-4">
+          <Badge className="accent-gradient text-primary-foreground border-0 text-xs font-bold tracking-wider uppercase px-3 py-1">
+            <Timer className="h-3 w-3 mr-1" />
+            8–15 Seconds
           </Badge>
-          <Button
-            className="accent-gradient text-primary-foreground gap-2"
-            disabled={!canGenerate || generating}
-            onClick={handleGenerate}
-          >
-            {generating ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Sparkles className="h-4 w-4" />
-            )}
-            {generating ? "Generating…" : "Generate Blueprint"}
-          </Button>
+        </div>
+        <div className="relative z-10 max-w-3xl">
+          <p className="text-xs font-bold tracking-[0.3em] uppercase text-primary mb-3">
+            8–15 Second Quantum Generation
+          </p>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-bricolage leading-tight">
+            <span className="text-foreground">The World's First</span>{" "}
+            <span className="gradient-text">Quantum AI</span>{" "}
+            <span className="text-foreground">Web App Agency</span>
+          </h1>
+          <p className="text-muted-foreground mt-4 text-base sm:text-lg max-w-2xl leading-relaxed">
+            Revolutionary breakthrough! Get AI web apps for niche professionals generated in just 8–15 seconds.
+            We don't build — we've just shattered the barrier.
+          </p>
+          <div className="flex flex-wrap gap-3 mt-6">
+            <Button
+              size="lg"
+              className="accent-gradient text-primary-foreground gap-2 font-semibold"
+              onClick={() => setActiveTab("project")}
+            >
+              <Rocket className="h-5 w-5" />
+              Start Building Now
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="gap-2 border-primary/30 hover:bg-primary/10"
+              onClick={() => setActiveTab("overview")}
+            >
+              <Eye className="h-5 w-5" />
+              View Strategy
+            </Button>
+          </div>
         </div>
       </div>
 
+      {/* ── Tabs ──────────────────────────────────────────── */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="project">Project Setup</TabsTrigger>
-          <TabsTrigger value="features">Advanced Features</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-6">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="project">Project</TabsTrigger>
+          <TabsTrigger value="features">Features</TabsTrigger>
           <TabsTrigger value="notes">Notes</TabsTrigger>
           <TabsTrigger value="blueprint">Blueprint</TabsTrigger>
+          <TabsTrigger value="outcomes">Outcomes</TabsTrigger>
         </TabsList>
+
+        {/* ── Tab: Overview (Vision + Strategy + Tech) ───── */}
+        <TabsContent value="overview" className="space-y-8 mt-6">
+          {/* Vision */}
+          <Card className="dark-slate-purple-card border-primary/20">
+            <CardContent className="pt-8 pb-8 text-center max-w-3xl mx-auto">
+              <Lightbulb className="h-10 w-10 text-primary mx-auto mb-4" />
+              <h2 className="text-2xl font-bold font-bricolage mb-4">Our Vision</h2>
+              <p className="text-muted-foreground text-base leading-relaxed italic">
+                "Revolutionary quantum leap: Deliver trend-inspired AI web apps for niche professionals in just 8–15 seconds.
+                We've shattered the time barrier with quantum AI technology. Users choose, quantum AI generates instantly,
+                and the future is now."
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Strategy Phases */}
+          <div>
+            <h2 className="text-2xl font-bold font-bricolage mb-2 flex items-center gap-2">
+              <Target className="h-6 w-6 text-primary" />
+              Strategy in Logical Sequence
+            </h2>
+            <p className="text-muted-foreground mb-6">
+              Our systematic approach to building the world's fastest AI web app agency
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {STRATEGY_PHASES.map((phase) => (
+                <Card key={phase.phase} className={`dark-slate-purple-card ${phase.borderColor} overflow-hidden`}>
+                  <div className={`h-1.5 w-full bg-gradient-to-r ${phase.color}`} />
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
+                        <phase.icon className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold tracking-widest uppercase text-primary">Phase {phase.phase}</p>
+                        <CardTitle className="text-lg">{phase.title}</CardTitle>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">{phase.subtitle}</p>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <ul className="space-y-2">
+                      {phase.items.map((item, i) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
+                          <CheckCircle className="h-4 w-4 text-primary/60 shrink-0 mt-0.5" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          {/* Tech Stack */}
+          <div>
+            <h2 className="text-2xl font-bold font-bricolage mb-2 flex items-center gap-2">
+              <CircuitBoard className="h-6 w-6 text-secondary" />
+              Tech Stack & Collaboration
+            </h2>
+            <p className="text-muted-foreground mb-6">
+              Powered by the world's best AI platforms working in perfect harmony
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {TECH_STACK.map((tech) => (
+                <Card key={tech.title} className="dark-slate-purple-card hover:border-primary/30 transition-colors">
+                  <CardContent className="pt-6">
+                    <tech.icon className={`h-8 w-8 ${tech.color} mb-3`} />
+                    <h3 className="font-semibold text-foreground">{tech.title}</h3>
+                    <p className="text-sm font-medium text-primary mt-1">{tech.subtitle}</p>
+                    <p className="text-xs text-muted-foreground mt-2">{tech.description}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <Button onClick={() => setActiveTab("project")} className="accent-gradient text-primary-foreground gap-2">
+              Start Building <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </TabsContent>
 
         {/* ── Tab: Project Setup ────────────────────────── */}
         <TabsContent value="project" className="space-y-6 mt-6">
-          {/* Project Name */}
           <Card className="dark-slate-purple-card">
             <CardHeader>
               <CardTitle className="text-lg">Project Details</CardTitle>
@@ -464,7 +685,6 @@ export default function QuantumOptimization() {
             </CardContent>
           </Card>
 
-          {/* Project Type */}
           <Card className="dark-slate-purple-card">
             <CardHeader>
               <CardTitle className="text-lg">Project Type</CardTitle>
@@ -489,7 +709,6 @@ export default function QuantumOptimization() {
             </CardContent>
           </Card>
 
-          {/* Platforms */}
           <Card className="dark-slate-purple-card">
             <CardHeader>
               <CardTitle className="text-lg">Target Platforms</CardTitle>
@@ -589,7 +808,7 @@ export default function QuantumOptimization() {
             </CardHeader>
             <CardContent>
               <Textarea
-                placeholder="Describe any specific requirements, constraints, or preferences for your project. For example: target user base, budget constraints, integration requirements, timeline expectations..."
+                placeholder="Describe any specific requirements, constraints, or preferences for your project..."
                 value={additionalNotes}
                 onChange={(e) => setAdditionalNotes(e.target.value)}
                 rows={6}
@@ -598,7 +817,6 @@ export default function QuantumOptimization() {
             </CardContent>
           </Card>
 
-          {/* AI Recommendations */}
           <Card className="dark-slate-purple-card border-primary/20">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-lg flex items-center gap-2">
@@ -625,21 +843,19 @@ export default function QuantumOptimization() {
               {recommending && (
                 <div className="flex items-center justify-center gap-3 py-6">
                   <Loader2 className="h-5 w-5 animate-spin text-primary" />
-                  <span className="text-sm text-muted-foreground">Analyzing your selections and generating recommendations…</span>
+                  <span className="text-sm text-muted-foreground">Analyzing your selections…</span>
                 </div>
               )}
               {aiSuggestions.length > 0 && (
                 <div className="space-y-3">
-                  <p className="text-xs text-muted-foreground">Click a suggestion to add it to your selections:</p>
+                  <p className="text-xs text-muted-foreground">Click a suggestion to add it:</p>
                   {aiSuggestions.map((suggestion) => (
                     <button
                       key={suggestion.featureId}
                       onClick={() => applySuggestion(suggestion)}
                       className="w-full flex items-start gap-3 p-3 rounded-lg border border-primary/30 bg-primary/5 hover:bg-primary/10 text-left transition-all"
                     >
-                      <div className="mt-0.5 flex-shrink-0">
-                        <Sparkles className="h-4 w-4 text-primary" />
-                      </div>
+                      <Sparkles className="h-4 w-4 text-primary mt-0.5 shrink-0" />
                       <div className="min-w-0">
                         <p className="text-sm font-medium text-foreground">{suggestion.label}</p>
                         <p className="text-xs text-muted-foreground mt-0.5">{suggestion.reason}</p>
@@ -702,8 +918,8 @@ export default function QuantumOptimization() {
               disabled={!canGenerate || generating}
               onClick={handleGenerate}
             >
-              {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-              {generating ? "Generating…" : "Generate Blueprint"}
+              {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
+              {generating ? "Generating…" : "Generate Quantum Blueprint"}
             </Button>
           </div>
         </TabsContent>
@@ -723,9 +939,16 @@ export default function QuantumOptimization() {
 
           {generating && !blueprint && (
             <Card className="dark-slate-purple-card">
-              <CardContent className="pt-6 flex items-center justify-center gap-3 py-12">
-                <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                <span className="text-muted-foreground">Generating your Quantum Blueprint…</span>
+              <CardContent className="pt-6 flex flex-col items-center justify-center gap-4 py-16">
+                <div className="relative">
+                  <Zap className="h-12 w-12 text-primary animate-pulse" />
+                  <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
+                </div>
+                <div className="text-center">
+                  <p className="text-foreground font-semibold text-lg">Quantum Engine Processing…</p>
+                  <p className="text-muted-foreground text-sm mt-1">Generating your complete project blueprint</p>
+                </div>
+                <Progress value={33} className="w-64 h-2" />
               </CardContent>
             </Card>
           )}
@@ -766,6 +989,40 @@ export default function QuantumOptimization() {
               </CardContent>
             </Card>
           )}
+        </TabsContent>
+
+        {/* ── Tab: Expected Outcomes ─────────────────────── */}
+        <TabsContent value="outcomes" className="space-y-6 mt-6">
+          <Card className="dark-slate-purple-card">
+            <CardContent className="pt-8 pb-8">
+              <div className="text-center mb-8">
+                <Rocket className="h-10 w-10 text-primary mx-auto mb-4" />
+                <h2 className="text-2xl font-bold font-bricolage">What You Will Achieve</h2>
+                <p className="text-muted-foreground mt-2">Expected Outcomes</p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl mx-auto">
+                {EXPECTED_OUTCOMES.map((outcome, i) => (
+                  <div
+                    key={i}
+                    className="flex items-start gap-3 p-4 rounded-lg bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/10"
+                  >
+                    <CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                    <p className="text-sm text-foreground">{outcome}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="text-center mt-8">
+                <Button
+                  size="lg"
+                  className="accent-gradient text-primary-foreground gap-2 font-semibold"
+                  onClick={() => setActiveTab("project")}
+                >
+                  <Zap className="h-5 w-5" />
+                  Start Your Quantum Project
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>
