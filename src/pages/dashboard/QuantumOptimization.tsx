@@ -773,7 +773,118 @@ export default function QuantumOptimization() {
                 Additional Notes
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-3">
+              {(() => {
+                const nicheKey = selectedNiche || "";
+                const typeKey = projectType || "";
+                const suggestionMap: Record<string, string[]> = {
+                  healthcare: [
+                    "Must be HIPAA-compliant with encrypted patient records",
+                    "Include telehealth video consultation module",
+                    "Add appointment scheduling with SMS reminders",
+                    "Integrate with EHR/EMR systems via HL7 FHIR",
+                  ],
+                  legal: [
+                    "Include e-signature and document versioning",
+                    "Add billable hours tracking with invoice generation",
+                    "Case timeline visualization with deadline alerts",
+                    "Client portal with secure document sharing",
+                  ],
+                  realestate: [
+                    "Interactive map-based property search with filters",
+                    "Virtual tour integration (Matterport/360°)",
+                    "Mortgage calculator and pre-qualification tool",
+                    "Automated listing syndication to MLS",
+                  ],
+                  fitness: [
+                    "Wearable device sync (Apple Watch, Fitbit)",
+                    "AI-powered workout plan generator",
+                    "Nutrition tracking with meal plan suggestions",
+                    "Progress photo comparison with body metrics",
+                  ],
+                  education: [
+                    "Gamified learning with badges and leaderboards",
+                    "Live classroom with whiteboard and screen sharing",
+                    "AI-powered quiz generator from uploaded content",
+                    "Student progress analytics for instructors",
+                  ],
+                  finance: [
+                    "Real-time market data feeds and charting",
+                    "Multi-currency support with exchange rates",
+                    "Automated tax reporting and compliance",
+                    "Risk assessment scoring with ML models",
+                  ],
+                  restaurant: [
+                    "QR code menu with real-time availability",
+                    "Kitchen display system with order prioritization",
+                    "Loyalty program with points and rewards",
+                    "Multi-location inventory management",
+                  ],
+                  ecommerce: [
+                    "AI-powered product recommendations",
+                    "Abandoned cart recovery with email automation",
+                    "Multi-vendor marketplace with split payments",
+                    "AR product preview (try before you buy)",
+                  ],
+                  saas: [
+                    "Multi-tenant architecture with data isolation",
+                    "Usage-based billing with Stripe integration",
+                    "White-label/custom branding per tenant",
+                    "API rate limiting and usage analytics",
+                  ],
+                  creative: [
+                    "Drag-and-drop portfolio builder",
+                    "Client feedback and approval workflow",
+                    "Asset library with version control",
+                    "Time tracking with project profitability reports",
+                  ],
+                  consulting: [
+                    "Client onboarding automation with intake forms",
+                    "Proposal generator with e-signature",
+                    "Meeting scheduler with calendar sync",
+                    "ROI tracking dashboard for client engagements",
+                  ],
+                };
+                const typeSuggestions: Record<string, string[]> = {
+                  "mobile-app": ["Offline-first with background sync", "Push notification strategy"],
+                  "full-stack": ["GraphQL API layer preferred", "Real-time WebSocket updates"],
+                  "api-service": ["OpenAPI/Swagger documentation auto-gen", "Rate limiting and API key management"],
+                  "saas": ["Subscription billing with free trial", "Admin super-dashboard for all tenants"],
+                };
+                const nicheSuggs = suggestionMap[nicheKey] || [];
+                const typeSuggs = typeSuggestions[typeKey] || [];
+                const allSuggs = [...nicheSuggs, ...typeSuggs];
+
+                if (allSuggs.length === 0) return null;
+
+                return (
+                  <div className="space-y-2">
+                    <p className="text-xs text-muted-foreground flex items-center gap-1">
+                      <Sparkles className="h-3 w-3 text-primary" /> AI-suggested notes — click to add
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {allSuggs.map((s) => (
+                        <button
+                          key={s}
+                          type="button"
+                          onClick={() => {
+                            setAdditionalNotes((prev) =>
+                              prev.includes(s) ? prev : prev ? `${prev}\n${s}` : s
+                            );
+                          }}
+                          className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
+                            additionalNotes.includes(s)
+                              ? "bg-primary/20 border-primary/50 text-primary"
+                              : "bg-card/30 border-border/50 text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                          }`}
+                        >
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
               <Textarea
                 placeholder="Any specific requirements, constraints, or preferences..."
                 value={additionalNotes}
