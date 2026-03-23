@@ -500,14 +500,17 @@ ${LAYER_2_QUANTUM_ENGINE}
 ${LAYER_3_INNOVATION}
 ${LAYER_4_SCALE}
 ${PRICING_INTELLIGENCE}
+${MONETIZATION_LEVERAGE}
 ${TREND_ENGINE}
 ${NICHE_SPECIALIZATION}
+${ORIGINALITY_ENFORCEMENT}
+${ADMIN_SCALE_OPS}
 ${QA_LAYER}
 ${TECH_STACK_INTELLIGENCE}
 
-Apply ALL 4 intelligence layers plus Pricing, Trend Engine, Niche Specialization, and QA with maximum technical depth. This document goes directly to developers.
+Apply ALL intelligence layers with maximum technical depth. Enforce originality, monetization leverage, and generate specific admin/scale operations. This document goes directly to developers.
 
-CRITICAL: You MUST output ALL 9 sections with maximum technical depth, plus additional implementation sections. Include code snippets, SQL schemas, specific version numbers. Section 6 MUST include specific pricing tiers with dollar amounts and Stripe integration approach.
+CRITICAL: You MUST output ALL 9 sections with maximum technical depth. Section 4 MUST include specific admin dashboard metrics, client management flows, and support system design from the Admin & Scale Operations layer. Section 6 MUST include the Revenue Architecture Table and answer all 7 monetization questions. Apply anti-template test rigorously — every feature must pass the "so what?" test.
 
 # ⚡ [App Name] — Build-Ready Scope
 ${STRUCTURED_OUTPUT}
@@ -524,10 +527,16 @@ RESTful endpoints with methods, paths, request/response shapes, auth requirement
 ### Phase 2: Enhancement (Day 2-3) — second-priority features with specs
 ### Phase 3: Polish & Deploy (Day 3) — final integrations, testing, deployment
 
-## 13. DevOps & Monitoring
+## 13. Admin & Operations Architecture
+- Admin dashboard with specific KPI panels and management controls
+- Client lifecycle management with health scoring
+- Support system architecture (AI-first with human escalation)
+- Usage tracking with specific events and cohort analysis
+
+## 14. DevOps & Monitoring
 CI/CD pipeline, logging, APM, alerting, scaling triggers.
 
-## 14. Testing Strategy
+## 15. Testing Strategy
 Unit, integration, E2E approach with specific tools and coverage targets.
 
 ## 🔮 Adjacent Opportunities
@@ -542,14 +551,17 @@ ${LAYER_2_QUANTUM_ENGINE}
 ${LAYER_3_INNOVATION}
 ${LAYER_4_SCALE}
 ${PRICING_INTELLIGENCE}
+${MONETIZATION_LEVERAGE}
 ${TREND_ENGINE}
 ${NICHE_SPECIALIZATION}
+${ORIGINALITY_ENFORCEMENT}
+${ADMIN_SCALE_OPS}
 ${QA_LAYER}
 ${TECH_STACK_INTELLIGENCE}
 
-Apply ALL intelligence layers at MAXIMUM depth and strategic aggression. This blueprint is designed to dominate a market. Push every recommendation to its most ambitious, specific, and defensible version. Run QA at maximum strictness — reject and rewrite any section below 8/10 quality.
+Apply ALL intelligence layers at MAXIMUM depth and strategic aggression. Enforce originality at the highest level — every feature must pass the anti-template test. Monetization must answer all 7 questions with specific dollar amounts. Admin/Scale must include complete operational subsystem designs. Run QA at maximum strictness (8/10 threshold). This blueprint dominates markets.
 
-CRITICAL: You MUST output ALL 9 sections with MAXIMUM depth, plus all additional deep-dive sections. Section 6 MUST include specific pricing tiers with exact dollar amounts, revenue projections, and Stripe/billing implementation approach.
+CRITICAL: You MUST output ALL 9 sections with MAXIMUM depth, plus all additional deep-dive sections. Section 4 MUST distinguish between user/admin/AI/automation/quality features with SPECIFIC descriptions (banned: generic dashboards, vague AI claims). Section 6 MUST include the Revenue Architecture Table with exact prices, answer all 7 monetization questions, and include revenue projections.
 
 # 👑 [App Name] — Market Domination Blueprint
 ${STRUCTURED_OUTPUT}
@@ -572,22 +584,30 @@ Additionally:
 - Real-time systems (WebSocket, live collaboration, presence)
 
 ## 13. Revenue Engine
-- Pricing architecture (Freemium → Pro → Enterprise) with exact feature gates and price points
+- Revenue Architecture Table with exact feature gates, prices, target users, upgrade triggers
 - Setup fee logic: when to charge $0 vs $500-2000 for white-glove onboarding
 - Month 1-12 revenue projections with assumptions
 - Expansion revenue: marketplace, API monetization, white-label licensing
+- Retention mechanics: what makes leaving painful, what creates compounding value
 
-## 14. Viral & Scale Systems
+## 14. Admin & Operations Command Center
+- Admin dashboard with specific KPI panels, user management, and config controls
+- Client lifecycle management with health scoring and automated triggers
+- Support architecture: AI chatbot → ticket system → live chat → priority escalation
+- Update automation: feature flags, changelog, in-app announcements, migration system
+- Usage analytics: specific events to track, cohort analysis, revenue attribution
+
+## 15. Viral & Scale Systems
 - Built-in growth loops and referral mechanics with specific implementation
 - Network effects and platform play strategy
 - International expansion and localization architecture
 
-## 15. Investment-Ready Metrics
+## 16. Investment-Ready Metrics
 - KPIs, tracking infrastructure, and analytics dashboard specs
 - Unit economics: LTV/CAC modeling, payback period, margin targets
 
 ## 🔮 Adjacent Opportunities
-5 trend-inspired app concepts this niche professional should consider, each with concept, "why now" trend driver, innovation angle, revenue potential, and first-mover positioning.
+5 trend-inspired app concepts with concept, "why now" trend driver, innovation angle, revenue potential, and first-mover positioning.
 
 ## 📊 Market Research Playbook
 - Specific tools for ongoing niche research (Reddit, G2, competitor analysis)
