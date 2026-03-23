@@ -16,6 +16,7 @@ import {
   Target, TrendingUp, Users, Lightbulb, Timer, Atom, Crown, Flame,
   ArrowRight, CircuitBoard, MessageSquare, Play, Briefcase, Search,
   Wrench, DollarSign, Star, Trophy, Settings, Blocks, PenTool,
+  ShieldCheck, Gem, Crosshair, Workflow, Scale, Fingerprint,
 } from "lucide-react";
 
 /* ══════════════════════════════════════════════════════════
@@ -103,6 +104,37 @@ const PLATFORMS = [
   { id: "api", label: "API Only" },
 ];
 
+/* ── Intelligence Layers (for UI display) ────────────── */
+interface IntelligenceLayer {
+  id: string;
+  label: string;
+  shortLabel: string;
+  icon: React.ElementType;
+  color: string;
+  description: string;
+}
+
+const INTELLIGENCE_LAYERS: IntelligenceLayer[] = [
+  { id: "foundation", label: "Foundation Logic", shortLabel: "Foundation", icon: Briefcase, color: "text-blue-400", description: "Product structure, user flow, business model & pricing" },
+  { id: "quantum-engine", label: "Quantum Synthesis", shortLabel: "Synthesis", icon: Brain, color: "text-purple-400", description: "Multi-model reasoning & blueprint assembly" },
+  { id: "innovation", label: "Trend & Innovation", shortLabel: "Innovation", icon: Sparkles, color: "text-cyan-400", description: "Originality, opportunity detection & 2025-2026 trends" },
+  { id: "scale", label: "Automation & Scale", shortLabel: "Scale", icon: Settings, color: "text-green-400", description: "Admin ops, client management & growth systems" },
+  { id: "pricing", label: "Pricing Intelligence", shortLabel: "Pricing", icon: DollarSign, color: "text-amber-400", description: "Tier generation, revenue architecture & monetization" },
+  { id: "trend-engine", label: "Trend Engine", shortLabel: "Trends", icon: TrendingUp, color: "text-pink-400", description: "Adjacent opportunities & market research automation" },
+  { id: "niche", label: "Niche Specialization", shortLabel: "Niche", icon: Crosshair, color: "text-orange-400", description: "Industry-specific workflows, terminology & integrations" },
+  { id: "originality", label: "Originality Enforcement", shortLabel: "Originality", icon: Fingerprint, color: "text-violet-400", description: "Anti-template filter, distinctive workflows & differentiation" },
+  { id: "qa", label: "Quality Assurance", shortLabel: "QA", icon: ShieldCheck, color: "text-emerald-400", description: "7-criteria evaluation — rejects weak concepts" },
+  { id: "buildability", label: "Buildability Layer", shortLabel: "Buildable", icon: Wrench, color: "text-lime-400", description: "MVP definition, implementation order & dependency mapping" },
+  { id: "monetization", label: "Monetization Leverage", shortLabel: "Revenue", icon: Gem, color: "text-yellow-400", description: "Revenue architecture, retention mechanics & upsell logic" },
+];
+
+const MODE_LAYERS: Record<string, string[]> = {
+  "instant-concept": ["foundation", "quantum-engine", "pricing", "monetization", "niche", "originality", "buildability", "qa"],
+  "premium-blueprint": ["foundation", "quantum-engine", "innovation", "pricing", "monetization", "trend-engine", "niche", "originality", "scale", "buildability", "qa"],
+  "build-ready": ["foundation", "quantum-engine", "innovation", "scale", "pricing", "monetization", "trend-engine", "niche", "originality", "scale", "buildability", "qa"],
+  "market-domination": ["foundation", "quantum-engine", "innovation", "scale", "pricing", "monetization", "trend-engine", "niche", "originality", "scale", "buildability", "qa"],
+};
+
 /* ── Generation Modes ──────────────────────────────────── */
 interface GenerationMode {
   id: string;
@@ -113,6 +145,8 @@ interface GenerationMode {
   color: string;
   speed: string;
   depth: string;
+  sections: string;
+  personality: string;
 }
 
 const GENERATION_MODES: GenerationMode[] = [
@@ -120,41 +154,49 @@ const GENERATION_MODES: GenerationMode[] = [
     id: "instant-concept",
     label: "Instant Concept",
     tagline: "Lightning-fast strategic clarity",
-    description: "Concise app concept with core features, value prop, and tech snapshot. Sharp and actionable.",
+    description: "Sharp app concept with pricing intelligence, niche specialization, MVP definition, and monetization logic. Built to validate fast.",
     icon: Zap,
     color: "from-yellow-500 to-orange-500",
     speed: "~8s",
-    depth: "Core",
+    depth: "8 layers",
+    sections: "9 sections",
+    personality: "Fast-launch founder mode",
   },
   {
     id: "premium-blueprint",
     label: "Premium Blueprint",
     tagline: "Full product architecture",
-    description: "Comprehensive blueprint with modules, UX strategy, monetization, and go-to-market plan.",
+    description: "Comprehensive blueprint with UX strategy, go-to-market plan, revenue architecture table, buildability roadmap, and adjacent opportunities.",
     icon: Blocks,
     color: "from-blue-500 to-cyan-500",
     speed: "~12s",
-    depth: "Full",
+    depth: "11 layers",
+    sections: "12+ sections",
+    personality: "Product strategist + architect",
   },
   {
     id: "build-ready",
     label: "Build-Ready Scope",
     tagline: "Developer-ready specification",
-    description: "Technical architecture, database schemas, API specs, implementation phases, and DevOps strategy.",
+    description: "Database schemas, API specs, phased implementation with acceptance criteria, dependency manifest with costs, and admin architecture.",
     icon: Wrench,
     color: "from-green-500 to-emerald-500",
     speed: "~14s",
-    depth: "Technical",
+    depth: "All layers",
+    sections: "16+ sections",
+    personality: "Senior technical architect",
   },
   {
     id: "market-domination",
     label: "Market Domination",
     tagline: "Total competitive blueprint",
-    description: "Everything above plus competitive strategy, scale systems, viral mechanics, and investor metrics.",
+    description: "Competitive annihilation strategy, AI/ML deep dive, revenue engine with projections, viral systems, and investment-ready metrics. Maximum depth.",
     icon: Crown,
     color: "from-purple-500 to-pink-500",
     speed: "~15s",
-    depth: "Maximum",
+    depth: "All layers MAX",
+    sections: "17+ sections",
+    personality: "Visionary strategist — $500/hr output",
   },
 ];
 
@@ -167,17 +209,23 @@ const STEPS = [
 ] as const;
 type StepKey = typeof STEPS[number]["key"];
 
-/* ── Quantum Phases — mirrors the 4 Intelligence Layers ── */
+/* ── Quantum Phases — mirrors all intelligence layers ─── */
 const QUANTUM_PHASES = [
   { at: 100, text: "Initializing Quantum Engine…", icon: CircuitBoard },
-  { at: 88, text: "Layer 1: Foundation Logic — analyzing structure & business model…", icon: Briefcase },
-  { at: 74, text: "Layer 1: Foundation Logic — mapping user flow & pricing…", icon: DollarSign },
-  { at: 62, text: "Layer 2: Quantum Synthesis — orchestrating multi-model reasoning…", icon: Brain },
-  { at: 50, text: "Layer 2: Quantum Synthesis — assembling blueprint sections…", icon: Blocks },
-  { at: 38, text: "Layer 3: Innovation — detecting opportunities & injecting originality…", icon: Sparkles },
-  { at: 26, text: "Layer 3: Innovation — applying 2025–2026 tech trends…", icon: TrendingUp },
-  { at: 14, text: "Layer 4: Scale — adding automation, admin & growth systems…", icon: Settings },
-  { at: 5, text: "Final Assembly — quality assurance & blueprint packaging…", icon: Rocket },
+  { at: 92, text: "Activating Tool Personality — 5 expert minds engaged…", icon: Crown },
+  { at: 84, text: "Layer 1: Foundation Logic — analyzing structure & business model…", icon: Briefcase },
+  { at: 76, text: "Layer 1: Foundation Logic — mapping user flow & pricing…", icon: DollarSign },
+  { at: 68, text: "Layer 2: Quantum Synthesis — orchestrating multi-model reasoning…", icon: Brain },
+  { at: 60, text: "Layer 2: Quantum Synthesis — assembling blueprint sections…", icon: Blocks },
+  { at: 52, text: "Layer 3: Innovation — detecting opportunities & injecting originality…", icon: Sparkles },
+  { at: 44, text: "Layer 3: Innovation — applying 2025–2026 tech trends…", icon: TrendingUp },
+  { at: 36, text: "Layer 4: Scale — adding automation, admin & growth systems…", icon: Settings },
+  { at: 28, text: "Pricing Intelligence — generating revenue architecture…", icon: DollarSign },
+  { at: 22, text: "Niche Specialization — tailoring to industry workflows…", icon: Crosshair },
+  { at: 16, text: "Buildability Check — verifying MVP & implementation order…", icon: Wrench },
+  { at: 10, text: "Originality Filter — running anti-template test…", icon: Fingerprint },
+  { at: 5, text: "Quality Assurance Gate — 7-criteria evaluation (min 7/10)…", icon: ShieldCheck },
+  { at: 2, text: "Final Synthesis — premium blueprint packaging…", icon: Rocket },
 ];
 
 /* ══════════════════════════════════════════════════════════
@@ -188,6 +236,7 @@ function QuantumCountdown({ onComplete, mode }: { onComplete: () => void; mode: 
   const [phase, setPhase] = useState(QUANTUM_PHASES[0]);
   const modeConfig = GENERATION_MODES.find((m) => m.id === mode);
   const duration = mode === "instant-concept" ? 8 : mode === "premium-blueprint" ? 12 : mode === "build-ready" ? 14 : 15;
+  const activeLayers = MODE_LAYERS[mode] || MODE_LAYERS["premium-blueprint"];
 
   useEffect(() => {
     const totalTicks = duration * 10;
@@ -207,7 +256,7 @@ function QuantumCountdown({ onComplete, mode }: { onComplete: () => void; mode: 
   }, [onComplete, duration]);
 
   return (
-    <div className="flex flex-col items-center justify-center gap-6 py-16">
+    <div className="flex flex-col items-center justify-center gap-6 py-12">
       <div className="relative">
         <div className="absolute inset-0 bg-primary/30 blur-3xl rounded-full animate-pulse" />
         <div className="relative h-28 w-28 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 border border-primary/40 flex items-center justify-center">
@@ -225,7 +274,7 @@ function QuantumCountdown({ onComplete, mode }: { onComplete: () => void; mode: 
         </div>
         {modeConfig && (
           <Badge variant="outline" className="border-primary/40 text-primary text-xs mt-1">
-            {modeConfig.label} Mode
+            {modeConfig.label} Mode — {activeLayers.length} Intelligence Layers Active
           </Badge>
         )}
       </div>
@@ -236,6 +285,21 @@ function QuantumCountdown({ onComplete, mode }: { onComplete: () => void; mode: 
           <span>Quantum Processing</span>
           <span>{Math.round(progress)}%</span>
         </div>
+      </div>
+
+      {/* Active layer indicators */}
+      <div className="flex gap-1.5 flex-wrap justify-center max-w-md">
+        {activeLayers.map((layerId) => {
+          const layer = INTELLIGENCE_LAYERS.find((l) => l.id === layerId);
+          if (!layer) return null;
+          const layerProgress = progress > 0;
+          return (
+            <Badge key={layer.id} variant="secondary" className={`text-[10px] gap-1 transition-all ${layerProgress ? 'opacity-100' : 'opacity-40'}`}>
+              <layer.icon className={`h-2.5 w-2.5 ${layer.color}`} />
+              {layer.shortLabel}
+            </Badge>
+          );
+        })}
       </div>
 
       <div className="flex gap-2 flex-wrap justify-center">
@@ -583,6 +647,8 @@ export default function QuantumOptimization() {
     setBlueprint(""); setError(""); setShowCountdown(false); setStep("mode");
   };
 
+  const activeLayers = MODE_LAYERS[generationMode] || MODE_LAYERS["premium-blueprint"];
+
   /* ══════════════════════════════════════════════════════
      RENDER
      ══════════════════════════════════════════════════════ */
@@ -600,26 +666,30 @@ export default function QuantumOptimization() {
         <div className="relative z-10 p-8 sm:p-10">
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div className="max-w-2xl">
-              <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center gap-3 mb-4 flex-wrap">
                 <Badge className="accent-gradient text-primary-foreground border-0 text-xs font-bold tracking-wider uppercase px-3 py-1.5">
                   <Timer className="h-3 w-3 mr-1.5" />8–15s Generation
                 </Badge>
                 <Badge variant="outline" className="border-primary/30 text-primary text-xs">
-                  <Crown className="h-3 w-3 mr-1" />Generation Engine
+                  <Crown className="h-3 w-3 mr-1" />11 Intelligence Layers
+                </Badge>
+                <Badge variant="outline" className="border-amber-500/30 text-amber-400 text-xs">
+                  <ShieldCheck className="h-3 w-3 mr-1" />QA Enforced
                 </Badge>
               </div>
               <h1 className="text-3xl sm:text-4xl font-bold font-bricolage leading-tight">
                 <span className="gradient-text">Quantum</span>{" "}
-                <span className="text-foreground">App Generator</span>
+                <span className="text-foreground">AI Product Studio</span>
               </h1>
               <p className="text-muted-foreground mt-3 text-sm sm:text-base max-w-xl leading-relaxed">
-                Describe your app idea. Choose a generation mode. Get a complete blueprint in 8–15 seconds.
-                From intent to software concept — instantly.
+                5 expert minds. 11 intelligence layers. From intent to premium, buildable, niche-specialized app blueprint — in seconds.
+                Pricing intelligence, trend engine, originality enforcement, and QA built in.
               </p>
             </div>
             <div className="flex gap-3">
               {[
                 { label: "Speed", value: "8–15s", icon: Zap },
+                { label: "Layers", value: "11", icon: Brain },
                 { label: "Modes", value: "4", icon: Blocks },
                 { label: "Niches", value: "12+", icon: Target },
               ].map((stat) => (
@@ -627,6 +697,19 @@ export default function QuantumOptimization() {
                   <stat.icon className="h-4 w-4 text-primary mx-auto mb-1" />
                   <p className="text-lg font-bold text-foreground">{stat.value}</p>
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Intelligence Layer Strip */}
+          <div className="mt-6 pt-5 border-t border-border/20">
+            <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-2.5">Active Intelligence Modules</p>
+            <div className="flex flex-wrap gap-1.5">
+              {INTELLIGENCE_LAYERS.map((layer) => (
+                <div key={layer.id} className="flex items-center gap-1 px-2 py-1 rounded-md bg-card/30 border border-border/20">
+                  <layer.icon className={`h-3 w-3 ${layer.color}`} />
+                  <span className="text-[10px] text-muted-foreground font-medium">{layer.shortLabel}</span>
                 </div>
               ))}
             </div>
@@ -698,7 +781,7 @@ export default function QuantumOptimization() {
                 <h2 className="text-2xl font-bold font-bricolage">
                   What kind of <span className="gradient-text">app</span> do you want to build?
                 </h2>
-                <p className="text-muted-foreground text-sm mt-1">Select a niche to get intelligent, tailored generation.</p>
+                <p className="text-muted-foreground text-sm mt-1">Select a niche to activate industry-specific intelligence.</p>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -764,7 +847,7 @@ export default function QuantumOptimization() {
                 <h2 className="text-2xl font-bold font-bricolage">
                   Describe your <span className="gradient-text">app idea</span>
                 </h2>
-                <p className="text-muted-foreground text-sm mt-1">Tell us what you want to build. The more detail, the better the output.</p>
+                <p className="text-muted-foreground text-sm mt-1">Tell us what you want to build. The AI will infer niche, market, and strategy.</p>
               </div>
 
               <div>
@@ -830,12 +913,13 @@ export default function QuantumOptimization() {
             <h2 className="text-2xl font-bold font-bricolage">
               Choose <span className="gradient-text">Generation Mode</span>
             </h2>
-            <p className="text-muted-foreground text-sm mt-1">Each mode changes the depth, detail, and strategic value of your output.</p>
+            <p className="text-muted-foreground text-sm mt-1">Each mode activates different intelligence layers at different depths.</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {GENERATION_MODES.map((mode) => {
               const isSelected = generationMode === mode.id;
+              const layers = MODE_LAYERS[mode.id] || [];
               return (
                 <button
                   key={mode.id}
@@ -858,6 +942,31 @@ export default function QuantumOptimization() {
                   <p className={`text-base font-bold ${isSelected ? "text-foreground" : "text-muted-foreground"}`}>{mode.label}</p>
                   <p className="text-xs text-primary/80 font-medium mt-0.5">{mode.tagline}</p>
                   <p className="text-xs text-muted-foreground/70 mt-2 leading-relaxed">{mode.description}</p>
+
+                  {/* Layer indicators per mode */}
+                  <div className="mt-3 pt-3 border-t border-border/20">
+                    <div className="flex items-center gap-1 mb-1.5">
+                      <span className="text-[9px] text-muted-foreground uppercase tracking-wider">{mode.sections}</span>
+                      <span className="text-[9px] text-muted-foreground">·</span>
+                      <span className="text-[9px] text-muted-foreground italic">{mode.personality}</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {layers.slice(0, 8).map((layerId) => {
+                        const layer = INTELLIGENCE_LAYERS.find((l) => l.id === layerId);
+                        if (!layer) return null;
+                        return (
+                          <span key={layer.id} className={`inline-flex items-center gap-0.5 text-[9px] ${layer.color} opacity-70`}>
+                            <layer.icon className="h-2.5 w-2.5" />
+                            {layer.shortLabel}
+                          </span>
+                        );
+                      })}
+                      {layers.length > 8 && (
+                        <span className="text-[9px] text-muted-foreground">+{layers.length - 8} more</span>
+                      )}
+                    </div>
+                  </div>
+
                   {isSelected && <div className="absolute top-3 right-3"><CheckCircle className="h-5 w-5 text-primary" /></div>}
                 </button>
               );
@@ -1048,7 +1157,7 @@ export default function QuantumOptimization() {
                 <div className="space-y-1">
                   <p className="text-sm font-semibold text-foreground">{projectName}</p>
                   <p className="text-xs text-muted-foreground">
-                    {GENERATION_MODES.find((m) => m.id === generationMode)?.label} Mode · {totalSelected} feature{totalSelected !== 1 ? "s" : ""} selected
+                    {GENERATION_MODES.find((m) => m.id === generationMode)?.label} Mode · {totalSelected} feature{totalSelected !== 1 ? "s" : ""} selected · {activeLayers.length} layers active
                   </p>
                 </div>
                 <div className="flex gap-3">
@@ -1094,7 +1203,7 @@ export default function QuantumOptimization() {
                 </div>
                 <div className="text-center">
                   <p className="text-foreground font-semibold text-lg">Quantum Engine Processing…</p>
-                  <p className="text-muted-foreground text-sm mt-1">Streaming your {GENERATION_MODES.find((m) => m.id === generationMode)?.label}</p>
+                  <p className="text-muted-foreground text-sm mt-1">Streaming your {GENERATION_MODES.find((m) => m.id === generationMode)?.label} — {activeLayers.length} layers active</p>
                 </div>
                 <Loader2 className="h-6 w-6 animate-spin text-primary" />
               </CardContent>
@@ -1104,13 +1213,34 @@ export default function QuantumOptimization() {
           {blueprint && (
             <Card className="dark-slate-purple-card">
               <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-3">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <Zap className="h-5 w-5 text-primary" />
-                  <span className="gradient-text">{projectName}</span>
-                  <Badge variant="secondary" className="text-xs ml-2">
-                    {GENERATION_MODES.find((m) => m.id === generationMode)?.label}
-                  </Badge>
-                </CardTitle>
+                <div>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Zap className="h-5 w-5 text-primary" />
+                    <span className="gradient-text">{projectName}</span>
+                    <Badge variant="secondary" className="text-xs ml-2">
+                      {GENERATION_MODES.find((m) => m.id === generationMode)?.label}
+                    </Badge>
+                  </CardTitle>
+                  {!generating && (
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {activeLayers.slice(0, 6).map((layerId) => {
+                        const layer = INTELLIGENCE_LAYERS.find((l) => l.id === layerId);
+                        if (!layer) return null;
+                        return (
+                          <Badge key={layer.id} variant="outline" className="text-[9px] border-border/30 gap-0.5">
+                            <layer.icon className={`h-2.5 w-2.5 ${layer.color}`} />
+                            {layer.shortLabel}
+                          </Badge>
+                        );
+                      })}
+                      {activeLayers.length > 6 && (
+                        <Badge variant="outline" className="text-[9px] border-border/30">
+                          +{activeLayers.length - 6} more
+                        </Badge>
+                      )}
+                    </div>
+                  )}
+                </div>
                 {!generating && (
                   <div className="flex gap-2">
                     <Button onClick={handleRegenerate} variant="outline" size="sm" className="gap-2 border-primary/30">
