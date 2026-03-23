@@ -10,7 +10,7 @@ const navLinks = [
   { label: "Projects", href: "/projects" },
   { label: "Testimonials", href: "#testimonials" },
   { label: "Contact", href: "#contact" },
-  { label: "FlashApps", href: "/flash-apps" },
+  { label: "Quantum Generation", href: "/flash-apps" },
 ];
 
 export default function Navbar() {
