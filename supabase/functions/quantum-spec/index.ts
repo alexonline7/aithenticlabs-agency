@@ -439,13 +439,15 @@ const MODE_PROMPTS: Record<string, string> = {
 ${LAYER_1_FOUNDATION}
 ${LAYER_2_QUANTUM_ENGINE}
 ${PRICING_INTELLIGENCE}
+${MONETIZATION_LEVERAGE}
 ${NICHE_SPECIALIZATION}
+${ORIGINALITY_ENFORCEMENT}
 ${QA_LAYER}
 ${TECH_STACK_INTELLIGENCE}
 
-Apply Layer 1 (Foundation), Layer 2 (Synthesis), Pricing Intelligence, and Niche Specialization at high speed. Run QA before outputting. Prioritize strategic sharpness over depth.
+Apply Foundation, Synthesis, Pricing, Monetization, Niche Specialization, and Originality Enforcement at high speed. Run QA before outputting. Prioritize strategic sharpness over depth.
 
-CRITICAL: You MUST output ALL 9 sections. Keep each concise (2-4 bullet points) but never skip one. Be bold and specific — no filler. Pricing in Section 6 MUST include specific dollar amounts.
+CRITICAL: You MUST output ALL 9 sections. Keep each concise (2-4 bullet points) but never skip one. Be bold and specific — no filler. Pricing in Section 6 MUST include specific dollar amounts and answer all 7 monetization questions. Apply the anti-template test before outputting.
 
 # 🚀 [App Name] — Instant Concept
 ${STRUCTURED_OUTPUT}
