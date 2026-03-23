@@ -61,8 +61,8 @@ export default function FlashApps() {
             <Zap className="h-5 w-5" /> 8-15 Second Quantum Generation
           </p>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-bricolage mb-6">
-            <span className="text-slate-100">The World's</span>{" "}
-            <span className="gradient-text">First Quantum AI Web App Agency</span>
+            <span className="text-slate-100">Quantum</span>{" "}
+            <span className="gradient-text">Generation</span>
           </h1>
           <p className="text-slate-400 text-lg md:text-xl max-w-3xl mx-auto mb-6">
             Revolutionary breakthrough! Get AI web apps for niche professionals generated in just 8–15 seconds. We don't just build fast—we've shattered the time barrier.

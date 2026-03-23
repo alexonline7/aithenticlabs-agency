@@ -99,7 +99,7 @@ export default function Index() {
                 Get AI Recommendation <Sparkles className="ml-2 h-5 w-5" />
               </Button>
             </Link>
-            <Link to="/flash-apps">
+            <Link to="/quantum-generation">
               <Button variant="outline" className="h-12 px-8 text-lg border-electric-blue-500/30 text-electric-blue-500 hover:bg-electric-blue-500/10">
                 ⚡ Quantum Generation
               </Button>
