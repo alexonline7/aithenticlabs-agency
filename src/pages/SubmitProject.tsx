@@ -111,18 +111,27 @@ export default function SubmitProject() {
             <p className="text-slate-400 mb-8">
               Thank you, {name || "there"}! We've received your project request and will get back to you at <span className="text-deep-gold-500">{email}</span> within 24 hours.
             </p>
-            <div className="flex gap-4 justify-center">
-              <Link to="/">
-                <Button variant="outline" className="border-deep-gold-500/30 text-deep-gold-500">
-                  <ArrowLeft className="mr-2 h-4 w-4" /> Back Home
-                </Button>
-              </Link>
-              <Link to="/auth">
-                <Button className="bg-gradient-to-r from-deep-gold-500 to-electric-blue-500 text-charcoal-900 font-bold">
-                  Explore Dashboard <Sparkles className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-            </div>
+
+            <Card className="border-deep-gold-500/30 bg-gradient-to-br from-deep-gold-500/10 to-electric-blue-500/10 mb-8">
+              <CardContent className="pt-6 text-center space-y-3">
+                <Sparkles className="h-6 w-6 text-deep-gold-500 mx-auto" />
+                <h3 className="text-lg font-bold text-slate-100">Want to discuss your project with our team?</h3>
+                <p className="text-sm text-slate-400">
+                  Create a free account to access our support chat and track your project progress in real time.
+                </p>
+                <Link to="/auth">
+                  <Button className="bg-gradient-to-r from-deep-gold-500 to-electric-blue-500 text-charcoal-900 font-bold hover:opacity-90 mt-2">
+                    Create Account <Sparkles className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            <Link to="/">
+              <Button variant="outline" className="border-deep-gold-500/30 text-deep-gold-500">
+                <ArrowLeft className="mr-2 h-4 w-4" /> Back Home
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
