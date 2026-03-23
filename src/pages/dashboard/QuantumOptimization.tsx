@@ -615,7 +615,7 @@ export default function QuantumOptimization() {
   const canGenerate = projectName.trim() && (selectedNiche || appIdea.trim()) && generationMode;
 
   /* ── Generate Blueprint ─────────────────────────────── */
-  const handleGenerate = async () => {
+  const handleGenerate = async (strictEnforcement = false) => {
     if (!canGenerate) return;
     setGenerating(true);
     setBlueprint("");
@@ -656,7 +656,7 @@ export default function QuantumOptimization() {
           projectType: PROJECT_TYPES.find((t) => t.id === projectType)?.label || projectType || "Web Application",
           platforms: selectedPlatforms.map((p) => PLATFORMS.find((pl) => pl.id === p)?.label || p),
           selectedFeatures: featureMap,
-          additionalNotes,
+          additionalNotes: [additionalNotes, strictEnforcement ? STRICT_ENFORCEMENT_APPENDIX : ""].filter(Boolean).join("\n\n"),
           mode: generationMode,
         }),
       });
@@ -736,6 +736,7 @@ export default function QuantumOptimization() {
             platforms: selectedPlatforms.map((p) => PLATFORMS.find((pl) => pl.id === p)?.label || p),
             selectedFeatures: featureMap,
             additionalNotes,
+            strictEnforcement,
             generatedByTool: "quantum-optimization",
           },
         });
@@ -810,7 +811,9 @@ export default function QuantumOptimization() {
     setBlueprint(""); setError(""); setShowCountdown(false); setStep("mode");
   };
 
-  const activeLayers = MODE_LAYERS[generationMode] || MODE_LAYERS["premium-blueprint"];
+  const activeLayers = Array.from(new Set(MODE_LAYERS[generationMode] || MODE_LAYERS["premium-blueprint"]));
+  const validationSummary = useMemo(() => buildValidationSummary(blueprint), [blueprint]);
+  const hasCriticalFailures = validationSummary.criticalFailures.length > 0;
 
   /* ══════════════════════════════════════════════════════
      RENDER
@@ -1215,7 +1218,7 @@ export default function QuantumOptimization() {
               <Button
                 className="accent-gradient text-primary-foreground gap-2 font-bold text-base px-6"
                 disabled={!canGenerate || generating}
-                onClick={handleGenerate}
+                    onClick={() => handleGenerate()}
               >
                 <Zap className="h-5 w-5" />
                 Generate {GENERATION_MODES.find((m) => m.id === generationMode)?.label}
@@ -1328,7 +1331,7 @@ export default function QuantumOptimization() {
                     <ChevronLeft className="h-4 w-4" /> Back
                   </Button>
                   <Button className="accent-gradient text-primary-foreground gap-2 font-bold text-base px-6"
-                    disabled={!canGenerate || generating} onClick={handleGenerate}>
+                    disabled={!canGenerate || generating} onClick={() => handleGenerate()}>
                     <Zap className="h-5 w-5" />
                     Generate {GENERATION_MODES.find((m) => m.id === generationMode)?.label}
                   </Button>
@@ -1416,6 +1419,70 @@ export default function QuantumOptimization() {
                 )}
               </CardHeader>
               <CardContent>
+                {!generating && validationSummary.groups.length > 0 && (
+                  <div className="mb-4 rounded-xl border border-border/30 bg-card/30 p-4 space-y-4">
+                    <div className="flex items-center justify-between flex-wrap gap-2">
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">Workflow Proof — Runtime Validation</p>
+                        <p className="text-xs text-muted-foreground">
+                          Validating Buildability, Personality, and Final Synthesis on generated output.
+                        </p>
+                      </div>
+                      <Badge variant={hasCriticalFailures ? "destructive" : "default"} className="text-xs">
+                        {validationSummary.totalPassed}/{validationSummary.totalChecks} checks passed
+                      </Badge>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+                      {validationSummary.groups.map((group) => (
+                        <div key={group.id} className="rounded-lg border border-border/30 bg-muted/10 p-3">
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <p className="text-xs font-semibold text-foreground">{group.title}</p>
+                              <p className="text-[11px] text-muted-foreground mt-0.5">{group.description}</p>
+                            </div>
+                            <Badge variant="outline" className="text-[10px] border-border/50">
+                              {group.passed}/{group.total}
+                            </Badge>
+                          </div>
+
+                          <div className="mt-2.5 space-y-1.5">
+                            {group.checks.map((check) => (
+                              <div key={check.id} className="flex items-start gap-2">
+                                {check.passed ? (
+                                  <CheckCircle className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
+                                ) : (
+                                  <Shield className="h-3.5 w-3.5 text-muted-foreground mt-0.5 shrink-0" />
+                                )}
+                                <div>
+                                  <p className={`text-[11px] leading-snug ${check.passed ? "text-foreground" : "text-muted-foreground"}`}>{check.label}</p>
+                                  {check.evidence.length > 0 && (
+                                    <p className="text-[10px] text-muted-foreground/80">{check.evidence.slice(0, 2).join(" · ")}</p>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {hasCriticalFailures && (
+                      <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 flex items-start justify-between gap-3 flex-wrap">
+                        <div>
+                          <p className="text-xs font-semibold text-destructive">Critical requirements missing from this blueprint.</p>
+                          <p className="text-[11px] text-destructive/80 mt-0.5">
+                            Missing: {validationSummary.criticalFailures.slice(0, 3).map((check) => check.label).join(" · ")}
+                          </p>
+                        </div>
+                        <Button size="sm" variant="outline" className="border-destructive/40 text-destructive hover:bg-destructive/10" onClick={() => handleGenerate(true)}>
+                          Regenerate with Strict Enforcement
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 <ScrollArea className="h-[600px]">
                   <div ref={blueprintRef} className="prose prose-invert max-w-none text-sm">
                     <ReactMarkdown>{blueprint}</ReactMarkdown>
