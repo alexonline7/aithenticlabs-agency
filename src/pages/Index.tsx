@@ -101,7 +101,7 @@ export default function Index() {
             </Link>
             <Link to="/flash-apps">
               <Button variant="outline" className="h-12 px-8 text-lg border-electric-blue-500/30 text-electric-blue-500 hover:bg-electric-blue-500/10">
-                ⚡ FlashApps Generator
+                ⚡ Quantum Generation
               </Button>
             </Link>
           </div>
