@@ -91,7 +91,7 @@ function App() {
         </Route>
 
         {/* Public pages */}
-        <Route path="/flash-apps" element={<FlashApps />} />
+        <Route path="/quantum-generation" element={<FlashApps />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/submit-project" element={<SubmitProject />} />
         <Route path="/ai-recommendation" element={<AIRecommendationPublic />} />
