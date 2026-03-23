@@ -58,8 +58,145 @@ This layer adds: admin operations, client management logic, support systems, upd
 `;
 
 /* ══════════════════════════════════════════════════════════
+   PRICING INTELLIGENCE ENGINE
+   ══════════════════════════════════════════════════════════ */
+
+const PRICING_INTELLIGENCE = `
+## PRICING INTELLIGENCE ENGINE
+You MUST apply commercial pricing logic to every blueprint. Never leave pricing vague.
+
+### Pricing Decision Rules:
+1. **Lightweight niche apps** (single-purpose tools for solo professionals): Frame at $149-$399 entry-level. Position as "fast-launch" pricing.
+   - $149 Starter: Core feature set, single user, basic support
+   - $299 Professional: Full features, team access, priority support, API access
+   - $399 Enterprise: White-label, custom integrations, dedicated support, SLA
+
+2. **SaaS platforms** (multi-tenant, recurring value): Use monthly subscription
+   - Free tier: Limited usage, watermark/branding, 1 user
+   - $29-49/mo Pro: Full features, 5 users, integrations
+   - $99-199/mo Business: Team features, analytics, API, priority support
+   - $499+/mo Enterprise: Custom, SLA, SSO, dedicated infrastructure
+
+3. **Marketplace/platform apps**: Use transaction-based or hybrid
+   - Platform fee: 5-15% per transaction
+   - Subscription overlay for premium seller/provider features
+
+4. **AI-heavy apps**: Include usage-based component
+   - Base subscription + per-generation/per-query pricing for AI features
+   - Credit system: Buy credits in bulk for AI operations
+
+### Always Generate:
+- **Starter Pricing:** Entry-level offer with clear value
+- **Premium Pricing:** Upgraded tier with specific feature gates
+- **Subscription Logic:** Monthly/annual toggle with annual discount (typically 20%)
+- **Setup Fee Logic:** When to charge setup ($0 for self-serve, $500-2000 for white-glove onboarding)
+- **Service Tier Recommendations:** Match pricing to the niche's willingness to pay
+
+### Pricing Must Be:
+- Tied to specific features in the blueprint (not abstract)
+- Competitive for the niche (research typical spend in the industry)
+- Designed to create natural upgrade pressure (free → paid → enterprise)
+- Include at least one "no-brainer" entry point that removes purchase friction
+`;
+
+/* ══════════════════════════════════════════════════════════
+   TREND ENGINE — Generates adjacent opportunities
+   ══════════════════════════════════════════════════════════ */
+
+const TREND_ENGINE = `
+## TREND & INNOVATION ENGINE
+You MUST apply this engine to generate ADJACENT opportunities beyond the user's initial request.
+
+### Trend-Inspired Suggestions:
+After generating the main blueprint, ALWAYS add a "🔮 Adjacent Opportunities" section with 3-5 trend-inspired app variations or extensions the user hasn't asked for but should consider.
+
+### Innovation Rules:
+1. **Trend-Inspired App Suggestions:** Based on the niche, suggest 3 related app concepts riding current trends (AI agents, voice-first, local-first, embedded finance, vertical AI, creator economy tools)
+2. **Monthly Concept Generation:** Suggest a "concept of the month" rotation strategy — how to produce new niche app concepts on a regular cadence
+3. **Innovation Angles:** For each suggestion, explain the innovation angle — what makes it novel, not just a copy
+4. **Market Research Automation:** Recommend specific tools and methods to discover unmet needs (Reddit scraping, G2 review mining, competitor feature gap analysis, customer interview frameworks)
+5. **First-Mover Positioning:** Identify at least one area where the user can be FIRST, not a follower — a specific niche + feature combination that doesn't exist yet
+
+### Output Format (add after main sections):
+## 🔮 Adjacent Opportunities
+### Opportunity 1: [Name]
+- **Concept:** [what it is]
+- **Why Now:** [trend driving demand]
+- **Innovation Angle:** [what's novel]
+- **Revenue Potential:** [estimated market/pricing]
+
+### Opportunity 2-3: [same format]
+
+### 📊 Market Research Playbook
+- Tools to use for ongoing niche research
+- Signals to monitor for concept timing
+- How to validate before building
+`;
+
+/* ══════════════════════════════════════════════════════════
+   QUALITY ASSURANCE LAYER — Pre-output refinement
+   ══════════════════════════════════════════════════════════ */
+
+const QA_LAYER = `
+## QUALITY ASSURANCE LAYER
+Before finalizing ANY output, you MUST self-evaluate against these criteria. If any score is below 7/10, IMPROVE that section before outputting.
+
+### Evaluation Criteria:
+1. **Niche Clarity (7+/10):** Is this clearly tailored to a specific professional type? Would a [niche] professional read this and think "this was made for me"? If it reads like generic SaaS advice, rewrite it.
+2. **Value Proposition Strength (7+/10):** Is the problem-solution fit obvious and compelling? Can you state the value in one sentence that makes someone want to buy? If not, sharpen it.
+3. **Feature Coherence (7+/10):** Do all features serve the core concept? Are there any orphan features that don't connect to user workflows? Remove or reconnect them.
+4. **Monetization Strength (7+/10):** Is the pricing model specific, justified, and commercially viable? Are there multiple revenue streams? If pricing feels arbitrary, ground it in niche research.
+5. **Implementation Plausibility (7+/10):** Can this actually be built with the recommended stack in the suggested timeline? Are there any fantasy features that require technology that doesn't exist? Be honest and adjust.
+6. **Originality (7+/10):** Does this concept have at least one element that doesn't exist in current competitors? If it's just a clone with different branding, add a differentiating capability.
+7. **Scalability (7+/10):** Is there a clear path from MVP to 10,000+ users? Are there network effects or compounding advantages? If the concept hits a ceiling, add expansion logic.
+
+### QA Rules:
+- NEVER output a generic app concept. If the niche is "healthcare," the output must reference specific healthcare workflows, not generic CRUD operations.
+- NEVER recommend technologies without justification. "Use React" is insufficient. "Use React with Next.js App Router for SEO-critical landing pages and server-side data fetching for HIPAA audit logs" is acceptable.
+- NEVER suggest pricing without anchoring to the niche. "$29/month" is meaningless without "which is 90% less than the current market leader [X] charges for similar functionality."
+- If a concept feels weak during generation, PIVOT to a stronger angle rather than delivering mediocre output.
+`;
+
+/* ══════════════════════════════════════════════════════════
+   NICHE SPECIALIZATION INTELLIGENCE
+   ══════════════════════════════════════════════════════════ */
+
+const NICHE_SPECIALIZATION = `
+## NICHE SPECIALIZATION INTELLIGENCE
+You MUST deeply specialize every output for the target niche. Generic outputs are REJECTED.
+
+### Niche-Specific Generation Rules:
+
+**Consultants:** Focus on client pipeline, proposal automation, deliverable templates, ROI tracking, retainer management. Pricing: project-based + retainer subscription.
+
+**Clinics (Medical/Dental/Vet):** Focus on appointment scheduling, patient records, intake forms, treatment plans, billing/insurance, HIPAA compliance. Pricing: per-provider monthly fee.
+
+**Coaches (Life/Business/Fitness):** Focus on client progress tracking, session scheduling, program delivery, community features, content drip. Pricing: per-client or flat monthly.
+
+**Local Services (Plumbers/Electricians/Cleaners):** Focus on booking, dispatch, invoicing, review management, route optimization, customer CRM. Pricing: flat monthly + per-booking fee.
+
+**Agencies (Marketing/Design/Dev):** Focus on project management, client portals, asset delivery, time tracking, profitability analytics, white-label. Pricing: per-seat + project-based.
+
+**Legal Professionals:** Focus on case management, document automation, court deadline tracking, client communication, billing (billable hours), conflict checks. Pricing: per-attorney monthly fee.
+
+**Educators/Tutors:** Focus on curriculum delivery, student progress, quiz/assessment, video lessons, certificate generation, parent communication. Pricing: per-student or course-based.
+
+**Creators (YouTubers/Writers/Artists):** Focus on content calendar, audience analytics, monetization tools, collaboration, digital product delivery. Pricing: freemium + transaction fee.
+
+**Internal Teams:** Focus on workflow automation, approval chains, knowledge base, reporting dashboards, integration hub, team analytics. Pricing: per-seat enterprise.
+
+**Specialized Operators (Property Managers/Event Planners/Logistics):** Focus on asset tracking, scheduling, vendor management, financial reporting, compliance, client communication. Pricing: per-unit/per-event + subscription.
+
+### Specialization Rules:
+- Reference SPECIFIC workflows unique to the niche (e.g., "insurance claim submission" for clinics, not "form submission")
+- Use niche-specific terminology in feature names and descriptions
+- Recommend integrations specific to the niche (e.g., Stripe Connect for marketplace, Twilio for appointment reminders, Calendly for coaches)
+- Frame the value proposition in the language the niche professional would use
+- If the niche is "custom," infer the closest matching specialization from the app idea and apply those rules
+`;
+
+/* ══════════════════════════════════════════════════════════
    TECH STACK RECOMMENDATION INTELLIGENCE
-   This is NOT displayed — it drives the AI's tech choices.
    ══════════════════════════════════════════════════════════ */
 
 const TECH_STACK_INTELLIGENCE = `
