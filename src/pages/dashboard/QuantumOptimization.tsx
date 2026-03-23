@@ -322,7 +322,7 @@ export default function QuantumOptimization() {
           <div className="flex justify-center gap-2">
             {([["quick", "Quick Select", Zap], ["describe", "Describe Idea", PenTool]] as const).map(([key, label, Icon]) => (
               <button key={key} onClick={() => setInputMode(key as "quick" | "describe")}
-                className={\`flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${inputMode === key ? "accent-gradient text-primary-foreground shadow-lg shadow-primary/20" : "glass-effect text-muted-foreground hover:text-foreground"}\`}>
+                className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${inputMode === key ? "accent-gradient text-primary-foreground shadow-lg shadow-primary/20" : "glass-effect text-muted-foreground hover:text-foreground"}`}>
                 <Icon className="h-4 w-4" /> {label}
               </button>
             ))}
@@ -335,9 +335,9 @@ export default function QuantumOptimization() {
                   const sel = niche === n.id;
                   return (
                     <button key={n.id} onClick={() => setNiche(n.id)}
-                      className={\`group relative flex flex-col items-center gap-2 p-4 rounded-xl border text-center transition-all ${sel ? "border-primary bg-primary/10 shadow-md shadow-primary/10" : "border-border/20 bg-card/30 hover:border-primary/30"}\`}>
-                      <n.icon className={\`h-5 w-5 ${sel ? "text-primary" : "text-muted-foreground group-hover:text-primary/60"}\`} />
-                      <span className={\`text-xs font-semibold ${sel ? "text-foreground" : "text-muted-foreground"}\`}>{n.label}</span>
+                      className={`group relative flex flex-col items-center gap-2 p-4 rounded-xl border text-center transition-all ${sel ? "border-primary bg-primary/10 shadow-md shadow-primary/10" : "border-border/20 bg-card/30 hover:border-primary/30"}`}>
+                      <n.icon className={`h-5 w-5 ${sel ? "text-primary" : "text-muted-foreground group-hover:text-primary/60"}`} />
+                      <span className={`text-xs font-semibold ${sel ? "text-foreground" : "text-muted-foreground"}`}>{n.label}</span>
                       {sel && <CheckCircle className="absolute top-1.5 right-1.5 h-3.5 w-3.5 text-primary" />}
                     </button>
                   );
@@ -391,8 +391,8 @@ export default function QuantumOptimization() {
                 const sel = mode === m.id;
                 return (
                   <button key={m.id} onClick={() => setMode(m.id)}
-                    className={\`relative flex items-start gap-4 p-5 rounded-xl border text-left transition-all ${sel ? "border-primary/50 bg-primary/5 shadow-lg shadow-primary/5" : "border-border/20 bg-card/30 hover:border-primary/30"}\`}>
-                    <div className={\`h-11 w-11 rounded-xl bg-gradient-to-br ${m.grad} flex items-center justify-center shrink-0\`}>
+                    className={`relative flex items-start gap-4 p-5 rounded-xl border text-left transition-all ${sel ? "border-primary/50 bg-primary/5 shadow-lg shadow-primary/5" : "border-border/20 bg-card/30 hover:border-primary/30"}`}>
+                    <div className={`h-11 w-11 rounded-xl bg-gradient-to-br ${m.grad} flex items-center justify-center shrink-0`}>
                       <m.icon className="h-5 w-5 text-white" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -415,7 +415,7 @@ export default function QuantumOptimization() {
               <div className="flex flex-wrap gap-2">
                 {PROJECT_TYPES.map((t) => (
                   <button key={t.id} onClick={() => setProjectType(t.id)}
-                    className={\`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${projectType === t.id ? "border-primary bg-primary/10 text-primary" : "border-border/30 text-muted-foreground hover:border-primary/30"}\`}>
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${projectType === t.id ? "border-primary bg-primary/10 text-primary" : "border-border/30 text-muted-foreground hover:border-primary/30"}`}>
                     <t.icon className="h-3.5 w-3.5" /> {t.label}
                   </button>
                 ))}
@@ -426,7 +426,7 @@ export default function QuantumOptimization() {
               <div className="flex flex-wrap gap-2">
                 {PLATFORMS.map((p) => (
                   <button key={p.id} onClick={() => togglePlatform(p.id)}
-                    className={\`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${platforms.includes(p.id) ? "border-primary bg-primary/10 text-primary" : "border-border/30 text-muted-foreground hover:border-primary/30"}\`}>
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${platforms.includes(p.id) ? "border-primary bg-primary/10 text-primary" : "border-border/30 text-muted-foreground hover:border-primary/30"}`}>
                     {p.label}
                   </button>
                 ))}
@@ -445,8 +445,8 @@ export default function QuantumOptimization() {
               <p className="text-xs font-bold text-foreground mb-2 flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5 text-primary" /> AI Suggestions for {nicheLabel}</p>
               <div className="flex flex-wrap gap-2">
                 {NICHE_TIPS[niche]!.map((tip) => (
-                  <button key={tip} onClick={() => setNotes((p) => p ? \`${p}\n${tip}\` : tip)}
-                    className={\`text-xs px-3 py-1.5 rounded-full border transition-all ${notes.includes(tip) ? "border-primary/50 bg-primary/10 text-primary" : "border-border/30 text-muted-foreground hover:border-primary/30"}\`}>
+                  <button key={tip} onClick={() => setNotes((p) => p ? `${p}\n${tip}` : tip)}
+                    className={`text-xs px-3 py-1.5 rounded-full border transition-all ${notes.includes(tip) ? "border-primary/50 bg-primary/10 text-primary" : "border-border/30 text-muted-foreground hover:border-primary/30"}`}>
                     {tip}
                   </button>
                 ))}
@@ -455,7 +455,7 @@ export default function QuantumOptimization() {
           )}
           <Textarea placeholder="Additional notes or requirements\u2026" value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} className="bg-background border-border/30 text-foreground placeholder:text-muted-foreground" />
           <button onClick={() => setShowFeatures((p) => !p)} className="flex items-center gap-2 text-sm text-primary hover:underline font-medium">
-            <Blocks className="h-4 w-4" /> {showFeatures ? "Hide" : "Show"} Advanced Features {totalFeatures > 0 && \`(${totalFeatures} selected)\`}
+            <Blocks className="h-4 w-4" /> {showFeatures ? "Hide" : "Show"} Advanced Features {totalFeatures > 0 && `(${totalFeatures} selected)`}
           </button>
           {showFeatures && (
             <div className="space-y-4">
@@ -464,7 +464,7 @@ export default function QuantumOptimization() {
                 return (
                   <div key={cat.id} className="rounded-xl border border-border/20 bg-card/20 p-4">
                     <p className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
-                      <cat.icon className={\`h-4 w-4 ${cat.color}\`} /> {cat.title}
+                      <cat.icon className={`h-4 w-4 ${cat.color}`} /> {cat.title}
                       {cnt > 0 && <Badge className="ml-1 text-[10px]">{cnt}</Badge>}
                     </p>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -472,8 +472,8 @@ export default function QuantumOptimization() {
                         const sel = isFeatureSelected(cat.id, f.id);
                         return (
                           <button key={f.id} onClick={() => toggleFeature(cat.id, f.id)}
-                            className={\`flex items-center gap-2 p-2.5 rounded-lg border text-left text-xs transition-all ${sel ? "border-primary bg-primary/10 text-foreground" : "border-border/20 text-muted-foreground hover:border-primary/30"}\`}>
-                            <div className={\`h-4 w-4 rounded border flex items-center justify-center shrink-0 ${sel ? "bg-primary border-primary" : "border-muted-foreground/40"}\`}>
+                            className={`flex items-center gap-2 p-2.5 rounded-lg border text-left text-xs transition-all ${sel ? "border-primary bg-primary/10 text-foreground" : "border-border/20 text-muted-foreground hover:border-primary/30"}`}>
+                            <div className={`h-4 w-4 rounded border flex items-center justify-center shrink-0 ${sel ? "bg-primary border-primary" : "border-muted-foreground/40"}`}>
                               {sel && <CheckCircle className="h-3 w-3 text-primary-foreground" />}
                             </div>
                             <span className="font-medium">{f.label}</span>
@@ -518,10 +518,10 @@ export default function QuantumOptimization() {
                 const done = i < pipelineStep;
                 const active = i === pipelineStep;
                 return (
-                  <div key={m.id} className={\`flex items-center gap-2.5 rounded-lg border px-3 py-2.5 transition-all duration-300 ${done ? "border-primary/30 bg-primary/10" : active ? "border-primary/40 bg-primary/5 shadow-md shadow-primary/10" : "border-border/10 bg-card/10 opacity-40"}\`}>
+                  <div key={m.id} className={`flex items-center gap-2.5 rounded-lg border px-3 py-2.5 transition-all duration-300 ${done ? "border-primary/30 bg-primary/10" : active ? "border-primary/40 bg-primary/5 shadow-md shadow-primary/10" : "border-border/10 bg-card/10 opacity-40"}`}>
                     {done ? <CheckCircle className="h-4 w-4 text-primary shrink-0" /> : active ? <Loader2 className="h-4 w-4 text-primary animate-spin shrink-0" /> : <div className="h-4 w-4 rounded-full border border-border/30 shrink-0" />}
                     <div className="min-w-0 flex-1">
-                      <p className={\`text-[11px] font-bold truncate ${done || active ? "text-foreground" : "text-muted-foreground"}\`}>
+                      <p className={`text-[11px] font-bold truncate ${done || active ? "text-foreground" : "text-muted-foreground"}`}>
                         <span className="text-primary mr-1">{m.n}.</span>{m.short}
                       </p>
                       <p className="text-[9px] text-muted-foreground truncate">{m.desc}</p>
@@ -560,7 +560,7 @@ export default function QuantumOptimization() {
                   <h2 className="text-2xl font-extrabold font-bricolage"><span className="gradient-text">{projectName}</span></h2>
                   <div className="flex items-center gap-2 mt-2 flex-wrap">
                     <Badge className="accent-gradient text-primary-foreground border-0 text-xs">{modeConfig?.label}</Badge>
-                    <Badge variant="outline" className="text-[10px] border-border/30">{genDuration ? \`${genDuration}s\` : "\u2014"}</Badge>
+                    <Badge variant="outline" className="text-[10px] border-border/30">{genDuration ? `${genDuration}s` : "\u2014"}</Badge>
                     <Badge variant="outline" className="text-[10px] border-border/30">{sectionsFound}/9 sections</Badge>
                     <Badge variant="outline" className="text-[10px] border-border/30">18 modules</Badge>
                   </div>
@@ -584,7 +584,7 @@ export default function QuantumOptimization() {
                 <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-bold mb-2">Section Coverage</p>
                 <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
                   {sectionCoverage.map((s) => (
-                    <div key={s.label} className={\`flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-[11px] font-medium ${s.found ? "border-primary/30 bg-primary/5 text-foreground" : "border-border/10 text-muted-foreground opacity-50"}\`}>
+                    <div key={s.label} className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-[11px] font-medium ${s.found ? "border-primary/30 bg-primary/5 text-foreground" : "border-border/10 text-muted-foreground opacity-50"}`}>
                       {s.found ? <CheckCircle className="h-3 w-3 text-primary shrink-0" /> : <div className="h-3 w-3 rounded-full border border-border/40 shrink-0" />}
                       <span className="truncate">{s.label}</span>
                     </div>
