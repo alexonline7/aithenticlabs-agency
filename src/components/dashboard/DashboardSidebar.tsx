@@ -5,7 +5,7 @@ import {
   MessageSquare,
   FileText,
   Zap,
-  Rocket,
+  
   Brain,
   Sparkles,
   Settings,
