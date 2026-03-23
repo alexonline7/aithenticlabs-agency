@@ -682,7 +682,7 @@ export default function QuantumOptimization() {
               placeholder="Describe your niche (e.g. Veterinary Clinic Management)"
               value={customNiche}
               onChange={(e) => setCustomNiche(e.target.value)}
-              className="bg-card/50 max-w-lg mx-auto"
+              className="bg-background border-primary/30 text-foreground placeholder:text-muted-foreground max-w-lg mx-auto"
             />
           )}
 
@@ -693,7 +693,7 @@ export default function QuantumOptimization() {
                 placeholder="e.g. NeuroHealth Pro"
                 value={projectName}
                 onChange={(e) => setProjectName(e.target.value)}
-                className="bg-card/50"
+                className="bg-background border-primary/30 text-foreground placeholder:text-muted-foreground"
               />
             </div>
           )}
@@ -779,7 +779,7 @@ export default function QuantumOptimization() {
                 value={additionalNotes}
                 onChange={(e) => setAdditionalNotes(e.target.value)}
                 rows={4}
-                className="bg-card/50"
+                className="bg-background border-primary/30 text-foreground placeholder:text-muted-foreground"
               />
             </CardContent>
           </Card>
