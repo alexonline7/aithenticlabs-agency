@@ -106,7 +106,7 @@ const PLATFORMS = [
   { id: "api", label: "API Only" },
 ];
 
-/* ── Intelligence Layers (for UI display) ────────────── */
+/* ── Quantum Optimization Transformation Modules ──────── */
 interface IntelligenceLayer {
   id: string;
   label: string;
@@ -117,24 +117,50 @@ interface IntelligenceLayer {
 }
 
 const INTELLIGENCE_LAYERS: IntelligenceLayer[] = [
-  { id: "foundation", label: "Foundation Logic", shortLabel: "Foundation", icon: Briefcase, color: "text-blue-400", description: "Product structure, user flow, business model & pricing" },
-  { id: "quantum-engine", label: "Quantum Synthesis", shortLabel: "Synthesis", icon: Brain, color: "text-purple-400", description: "Multi-model reasoning & blueprint assembly" },
-  { id: "innovation", label: "Trend & Innovation", shortLabel: "Innovation", icon: Sparkles, color: "text-cyan-400", description: "Originality, opportunity detection & 2025-2026 trends" },
-  { id: "scale", label: "Automation & Scale", shortLabel: "Scale", icon: Settings, color: "text-green-400", description: "Admin ops, client management & growth systems" },
-  { id: "pricing", label: "Pricing Intelligence", shortLabel: "Pricing", icon: DollarSign, color: "text-amber-400", description: "Tier generation, revenue architecture & monetization" },
-  { id: "trend-engine", label: "Trend Engine", shortLabel: "Trends", icon: TrendingUp, color: "text-pink-400", description: "Adjacent opportunities & market research automation" },
-  { id: "niche", label: "Niche Specialization", shortLabel: "Niche", icon: Crosshair, color: "text-orange-400", description: "Industry-specific workflows, terminology & integrations" },
-  { id: "originality", label: "Originality Enforcement", shortLabel: "Originality", icon: Fingerprint, color: "text-violet-400", description: "Anti-template filter, distinctive workflows & differentiation" },
-  { id: "qa", label: "Quality Assurance", shortLabel: "QA", icon: ShieldCheck, color: "text-emerald-400", description: "7-criteria evaluation — rejects weak concepts" },
-  { id: "buildability", label: "Buildability Layer", shortLabel: "Buildable", icon: Wrench, color: "text-lime-400", description: "MVP definition, implementation order & dependency mapping" },
-  { id: "monetization", label: "Monetization Leverage", shortLabel: "Revenue", icon: Gem, color: "text-yellow-400", description: "Revenue architecture, retention mechanics & upsell logic" },
+  { id: "tool-definition", label: "Tool Definition", shortLabel: "Definition", icon: Workflow, color: "text-primary", description: "Engine behavior: tool-first, not marketing content" },
+  { id: "core-user-action", label: "Core User Action", shortLabel: "Core Action", icon: Target, color: "text-primary", description: "Intent → structured app blueprint in one flow" },
+  { id: "input-model", label: "Input Model", shortLabel: "Input", icon: MessageSquare, color: "text-primary", description: "Niche, app idea, workflow, customer, and outcome capture" },
+  { id: "generation-modes", label: "Generation Modes", shortLabel: "Modes", icon: Play, color: "text-primary", description: "Instant, Premium, Build-Ready, Market-Domination" },
+  { id: "quantum-behavior", label: "Quantum Behavior", shortLabel: "Quantum", icon: Atom, color: "text-primary", description: "Rapid staged generation for 8-15 second execution" },
+  { id: "output-structure", label: "Output Structure", shortLabel: "Structure", icon: FileText, color: "text-primary", description: "Enforces the 9-section blueprint framework" },
+  { id: "phase-conversion", label: "Phase Conversion", shortLabel: "Phase Logic", icon: Layers, color: "text-primary", description: "Converts 4 phases into internal intelligence routing" },
+  { id: "tech-stack", label: "Tech Stack Logic", shortLabel: "Tech Stack", icon: Server, color: "text-primary", description: "Maps architecture recommendations by concept and niche" },
+  { id: "pricing", label: "Pricing Intelligence", shortLabel: "Pricing", icon: DollarSign, color: "text-primary", description: "Tier logic, setup fees, and commercial positioning" },
+  { id: "trend-engine", label: "Trend Engine", shortLabel: "Trend", icon: TrendingUp, color: "text-primary", description: "Generates adjacent opportunities and innovation angles" },
+  { id: "qa", label: "Quality Assurance", shortLabel: "QA", icon: ShieldCheck, color: "text-primary", description: "7-criteria refinement before final output" },
+  { id: "niche", label: "Niche Specialization", shortLabel: "Niche", icon: Crosshair, color: "text-primary", description: "Domain-specific workflows, language, and integrations" },
+  { id: "originality", label: "Originality Enforcement", shortLabel: "Originality", icon: Fingerprint, color: "text-primary", description: "Anti-template filtering and differentiation checks" },
+  { id: "admin-scale", label: "Admin + Scale Logic", shortLabel: "Admin+Scale", icon: Scale, color: "text-primary", description: "Operational systems, support flows, and scaling controls" },
+  { id: "monetization", label: "Monetization Leverage", shortLabel: "Monetization", icon: Gem, color: "text-primary", description: "Revenue architecture, retention mechanics, and upsell paths" },
+  { id: "buildability", label: "Buildability Layer", shortLabel: "Buildability", icon: Wrench, color: "text-primary", description: "MVP realism, dependency path, and implementation order" },
+  { id: "tool-personality", label: "Tool Personality", shortLabel: "Personality", icon: Crown, color: "text-primary", description: "Strategist + architect + founder + operator + analyst tone" },
+  { id: "final-synthesis", label: "Final Synthesis", shortLabel: "Synthesis", icon: Rocket, color: "text-primary", description: "Combines all modules into a premium buildable blueprint" },
 ];
 
+const FULL_TRANSFORMATION_STACK = INTELLIGENCE_LAYERS.map((layer) => layer.id);
+
 const MODE_LAYERS: Record<string, string[]> = {
-  "instant-concept": ["foundation", "quantum-engine", "pricing", "monetization", "niche", "originality", "buildability", "qa"],
-  "premium-blueprint": ["foundation", "quantum-engine", "innovation", "pricing", "monetization", "trend-engine", "niche", "originality", "scale", "buildability", "qa"],
-  "build-ready": ["foundation", "quantum-engine", "innovation", "scale", "pricing", "monetization", "trend-engine", "niche", "originality", "scale", "buildability", "qa"],
-  "market-domination": ["foundation", "quantum-engine", "innovation", "scale", "pricing", "monetization", "trend-engine", "niche", "originality", "scale", "buildability", "qa"],
+  "instant-concept": [
+    "tool-definition",
+    "core-user-action",
+    "input-model",
+    "generation-modes",
+    "quantum-behavior",
+    "output-structure",
+    "phase-conversion",
+    "tech-stack",
+    "pricing",
+    "qa",
+    "niche",
+    "originality",
+    "monetization",
+    "buildability",
+    "tool-personality",
+    "final-synthesis",
+  ],
+  "premium-blueprint": FULL_TRANSFORMATION_STACK,
+  "build-ready": FULL_TRANSFORMATION_STACK,
+  "market-domination": FULL_TRANSFORMATION_STACK,
 };
 
 /* ── Generation Modes ──────────────────────────────────── */
@@ -160,7 +186,7 @@ const GENERATION_MODES: GenerationMode[] = [
     icon: Zap,
     color: "from-yellow-500 to-orange-500",
     speed: "~8s",
-    depth: "8 layers",
+    depth: "16 modules",
     sections: "9 sections",
     personality: "Fast-launch founder mode",
   },
@@ -172,7 +198,7 @@ const GENERATION_MODES: GenerationMode[] = [
     icon: Blocks,
     color: "from-blue-500 to-cyan-500",
     speed: "~12s",
-    depth: "11 layers",
+    depth: "18 modules",
     sections: "12+ sections",
     personality: "Product strategist + architect",
   },
@@ -184,7 +210,7 @@ const GENERATION_MODES: GenerationMode[] = [
     icon: Wrench,
     color: "from-green-500 to-emerald-500",
     speed: "~14s",
-    depth: "All layers",
+    depth: "18 modules",
     sections: "16+ sections",
     personality: "Senior technical architect",
   },
@@ -196,7 +222,7 @@ const GENERATION_MODES: GenerationMode[] = [
     icon: Crown,
     color: "from-purple-500 to-pink-500",
     speed: "~15s",
-    depth: "All layers MAX",
+    depth: "18 modules MAX",
     sections: "17+ sections",
     personality: "Visionary strategist — $500/hr output",
   },
@@ -218,30 +244,30 @@ interface QuantumPhase {
   layerId?: string;
 }
 
-const QUANTUM_CORE_PHASES: QuantumPhase[] = [
-  { id: "init", text: "Initializing Quantum Engine…", icon: CircuitBoard },
-  { id: "personality", text: "Activating Tool Personality — 5 expert minds engaged…", icon: Crown },
-  { id: "final-synthesis", text: "Final Synthesis — premium blueprint packaging…", icon: Rocket },
-];
-
-const QUANTUM_LAYER_PHASES: QuantumPhase[] = [
-  { id: "foundation", layerId: "foundation", text: "Layer 1: Foundation Logic — analyzing structure, pricing, and core flow…", icon: Briefcase },
-  { id: "quantum-engine", layerId: "quantum-engine", text: "Layer 2: Quantum Synthesis — orchestrating multi-model reasoning…", icon: Brain },
-  { id: "innovation", layerId: "innovation", text: "Layer 3: Innovation — injecting trend timing and differentiation…", icon: Sparkles },
-  { id: "scale", layerId: "scale", text: "Layer 4: Scale — mapping automation, admin, and growth systems…", icon: Settings },
-  { id: "pricing", layerId: "pricing", text: "Pricing Intelligence — generating tier architecture and commercial logic…", icon: DollarSign },
-  { id: "monetization", layerId: "monetization", text: "Monetization Leverage — defining retention and expansion mechanics…", icon: Gem },
-  { id: "trend-engine", layerId: "trend-engine", text: "Trend Engine — detecting adjacent opportunities and timing signals…", icon: TrendingUp },
-  { id: "niche", layerId: "niche", text: "Niche Specialization — tailoring workflows and domain language…", icon: Crosshair },
-  { id: "originality", layerId: "originality", text: "Originality Filter — running anti-template differentiation checks…", icon: Fingerprint },
-  { id: "buildability", layerId: "buildability", text: "Buildability Gate — validating MVP, dependency path, and implementation order…", icon: Wrench },
-  { id: "qa", layerId: "qa", text: "Quality Assurance Gate — applying 7-criteria viability scoring…", icon: ShieldCheck },
+const TRANSFORMATION_PHASES: QuantumPhase[] = [
+  { id: "tool-definition", layerId: "tool-definition", text: "1/18 Tool Definition — configuring generator behavior as an execution engine…", icon: Workflow },
+  { id: "core-user-action", layerId: "core-user-action", text: "2/18 Core User Action — locking the intent → blueprint workflow…", icon: Target },
+  { id: "input-model", layerId: "input-model", text: "3/18 Input Model — parsing niche, user type, value opportunity, and constraints…", icon: MessageSquare },
+  { id: "generation-modes", layerId: "generation-modes", text: "4/18 Mode Orchestration — selecting depth profile for this run…", icon: Play },
+  { id: "quantum-behavior", layerId: "quantum-behavior", text: "5/18 Quantum Behavior — executing staged 8-15 second synthesis…", icon: Atom },
+  { id: "output-structure", layerId: "output-structure", text: "6/18 Output Structure — enforcing the 9-section blueprint schema…", icon: FileText },
+  { id: "phase-conversion", layerId: "phase-conversion", text: "7/18 Phase Conversion — routing through internal intelligence layers…", icon: Layers },
+  { id: "tech-stack", layerId: "tech-stack", text: "8/18 Tech Stack Logic — mapping implementation-ready architecture…", icon: Server },
+  { id: "pricing", layerId: "pricing", text: "9/18 Pricing Intelligence — generating tier, setup, and upgrade logic…", icon: DollarSign },
+  { id: "trend-engine", layerId: "trend-engine", text: "10/18 Trend Engine — injecting adjacent opportunities and innovation paths…", icon: TrendingUp },
+  { id: "qa", layerId: "qa", text: "11/18 QA Gate — refining clarity, originality, feasibility, and scale…", icon: ShieldCheck },
+  { id: "niche", layerId: "niche", text: "12/18 Niche Specialization — applying domain workflows and terminology…", icon: Crosshair },
+  { id: "originality", layerId: "originality", text: "13/18 Originality Filter — rejecting boilerplate and enforcing differentiation…", icon: Fingerprint },
+  { id: "admin-scale", layerId: "admin-scale", text: "14/18 Admin + Scale — adding operational systems and growth controls…", icon: Scale },
+  { id: "monetization", layerId: "monetization", text: "15/18 Monetization Leverage — defining revenue architecture and retention mechanics…", icon: Gem },
+  { id: "buildability", layerId: "buildability", text: "16/18 Buildability — sequencing MVP, dependencies, and ship-now scope…", icon: Wrench },
+  { id: "tool-personality", layerId: "tool-personality", text: "17/18 Tool Personality — applying strategist + architect + founder mindset…", icon: Crown },
+  { id: "final-synthesis", layerId: "final-synthesis", text: "18/18 Final Synthesis — packaging a premium, actionable blueprint…", icon: Rocket },
 ];
 
 const getModePhases = (mode: string) => {
-  const activeLayerIds = Array.from(new Set(MODE_LAYERS[mode] || MODE_LAYERS["premium-blueprint"]));
-  const activeLayerPhases = QUANTUM_LAYER_PHASES.filter((phase) => phase.layerId && activeLayerIds.includes(phase.layerId));
-  return [QUANTUM_CORE_PHASES[0], QUANTUM_CORE_PHASES[1], ...activeLayerPhases, QUANTUM_CORE_PHASES[2]];
+  const activeLayerIds = new Set(MODE_LAYERS[mode] || MODE_LAYERS["premium-blueprint"]);
+  return TRANSFORMATION_PHASES.filter((phase) => phase.layerId && activeLayerIds.has(phase.layerId));
 };
 
 type ValidationResult = { id: string; label: string; passed: boolean; evidence: string[]; critical: boolean };
@@ -511,7 +537,7 @@ function QuantumCountdown({ onComplete, mode }: { onComplete: () => void; mode: 
         </div>
         {modeConfig && (
           <Badge variant="outline" className="border-primary/40 text-primary text-xs mt-1">
-            {modeConfig.label} Mode — {activeLayers.length} Intelligence Layers Active
+            {modeConfig.label} Mode — {activeLayers.length} Transformation Modules Active
           </Badge>
         )}
       </div>
@@ -976,7 +1002,7 @@ export default function QuantumOptimization() {
                   <Timer className="h-3 w-3 mr-1.5" />8–15s Generation
                 </Badge>
                 <Badge variant="outline" className="border-primary/30 text-primary text-xs">
-                  <Crown className="h-3 w-3 mr-1" />11 Intelligence Layers
+                  <Crown className="h-3 w-3 mr-1" />{INTELLIGENCE_LAYERS.length} Transformation Modules
                 </Badge>
                 <Badge variant="outline" className="border-primary/30 text-primary text-xs">
                   <ShieldCheck className="h-3 w-3 mr-1" />QA Enforced
@@ -987,14 +1013,14 @@ export default function QuantumOptimization() {
                 <span className="text-foreground">AI Product Studio</span>
               </h1>
               <p className="text-muted-foreground mt-3 text-sm sm:text-base max-w-xl leading-relaxed">
-                5 expert minds. 11 intelligence layers. From intent to premium, buildable, niche-specialized app blueprint — in seconds.
+                5 expert minds. {INTELLIGENCE_LAYERS.length} transformation modules. From intent to premium, buildable, niche-specialized app blueprint — in seconds.
                 Pricing intelligence, trend engine, originality enforcement, and QA built in.
               </p>
             </div>
             <div className="flex gap-3">
               {[
                 { label: "Speed", value: "8–15s", icon: Zap },
-                { label: "Layers", value: "11", icon: Brain },
+                  { label: "Modules", value: String(INTELLIGENCE_LAYERS.length), icon: Brain },
                 { label: "Modes", value: "4", icon: Blocks },
                 { label: "Niches", value: "12+", icon: Target },
               ].map((stat) => (
@@ -1530,8 +1556,8 @@ export default function QuantumOptimization() {
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="space-y-1">
                   <p className="text-sm font-semibold text-foreground">{projectName}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {GENERATION_MODES.find((m) => m.id === generationMode)?.label} Mode · {totalSelected} feature{totalSelected !== 1 ? "s" : ""} selected · {activeLayers.length} layers active
+                    <p className="text-xs text-muted-foreground">
+                      {GENERATION_MODES.find((m) => m.id === generationMode)?.label} Mode · {totalSelected} feature{totalSelected !== 1 ? "s" : ""} selected · {activeLayers.length} modules active
                   </p>
                 </div>
                 <div className="flex gap-3">
@@ -1577,7 +1603,7 @@ export default function QuantumOptimization() {
                 </div>
                 <div className="text-center">
                   <p className="text-foreground font-semibold text-lg">Quantum Engine Processing…</p>
-                  <p className="text-muted-foreground text-sm mt-1">Streaming your {GENERATION_MODES.find((m) => m.id === generationMode)?.label} — {activeLayers.length} layers active</p>
+                  <p className="text-muted-foreground text-sm mt-1">Streaming your {GENERATION_MODES.find((m) => m.id === generationMode)?.label} — {activeLayers.length} modules active</p>
                 </div>
                 <Loader2 className="h-6 w-6 animate-spin text-primary" />
               </CardContent>
