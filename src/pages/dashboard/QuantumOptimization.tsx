@@ -204,7 +204,7 @@ export default function QuantumOptimization() {
         if (!cat || !fIds.length) continue;
         featureMap[cat.title] = fIds.map((fId) => cat.features.find((f) => f.id === fId)?.label || fId);
       }
-      const url = \`\${import.meta.env.VITE_SUPABASE_URL}/functions/v1/quantum-spec\`;
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/quantum-spec`;
       const { data: sd } = await supabase.auth.getSession();
       const headers: Record<string, string> = { "Content-Type": "application/json", apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY };
       if (sd.session?.access_token) headers.Authorization = \`Bearer \${sd.session.access_token}\`;
