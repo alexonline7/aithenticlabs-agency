@@ -167,16 +167,17 @@ const STEPS = [
 ] as const;
 type StepKey = typeof STEPS[number]["key"];
 
-/* ── Quantum Phases for countdown ──────────────────────── */
+/* ── Quantum Phases — mirrors the 4 Intelligence Layers ── */
 const QUANTUM_PHASES = [
   { at: 100, text: "Initializing Quantum Engine…", icon: CircuitBoard },
-  { at: 85, text: "Niche Recognition & Analysis…", icon: Search },
-  { at: 70, text: "App Opportunity Detection…", icon: Target },
-  { at: 55, text: "Feature Architecture Creation…", icon: Blocks },
-  { at: 40, text: "Monetization Logic Generation…", icon: DollarSign },
-  { at: 25, text: "Tech Stack Mapping…", icon: Settings },
-  { at: 12, text: "Expansion Logic Synthesis…", icon: TrendingUp },
-  { at: 5, text: "Final Blueprint Assembly…", icon: Rocket },
+  { at: 88, text: "Layer 1: Foundation Logic — analyzing structure & business model…", icon: Briefcase },
+  { at: 74, text: "Layer 1: Foundation Logic — mapping user flow & pricing…", icon: DollarSign },
+  { at: 62, text: "Layer 2: Quantum Synthesis — orchestrating multi-model reasoning…", icon: Brain },
+  { at: 50, text: "Layer 2: Quantum Synthesis — assembling blueprint sections…", icon: Blocks },
+  { at: 38, text: "Layer 3: Innovation — detecting opportunities & injecting originality…", icon: Sparkles },
+  { at: 26, text: "Layer 3: Innovation — applying 2025–2026 tech trends…", icon: TrendingUp },
+  { at: 14, text: "Layer 4: Scale — adding automation, admin & growth systems…", icon: Settings },
+  { at: 5, text: "Final Assembly — quality assurance & blueprint packaging…", icon: Rocket },
 ];
 
 /* ══════════════════════════════════════════════════════════
