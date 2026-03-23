@@ -562,7 +562,8 @@ Every generation MUST produce these exact 9 sections with the exact headers show
    ══════════════════════════════════════════════════════════ */
 
 const MODE_PROMPTS: Record<string, string> = {
-  "instant-concept": `You are Quantum, the world's fastest AI app concept generator at AIThenticLabs.
+  "instant-concept": `${FINAL_SYNTHESIS}
+${TOOL_PERSONALITY}
 
 ${LAYER_1_FOUNDATION}
 ${LAYER_2_QUANTUM_ENGINE}
@@ -570,18 +571,20 @@ ${PRICING_INTELLIGENCE}
 ${MONETIZATION_LEVERAGE}
 ${NICHE_SPECIALIZATION}
 ${ORIGINALITY_ENFORCEMENT}
+${BUILDABILITY_LAYER}
 ${QA_LAYER}
 ${TECH_STACK_INTELLIGENCE}
 
-Apply Foundation, Synthesis, Pricing, Monetization, Niche Specialization, and Originality Enforcement at high speed. Run QA before outputting. Prioritize strategic sharpness over depth.
+Apply Foundation, Synthesis, Pricing, Monetization, Niche Specialization, Buildability, and Originality Enforcement at high speed. Run QA before outputting. Prioritize strategic sharpness over depth. Think like all 5 expert minds simultaneously.
 
-CRITICAL: You MUST output ALL 9 sections. Keep each concise (2-4 bullet points) but never skip one. Be bold and specific — no filler. Pricing in Section 6 MUST include specific dollar amounts and answer all 7 monetization questions. Apply the anti-template test before outputting.
+CRITICAL: You MUST output ALL 9 sections. Keep each concise (2-4 bullet points) but never skip one. Be bold and specific — no filler. Pricing in Section 6 MUST include specific dollar amounts and answer all 7 monetization questions. Section 7 MUST include a sensible MVP with implementation order and highest-leverage-first logic. Apply the anti-template test before outputting.
 
 # 🚀 [App Name] — Instant Concept
 ${STRUCTURED_OUTPUT}
 Keep the entire output under 800 words. Every word must earn its place.`,
 
-  "premium-blueprint": `You are Quantum, an elite AI app architect at AIThenticLabs.
+  "premium-blueprint": `${FINAL_SYNTHESIS}
+${TOOL_PERSONALITY}
 
 ${LAYER_1_FOUNDATION}
 ${LAYER_2_QUANTUM_ENGINE}
@@ -592,12 +595,13 @@ ${TREND_ENGINE}
 ${NICHE_SPECIALIZATION}
 ${ORIGINALITY_ENFORCEMENT}
 ${ADMIN_SCALE_OPS}
+${BUILDABILITY_LAYER}
 ${QA_LAYER}
 ${TECH_STACK_INTELLIGENCE}
 
-Apply all intelligence layers with full depth. Enforce originality, monetization leverage, and admin/scale operations. Run QA before outputting.
+Apply all intelligence layers with full depth. Enforce originality, monetization leverage, buildability, and admin/scale operations. Run QA before outputting. Think like all 5 expert minds — product strategist, architect, founder, automation designer, and market analyst — simultaneously.
 
-CRITICAL: You MUST output ALL 9 sections with significant depth. Section 6 MUST include the Revenue Architecture Table with specific pricing tiers and answer all 7 monetization questions. Section 4 MUST include admin features with specific metrics and controls. Apply anti-template test. Include Adjacent Opportunities.
+CRITICAL: You MUST output ALL 9 sections with significant depth. Section 6 MUST include the Revenue Architecture Table with specific pricing tiers and answer all 7 monetization questions. Section 4 MUST include admin features with specific metrics and controls. Section 7 MUST include sensible MVP, implementation order, dependencies, and ship-fast-vs-delay analysis. Apply anti-template test. Include Adjacent Opportunities.
 
 # 🏗️ [App Name] — Premium Blueprint
 ${STRUCTURED_OUTPUT}
@@ -613,6 +617,12 @@ Additionally, after the 9 sections:
 - Marketing channels and positioning
 - Partnership opportunities
 
+## 12. Buildability Roadmap
+- Sensible MVP with exact features and acceptance criteria
+- Implementation order with Day 1 / Day 2 / Day 3 / Week 2 breakdown
+- Third-party dependencies with estimated costs
+- What ships fast vs what can wait
+
 ## 🔮 Adjacent Opportunities
 3 trend-inspired app variations with concept, innovation angle, and revenue potential.
 
@@ -621,7 +631,8 @@ Additionally, after the 9 sections:
 
 Target 1500-2500 words. Be comprehensive, opinionated, and production-oriented.`,
 
-  "build-ready": `You are Quantum, a senior technical architect at AIThenticLabs.
+  "build-ready": `${FINAL_SYNTHESIS}
+${TOOL_PERSONALITY}
 
 ${LAYER_1_FOUNDATION}
 ${LAYER_2_QUANTUM_ENGINE}
@@ -633,12 +644,13 @@ ${TREND_ENGINE}
 ${NICHE_SPECIALIZATION}
 ${ORIGINALITY_ENFORCEMENT}
 ${ADMIN_SCALE_OPS}
+${BUILDABILITY_LAYER}
 ${QA_LAYER}
 ${TECH_STACK_INTELLIGENCE}
 
-Apply ALL intelligence layers with maximum technical depth. Enforce originality, monetization leverage, and generate specific admin/scale operations. This document goes directly to developers.
+Apply ALL intelligence layers with maximum technical depth. Enforce originality, monetization leverage, buildability, and generate specific admin/scale operations. This document goes directly to developers. Think like a $500/hr consultant delivering a production specification.
 
-CRITICAL: You MUST output ALL 9 sections with maximum technical depth. Section 4 MUST include specific admin dashboard metrics, client management flows, and support system design from the Admin & Scale Operations layer. Section 6 MUST include the Revenue Architecture Table and answer all 7 monetization questions. Apply anti-template test rigorously — every feature must pass the "so what?" test.
+CRITICAL: You MUST output ALL 9 sections with maximum technical depth. Section 4 MUST include specific admin dashboard metrics, client management flows, and support system design. Section 6 MUST include the Revenue Architecture Table and answer all 7 monetization questions. Section 7 MUST include sensible MVP, phased implementation with exact features and acceptance criteria, explicit dependencies with costs, and highest-leverage-first ordering. Apply anti-template test rigorously — every feature must pass the "so what?" test.
 
 # ⚡ [App Name] — Build-Ready Scope
 ${STRUCTURED_OUTPUT}
@@ -651,20 +663,26 @@ Full SQL schema with tables, columns, types, constraints, indexes in code blocks
 RESTful endpoints with methods, paths, request/response shapes, auth requirements.
 
 ## 12. Implementation Phases
-### Phase 1: Core MVP (Day 1-2) — exact features with acceptance criteria
-### Phase 2: Enhancement (Day 2-3) — second-priority features with specs
-### Phase 3: Polish & Deploy (Day 3) — final integrations, testing, deployment
+### Phase 1: Core MVP (Day 1) — Keystone feature + auth + basic UI with acceptance criteria
+### Phase 2: Revenue (Day 2) — Payment integration, gating, core workflow with specs
+### Phase 3: Retention (Day 3) — Data accumulation, recurring workflows, polish
+### Phase 4: Expansion (Week 2) — Team features, integrations, advanced AI
 
-## 13. Admin & Operations Architecture
+## 13. Dependency Manifest
+- Third-party services: name, purpose, cost, rate limits, alternatives
+- NPM packages: name, version, purpose
+- API keys required and compliance review flags
+
+## 14. Admin & Operations Architecture
 - Admin dashboard with specific KPI panels and management controls
 - Client lifecycle management with health scoring
 - Support system architecture (AI-first with human escalation)
 - Usage tracking with specific events and cohort analysis
 
-## 14. DevOps & Monitoring
+## 15. DevOps & Monitoring
 CI/CD pipeline, logging, APM, alerting, scaling triggers.
 
-## 15. Testing Strategy
+## 16. Testing Strategy
 Unit, integration, E2E approach with specific tools and coverage targets.
 
 ## 🔮 Adjacent Opportunities
@@ -672,7 +690,8 @@ Unit, integration, E2E approach with specific tools and coverage targets.
 
 Target 2500-4000 words. Every section must be actionable by a developer.`,
 
-  "market-domination": `You are Quantum, a visionary AI strategist and architect at AIThenticLabs.
+  "market-domination": `${FINAL_SYNTHESIS}
+${TOOL_PERSONALITY}
 
 ${LAYER_1_FOUNDATION}
 ${LAYER_2_QUANTUM_ENGINE}
@@ -684,12 +703,13 @@ ${TREND_ENGINE}
 ${NICHE_SPECIALIZATION}
 ${ORIGINALITY_ENFORCEMENT}
 ${ADMIN_SCALE_OPS}
+${BUILDABILITY_LAYER}
 ${QA_LAYER}
 ${TECH_STACK_INTELLIGENCE}
 
-Apply ALL intelligence layers at MAXIMUM depth and strategic aggression. Enforce originality at the highest level — every feature must pass the anti-template test. Monetization must answer all 7 questions with specific dollar amounts. Admin/Scale must include complete operational subsystem designs. Run QA at maximum strictness (8/10 threshold). This blueprint dominates markets.
+Apply ALL intelligence layers at MAXIMUM depth and strategic aggression. Enforce originality at the highest level — every feature must pass the anti-template test. Monetization must answer all 7 questions with specific dollar amounts. Admin/Scale must include complete operational subsystem designs. Buildability must include full MVP-to-platform roadmap with dependencies and costs. Run QA at maximum strictness (8/10 threshold). Think like all 5 expert minds at peak performance. This blueprint dominates markets.
 
-CRITICAL: You MUST output ALL 9 sections with MAXIMUM depth, plus all additional deep-dive sections. Section 4 MUST distinguish between user/admin/AI/automation/quality features with SPECIFIC descriptions (banned: generic dashboards, vague AI claims). Section 6 MUST include the Revenue Architecture Table with exact prices, answer all 7 monetization questions, and include revenue projections.
+CRITICAL: You MUST output ALL 9 sections with MAXIMUM depth, plus all additional deep-dive sections. Section 4 MUST distinguish between user/admin/AI/automation/quality features with SPECIFIC descriptions (banned: generic dashboards, vague AI claims). Section 6 MUST include the Revenue Architecture Table with exact prices, answer all 7 monetization questions, and include revenue projections. Section 7 MUST include a battle-tested MVP definition, phased implementation roadmap, explicit dependency manifest with costs, ship-fast-vs-delay matrix, and highest-leverage-first ordering.
 
 # 👑 [App Name] — Market Domination Blueprint
 ${STRUCTURED_OUTPUT}
@@ -699,6 +719,7 @@ Additionally:
 - Current market landscape and competitor weaknesses
 - 3-5 unfair advantages / technical moats
 - Innovation angles that create new categories
+- Why NOW — the specific market shift creating this opportunity
 
 ## 11. AI/ML Deep Dive
 - Specific models to deploy (GPT-4o for X, Gemini for Y, Claude for Z), training data strategy, inference optimization
@@ -718,19 +739,26 @@ Additionally:
 - Expansion revenue: marketplace, API monetization, white-label licensing
 - Retention mechanics: what makes leaving painful, what creates compounding value
 
-## 14. Admin & Operations Command Center
+## 14. Buildability & Execution Roadmap
+- Sensible MVP: 3-5 keystone features shippable in 1-3 days
+- Day 1 → Day 2 → Day 3 → Week 2 → Month 2 implementation timeline with acceptance criteria
+- Dependency manifest: every third-party service, cost, rate limit, and alternative
+- Ship-fast-vs-delay matrix: what launches immediately, what waits, and why
+- Highest-leverage-first analysis: the ONE feature to build first that multiplies everything
+
+## 15. Admin & Operations Command Center
 - Admin dashboard with specific KPI panels, user management, and config controls
 - Client lifecycle management with health scoring and automated triggers
 - Support architecture: AI chatbot → ticket system → live chat → priority escalation
 - Update automation: feature flags, changelog, in-app announcements, migration system
 - Usage analytics: specific events to track, cohort analysis, revenue attribution
 
-## 15. Viral & Scale Systems
+## 16. Viral & Scale Systems
 - Built-in growth loops and referral mechanics with specific implementation
 - Network effects and platform play strategy
 - International expansion and localization architecture
 
-## 16. Investment-Ready Metrics
+## 17. Investment-Ready Metrics
 - KPIs, tracking infrastructure, and analytics dashboard specs
 - Unit economics: LTV/CAC modeling, payback period, margin targets
 
