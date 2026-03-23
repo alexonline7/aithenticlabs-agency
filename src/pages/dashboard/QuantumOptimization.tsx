@@ -207,7 +207,7 @@ export default function QuantumOptimization() {
       const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/quantum-spec`;
       const { data: sd } = await supabase.auth.getSession();
       const headers: Record<string, string> = { "Content-Type": "application/json", apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY };
-      if (sd.session?.access_token) headers.Authorization = \`Bearer \${sd.session.access_token}\`;
+      if (sd.session?.access_token) headers.Authorization = `Bearer ${sd.session.access_token}`;
 
       const resp = await fetch(url, {
         method: "POST", headers,
