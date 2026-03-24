@@ -240,9 +240,9 @@ export default function Index() {
                 Submit Your Project <Send className="ml-2 h-5 w-5" />
               </Button>
             </Link>
-            <Link to="/auth">
-              <Button variant="outline" className="h-14 px-10 text-lg border-deep-gold-500/30 text-deep-gold-500 hover:bg-deep-gold-500/10">
-                Try AI Recommendation <Sparkles className="ml-2 h-5 w-5" />
+            <Link to="/idea-to-blueprint">
+              <Button variant="outline" className="h-14 px-10 text-lg border-green-500/30 text-green-400 hover:bg-green-500/10">
+                <Lightbulb className="mr-2 h-5 w-5" /> Idea → Blueprint
               </Button>
             </Link>
           </div>
