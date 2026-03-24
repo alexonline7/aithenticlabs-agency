@@ -73,6 +73,9 @@ function App() {
         >
           <Route path="idea-to-blueprint" element={<IdeaToBlueprint />} />
           <Route path="flash-apps" element={<FlashAppsGenerator />} />
+          <Route path="support-chat" element={<SupportChat />} />
+          <Route path="briefs" element={<GeneratedBriefs />} />
+          <Route path="settings" element={<DashboardSettings />} />
         </Route>
 
         {/* Admin Panel (role-based) */}
