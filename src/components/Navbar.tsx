@@ -65,16 +65,9 @@ export default function Navbar() {
               </Button>
             </>
           ) : (
-            <>
-              <Link to="/auth">
-                <Button variant="ghost" className="text-slate-300 hover:text-white">Sign In</Button>
-              </Link>
-              <Link to="/ai-recommendation">
-                <Button className="bg-gradient-to-r from-deep-gold-500 to-electric-blue-500 text-charcoal-900 font-bold hover:opacity-90">
-                  Get AI Recommendation
-                </Button>
-              </Link>
-            </>
+            <Link to="/auth">
+              <Button variant="ghost" className="text-slate-300 hover:text-white">Sign In</Button>
+            </Link>
           )}
         </div>
 
