@@ -99,6 +99,11 @@ export default function Index() {
                 Get AI Recommendation <Sparkles className="ml-2 h-5 w-5" />
               </Button>
             </Link>
+            <Link to="/idea-to-blueprint">
+              <Button variant="outline" className="h-12 px-8 text-lg border-green-500/30 text-green-400 hover:bg-green-500/10">
+                <Lightbulb className="mr-2 h-5 w-5" /> Idea → Blueprint
+              </Button>
+            </Link>
             <Link to="/quantum-generation">
               <Button variant="outline" className="h-12 px-8 text-lg border-electric-blue-500/30 text-electric-blue-500 hover:bg-electric-blue-500/10">
                 ⚡ Quantum Generation
