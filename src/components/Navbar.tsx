@@ -5,13 +5,11 @@ import { useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 
 const navLinks = [
+  { label: "How It Works", href: "#how-it-works" },
   { label: "Services", href: "#services" },
   { label: "Portfolio", href: "#portfolio" },
-  { label: "Projects", href: "/projects" },
   { label: "Testimonials", href: "#testimonials" },
   { label: "Contact", href: "#contact" },
-  { label: "Quantum Generation", href: "/quantum-generation" },
-  { label: "Idea → Blueprint", href: "/idea-to-blueprint" },
 ];
 
 export default function Navbar() {
