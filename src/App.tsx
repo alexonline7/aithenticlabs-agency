@@ -5,6 +5,7 @@ import Auth from "@/pages/Auth";
 import ResetPassword from "@/pages/ResetPassword";
 import { GuestRoute, ProtectedRoute } from "@/components/auth/RouteGuards";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import StandaloneToolLayout from "@/components/dashboard/StandaloneToolLayout";
 import DashboardOverview from "@/pages/dashboard/DashboardOverview";
 import SupportChat from "@/pages/dashboard/SupportChat";
 import GeneratedBriefs from "@/pages/dashboard/GeneratedBriefs";
