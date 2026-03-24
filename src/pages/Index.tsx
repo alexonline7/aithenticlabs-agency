@@ -3,7 +3,7 @@ import Navbar from "@/components/Navbar";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Sparkles, Globe, Smartphone, ShoppingCart, Cloud, ArrowRight, Star, Zap, Quote, Briefcase, Send } from "lucide-react";
+import { Sparkles, Globe, Smartphone, ShoppingCart, Cloud, ArrowRight, Star, Zap, Quote, Briefcase, Send, Lightbulb } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const stats = [
