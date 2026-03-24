@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      chat_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       client_submissions: {
         Row: {
           ai_recommendation: Json | null
@@ -83,6 +107,36 @@ export type Database = {
           report_type?: string
           user_email?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          id: string
+          notify_briefs: boolean
+          notify_deployments: boolean
+          notify_email: boolean
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          id: string
+          notify_briefs?: boolean
+          notify_deployments?: boolean
+          notify_email?: boolean
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          notify_briefs?: boolean
+          notify_deployments?: boolean
+          notify_email?: boolean
+          updated_at?: string
         }
         Relationships: []
       }
