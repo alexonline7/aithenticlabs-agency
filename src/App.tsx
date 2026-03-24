@@ -31,6 +31,7 @@ import AdminQuantum from "@/pages/admin/AdminQuantum";
 import AdminIdeaBlueprint from "@/pages/admin/AdminIdeaBlueprint";
 import AdminAIRecommendations from "@/pages/admin/AdminAIRecommendations";
 import AIRecommendationPublic from "@/pages/AIRecommendationPublic";
+import IdeaToBlueprintPublic from "@/pages/IdeaToBlueprintPublic";
 
 function App() {
   return (
