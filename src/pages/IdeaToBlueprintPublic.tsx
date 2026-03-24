@@ -285,19 +285,19 @@ export default function IdeaToBlueprintPublic() {
         setIsTyping(false);
         if (assistantContent.includes("[INTERVIEW_COMPLETE]")) {
           setInterviewComplete(true);
-          if (user) {
+          {
             const cleanAssistant = assistantContent.replace("[INTERVIEW_COMPLETE]", "");
             const transcript = [...newMessages, { id: "assistant-final", role: "assistant", content: cleanAssistant }]
               .map((m) => `${m.role === "user" ? "Client" : "Consultant"}: ${m.content}`)
               .join("\n\n");
             const projectTitle = newMessages.find((m) => m.role === "user")?.content?.slice(0, 80) || "Idea Blueprint";
             supabase.from("generated_reports").insert({
-              user_id: user.id,
-              user_email: user.email ?? null,
+              user_id: user?.id ?? null,
+              user_email: user?.email ?? null,
               project_name: projectTitle,
               report_type: "interview",
               content: cleanAssistant,
-              metadata: { scope, pipelineStep: "interview", interviewTranscript: transcript, generatedByTool: "idea-blueprint" },
+              metadata: { scope, pipelineStep: "interview", interviewTranscript: transcript, generatedByTool: "idea-blueprint", source: "public" },
             });
           }
         }
@@ -324,15 +324,15 @@ export default function IdeaToBlueprintPublic() {
     const summary = getInterviewSummary();
 
     const trySaveReport = async (reportType: string, content: string) => {
-      if (!content || !user) return;
+      if (!content) return;
       const projectTitle = messages.find((m) => m.role === "user")?.content?.slice(0, 80) || "Idea Blueprint";
       await supabase.from("generated_reports").insert({
-        user_id: user.id,
-        user_email: user.email ?? null,
+        user_id: user?.id ?? null,
+        user_email: user?.email ?? null,
         project_name: projectTitle,
         report_type: reportType,
         content,
-        metadata: { scope, pipelineStep: reportType, generatedByTool: "idea-blueprint" },
+        metadata: { scope, pipelineStep: reportType, generatedByTool: "idea-blueprint", source: "public" },
       });
     };
 
