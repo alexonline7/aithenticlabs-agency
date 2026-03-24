@@ -5,6 +5,7 @@ import Auth from "@/pages/Auth";
 import ResetPassword from "@/pages/ResetPassword";
 import { GuestRoute, ProtectedRoute } from "@/components/auth/RouteGuards";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import StandaloneToolLayout from "@/components/dashboard/StandaloneToolLayout";
 import DashboardOverview from "@/pages/dashboard/DashboardOverview";
 import SupportChat from "@/pages/dashboard/SupportChat";
 import GeneratedBriefs from "@/pages/dashboard/GeneratedBriefs";
@@ -58,9 +59,20 @@ function App() {
           <Route index element={<DashboardOverview />} />
           <Route path="support-chat" element={<SupportChat />} />
           <Route path="briefs" element={<GeneratedBriefs />} />
+          <Route path="settings" element={<DashboardSettings />} />
+        </Route>
+
+        {/* Standalone full-page tools */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <StandaloneToolLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route path="idea-to-blueprint" element={<IdeaToBlueprint />} />
           <Route path="flash-apps" element={<FlashAppsGenerator />} />
-          <Route path="settings" element={<DashboardSettings />} />
         </Route>
 
         {/* Admin Panel (role-based) */}
