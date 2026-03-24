@@ -106,10 +106,8 @@ export default function Navbar() {
               </Button>
             </>
           ) : (
-            <Link to="/ai-recommendation" onClick={() => setOpen(false)}>
-              <Button className="w-full bg-gradient-to-r from-deep-gold-500 to-electric-blue-500 text-charcoal-900 font-bold mt-2">
-                Get AI Recommendation
-              </Button>
+            <Link to="/auth" onClick={() => setOpen(false)}>
+              <Button variant="ghost" className="w-full text-slate-300 hover:text-white">Sign In</Button>
             </Link>
           )}
         </div>
