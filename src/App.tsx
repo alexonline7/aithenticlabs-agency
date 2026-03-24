@@ -31,6 +31,7 @@ import AdminQuantum from "@/pages/admin/AdminQuantum";
 import AdminIdeaBlueprint from "@/pages/admin/AdminIdeaBlueprint";
 import AdminAIRecommendations from "@/pages/admin/AdminAIRecommendations";
 import AIRecommendationPublic from "@/pages/AIRecommendationPublic";
+import IdeaToBlueprintPublic from "@/pages/IdeaToBlueprintPublic";
 
 function App() {
   return (
@@ -95,6 +96,7 @@ function App() {
         <Route path="/projects" element={<Projects />} />
         <Route path="/submit-project" element={<SubmitProject />} />
         <Route path="/ai-recommendation" element={<AIRecommendationPublic />} />
+        <Route path="/idea-to-blueprint" element={<IdeaToBlueprintPublic />} />
       </Routes>
     </BrowserRouter>
   );
