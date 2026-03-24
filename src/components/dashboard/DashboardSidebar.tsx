@@ -4,13 +4,9 @@ import {
   LayoutDashboard,
   MessageSquare,
   FileText,
-  Zap,
-  
-  Brain,
   Sparkles,
   Settings,
   LogOut,
-  ChevronRight,
   Lightbulb,
   ShieldAlert,
 } from "lucide-react";
@@ -29,7 +25,6 @@ import {
   SidebarHeader,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
 
 const mainItems = [
   { title: "Overview", url: "/dashboard", icon: LayoutDashboard },
@@ -37,15 +32,9 @@ const mainItems = [
   { title: "Generated Briefs", url: "/dashboard/briefs", icon: FileText },
 ];
 
-const advancedItems = [
-  { title: "Quantum Generation", url: "/dashboard/quantum-optimization", icon: Zap },
-  
-];
-
 const toolItems = [
   { title: "Idea → Blueprint", url: "/dashboard/idea-to-blueprint", icon: Lightbulb },
-  { title: "AI Recommendation", url: "/dashboard/ai-recommendation", icon: Brain },
-  { title: "FlashApps Generator", url: "/dashboard/flash-apps", icon: Sparkles },
+  { title: "Project Generator", url: "/dashboard/flash-apps", icon: Sparkles },
 ];
 
 export default function DashboardSidebar() {
@@ -103,28 +92,6 @@ export default function DashboardSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {toolItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink
-                      to={item.url}
-                      className="flex items-center gap-2 px-2 py-1.5 rounded-md text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
-                      activeClassName="bg-sidebar-accent text-primary font-medium"
-                    >
-                      <item.icon className="h-4 w-4 shrink-0" />
-                      {!collapsed && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarGroup>
-          <SidebarGroupLabel>Advanced</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {advancedItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <NavLink

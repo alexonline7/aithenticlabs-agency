@@ -8,9 +8,6 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import DashboardOverview from "@/pages/dashboard/DashboardOverview";
 import SupportChat from "@/pages/dashboard/SupportChat";
 import GeneratedBriefs from "@/pages/dashboard/GeneratedBriefs";
-import QuantumOptimization from "@/pages/dashboard/QuantumOptimization";
-
-import AIRecommendation from "@/pages/dashboard/AIRecommendation";
 import FlashAppsGenerator from "@/pages/dashboard/FlashAppsGenerator";
 import DashboardSettings from "@/pages/dashboard/DashboardSettings";
 import IdeaToBlueprint from "@/pages/dashboard/IdeaToBlueprint";
@@ -61,10 +58,7 @@ function App() {
           <Route index element={<DashboardOverview />} />
           <Route path="support-chat" element={<SupportChat />} />
           <Route path="briefs" element={<GeneratedBriefs />} />
-          <Route path="quantum-optimization" element={<QuantumOptimization />} />
-          
           <Route path="idea-to-blueprint" element={<IdeaToBlueprint />} />
-          <Route path="ai-recommendation" element={<AIRecommendation />} />
           <Route path="flash-apps" element={<FlashAppsGenerator />} />
           <Route path="settings" element={<DashboardSettings />} />
         </Route>
