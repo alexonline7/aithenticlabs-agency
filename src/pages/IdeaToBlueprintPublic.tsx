@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -11,11 +11,12 @@ import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ReactMarkdown from "react-markdown";
 import {
-  MessageSquare, Brain, Palette, FileCheck, Send, ArrowRight,
+  MessageSquare, Brain, FileCheck, Send, ArrowRight,
   CheckCircle2, Loader2, Lightbulb, Cpu, Paintbrush, ClipboardCheck,
-  RotateCcw, ChevronDown, Paperclip, X, Image, FileText,
+  RotateCcw, ChevronDown, Paperclip, X, FileText,
   UserPlus, LogIn, Sparkles,
 } from "lucide-react";
+import { detectBrowserLang, t, type BlueprintLang } from "@/lib/blueprint-i18n";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -37,37 +38,41 @@ interface ChatMessage {
   attachments?: { type: "image" | "document"; name: string; preview?: string }[];
 }
 
-const SCOPE_OPTIONS = [
-  {
-    id: "interview-only" as Scope,
-    icon: MessageSquare,
-    title: "Interview Only",
-    desc: "Start with the AI Discovery Interview, then iterate on the rest based on results.",
-    steps: ["Discovery Interview"],
-  },
-  {
-    id: "interview-report" as Scope,
-    icon: FileCheck,
-    title: "Interview + Report",
-    desc: "AI Discovery Interview plus a final Consensus Report with cost & timeline estimates.",
-    steps: ["Discovery Interview", "Consensus Report"],
-    recommended: true,
-  },
-  {
-    id: "full-pipeline" as Scope,
-    icon: Brain,
-    title: "Full Pipeline",
-    desc: "Complete 4-step pipeline: Interview → Architecture → UI/UX Blueprint → Consensus Report.",
-    steps: ["Discovery Interview", "Technical Architecture", "UI/UX Blueprint", "Consensus Report"],
-  },
-];
+function getScopeOptions(lang: BlueprintLang) {
+  return [
+    {
+      id: "interview-only" as Scope,
+      icon: MessageSquare,
+      title: t(lang, "interviewOnly"),
+      desc: t(lang, "interviewOnlyDesc"),
+      steps: [t(lang, "discoveryInterview")],
+    },
+    {
+      id: "interview-report" as Scope,
+      icon: FileCheck,
+      title: t(lang, "interviewReport"),
+      desc: t(lang, "interviewReportDesc"),
+      steps: [t(lang, "discoveryInterview"), t(lang, "consensusReport")],
+      recommended: true,
+    },
+    {
+      id: "full-pipeline" as Scope,
+      icon: Brain,
+      title: t(lang, "fullPipeline"),
+      desc: t(lang, "fullPipelineDesc"),
+      steps: [t(lang, "discoveryInterview"), t(lang, "technicalArchitecture"), t(lang, "uiUxBlueprint"), t(lang, "consensusReport")],
+    },
+  ];
+}
 
-const PIPELINE_META: Record<string, { icon: typeof MessageSquare; label: string; ai: string; color: string }> = {
-  interview: { icon: Lightbulb, label: "Discovery Interview", ai: "Claude", color: "from-orange-500 to-amber-500" },
-  architecture: { icon: Cpu, label: "Technical Architecture", ai: "GPT-4o", color: "from-blue-500 to-purple-600" },
-  "ux-blueprint": { icon: Paintbrush, label: "UI/UX Blueprint", ai: "Gemini", color: "from-green-500 to-teal-500" },
-  consensus: { icon: ClipboardCheck, label: "Consensus Report", ai: "All 3 AIs", color: "from-primary to-accent" },
-};
+function getPipelineMeta(lang: BlueprintLang) {
+  return {
+    interview: { icon: Lightbulb, label: t(lang, "discoveryInterview"), ai: "Claude", color: "from-orange-500 to-amber-500" },
+    architecture: { icon: Cpu, label: t(lang, "technicalArchitecture"), ai: "GPT-4o", color: "from-blue-500 to-purple-600" },
+    "ux-blueprint": { icon: Paintbrush, label: t(lang, "uiUxBlueprint"), ai: "Gemini", color: "from-green-500 to-teal-500" },
+    consensus: { icon: ClipboardCheck, label: t(lang, "consensusReport"), ai: "All 3 AIs", color: "from-primary to-accent" },
+  } as Record<string, { icon: typeof MessageSquare; label: string; ai: string; color: string }>;
+}
 
 async function streamFromFunction(
   fnName: string,
@@ -130,6 +135,7 @@ async function streamFromFunction(
 
 export default function IdeaToBlueprintPublic() {
   const { user } = useAuth();
+  const [lang] = useState<BlueprintLang>(() => detectBrowserLang());
   const [scope, setScope] = useState<Scope | null>(null);
   const [currentStep, setCurrentStep] = useState<PipelineStep>("scope");
   const [pipelineFinished, setPipelineFinished] = useState(false);
@@ -148,6 +154,9 @@ export default function IdeaToBlueprintPublic() {
   const [generating, setGenerating] = useState(false);
   const [genError, setGenError] = useState("");
   const outputRef = useRef<HTMLDivElement>(null);
+
+  const scopeOptions = useMemo(() => getScopeOptions(lang), [lang]);
+  const pipelineMeta = useMemo(() => getPipelineMeta(lang), [lang]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -213,7 +222,7 @@ export default function IdeaToBlueprintPublic() {
     let assistantContent = "";
     streamFromFunction(
       "idea-interview",
-      { messages: [] },
+      { messages: [], lang },
       (delta) => {
         assistantContent += delta;
         const clean = assistantContent.replace("[INTERVIEW_COMPLETE]", "");
@@ -261,7 +270,7 @@ export default function IdeaToBlueprintPublic() {
     let assistantContent = "";
     streamFromFunction(
       "idea-interview",
-      { messages: apiMessages },
+      { messages: apiMessages, lang },
       (delta) => {
         assistantContent += delta;
         setMessages((prev) => {
@@ -276,7 +285,6 @@ export default function IdeaToBlueprintPublic() {
         setIsTyping(false);
         if (assistantContent.includes("[INTERVIEW_COMPLETE]")) {
           setInterviewComplete(true);
-          // For public version: only save if user is authenticated
           if (user) {
             const cleanAssistant = assistantContent.replace("[INTERVIEW_COMPLETE]", "");
             const transcript = [...newMessages, { id: "assistant-final", role: "assistant", content: cleanAssistant }]
@@ -379,12 +387,6 @@ export default function IdeaToBlueprintPublic() {
     return steps.indexOf(currentStep) >= steps.length - 1;
   };
 
-  // Check if current step finished (for showing CTA)
-  const isCurrentStepDone = () => {
-    if (currentStep === "interview") return interviewComplete && isLastStep();
-    return !generating && isLastStep() && (consensusReport || uxBlueprint || architectureSpec);
-  };
-
   // ─── ACCOUNT CTA ───
   const renderAccountCTA = () => {
     if (user) return null;
@@ -395,21 +397,18 @@ export default function IdeaToBlueprintPublic() {
             <Sparkles className="w-7 h-7 text-primary-foreground" />
           </div>
           <div className="space-y-2">
-            <h3 className="text-xl font-bold text-foreground">Save Your Blueprint & Unlock More</h3>
-            <p className="text-muted-foreground max-w-md">
-              Create a free account to save your generated blueprints, access your project history,
-              get support chat, and unlock all AI tools.
-            </p>
+            <h3 className="text-xl font-bold text-foreground">{t(lang, "saveBlueprint")}</h3>
+            <p className="text-muted-foreground max-w-md">{t(lang, "saveBlueprintDesc")}</p>
           </div>
           <div className="flex gap-3">
             <Link to="/auth">
               <Button className="bg-gradient-to-r from-primary to-accent text-primary-foreground font-bold px-6">
-                <UserPlus className="w-4 h-4 mr-2" /> Create Account
+                <UserPlus className="w-4 h-4 mr-2" /> {t(lang, "createAccount")}
               </Button>
             </Link>
             <Link to="/auth">
               <Button variant="outline" className="border-primary/30">
-                <LogIn className="w-4 h-4 mr-2" /> Sign In
+                <LogIn className="w-4 h-4 mr-2" /> {t(lang, "signIn")}
               </Button>
             </Link>
           </div>
@@ -428,20 +427,18 @@ export default function IdeaToBlueprintPublic() {
             <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-2xl flex items-center justify-center">
               <Lightbulb className="w-8 h-8 text-primary-foreground" />
             </div>
-            <h1 className="text-3xl font-bold text-foreground">Idea → Blueprint</h1>
-            <p className="text-muted-foreground max-w-xl mx-auto">
-              Transform your project vision into a development-ready blueprint. No coding knowledge needed — our 3 AI engines handle everything.
-            </p>
+            <h1 className="text-3xl font-bold text-foreground">{t(lang, "pageTitle")}</h1>
+            <p className="text-muted-foreground max-w-xl mx-auto">{t(lang, "pageSubtitle")}</p>
             {!user && (
               <p className="text-sm text-muted-foreground">
-                No account needed to try it out!{" "}
-                <Link to="/auth" className="text-primary hover:underline">Sign in</Link> to save your results.
+                {t(lang, "noAccountNeeded")}{" "}
+                <Link to="/auth" className="text-primary hover:underline">{t(lang, "signInToSave")}</Link>
               </p>
             )}
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            {SCOPE_OPTIONS.map((opt) => (
+            {scopeOptions.map((opt) => (
               <Card
                 key={opt.id}
                 onClick={() => handleScopeSelect(opt.id)}
@@ -451,7 +448,7 @@ export default function IdeaToBlueprintPublic() {
               >
                 {opt.recommended && (
                   <Badge className="absolute -top-2 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs">
-                    Recommended
+                    {t(lang, "recommended")}
                   </Badge>
                 )}
                 <div className="flex flex-col items-center text-center gap-4">
@@ -484,7 +481,7 @@ export default function IdeaToBlueprintPublic() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           {steps.map((step, i) => {
-            const meta = PIPELINE_META[step];
+            const meta = pipelineMeta[step];
             const isDone = i < currentIdx || (i === currentIdx && !generating && currentStep !== "interview");
             const isActive = i === currentIdx;
             return (
@@ -503,7 +500,7 @@ export default function IdeaToBlueprintPublic() {
           })}
         </div>
         <Button variant="ghost" size="sm" onClick={resetPipeline} className="text-muted-foreground">
-          <RotateCcw className="w-3 h-3 mr-1" /> Start Over
+          <RotateCcw className="w-3 h-3 mr-1" /> {t(lang, "startOver")}
         </Button>
       </div>
       <Progress value={progress} className="h-1.5" />
@@ -524,11 +521,11 @@ export default function IdeaToBlueprintPublic() {
                 <MessageSquare className="w-4 h-4 text-white" />
               </div>
               <div>
-                <h2 className="font-semibold text-foreground">AI Discovery Interview</h2>
-                <p className="text-xs text-muted-foreground">Powered by Claude • Tell us about your vision</p>
+                <h2 className="font-semibold text-foreground">{t(lang, "aiDiscoveryInterview")}</h2>
+                <p className="text-xs text-muted-foreground">{t(lang, "poweredByClaudeDesc")}</p>
               </div>
               {interviewComplete && (
-                <Badge className="ml-auto bg-green-500/20 text-green-400 border-green-500/30">Interview Complete</Badge>
+                <Badge className="ml-auto bg-green-500/20 text-green-400 border-green-500/30">{t(lang, "interviewComplete")}</Badge>
               )}
             </div>
 
@@ -577,15 +574,15 @@ export default function IdeaToBlueprintPublic() {
             <div className="p-4 border-t border-border">
               {interviewComplete && !isLastStep() && (
                 <div className="mb-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-between">
-                  <p className="text-sm text-green-400">✨ Interview complete! Ready to generate your blueprint.</p>
+                  <p className="text-sm text-green-400">{t(lang, "interviewCompleteMsg")}</p>
                   <Button onClick={proceedToNextStep} size="sm" className="bg-primary text-primary-foreground">
-                    Continue <ArrowRight className="w-3 h-3 ml-1" />
+                    {t(lang, "continue")} <ArrowRight className="w-3 h-3 ml-1" />
                   </Button>
                 </div>
               )}
               {interviewComplete && isLastStep() && (
                 <div className="mb-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                  <p className="text-sm text-green-400">✨ Interview complete! You can review the conversation above.</p>
+                  <p className="text-sm text-green-400">{t(lang, "interviewCompleteFinalMsg")}</p>
                 </div>
               )}
               {attachments.length > 0 && (
@@ -614,14 +611,14 @@ export default function IdeaToBlueprintPublic() {
               )}
               <div className="flex gap-2">
                 <input ref={fileInputRef} type="file" multiple accept="image/*,.pdf,.txt,.doc,.docx,.md,.csv,.json" onChange={handleFileSelect} className="hidden" />
-                <Button variant="ghost" size="icon" onClick={() => fileInputRef.current?.click()} disabled={isTyping} className="shrink-0 h-11 w-11 text-muted-foreground hover:text-foreground" title="Attach image or document">
+                <Button variant="ghost" size="icon" onClick={() => fileInputRef.current?.click()} disabled={isTyping} className="shrink-0 h-11 w-11 text-muted-foreground hover:text-foreground" title={t(lang, "attachTooltip")}>
                   <Paperclip className="w-4 h-4" />
                 </Button>
                 <Textarea
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
-                  placeholder="Tell the AI about your project idea..."
+                  placeholder={t(lang, "tellAi")}
                   className="min-h-[44px] max-h-32 resize-none bg-muted border-border"
                   disabled={isTyping}
                 />
@@ -632,7 +629,6 @@ export default function IdeaToBlueprintPublic() {
             </div>
           </Card>
 
-          {/* Show account CTA when interview is the last step and is complete */}
           {interviewComplete && isLastStep() && renderAccountCTA()}
         </div>
       </div>
@@ -640,7 +636,7 @@ export default function IdeaToBlueprintPublic() {
   }
 
   // ─── GENERATION STEPS ───
-  const meta = PIPELINE_META[currentStep];
+  const meta = pipelineMeta[currentStep];
   const currentContent =
     currentStep === "architecture" ? architectureSpec :
     currentStep === "ux-blueprint" ? uxBlueprint :
@@ -655,7 +651,7 @@ export default function IdeaToBlueprintPublic() {
         {genError && (
           <Card className="p-4 bg-destructive/10 border-destructive/30 text-destructive text-sm">
             {genError}
-            <Button variant="ghost" size="sm" onClick={proceedToNextStep} className="ml-2 text-destructive">Retry</Button>
+            <Button variant="ghost" size="sm" onClick={proceedToNextStep} className="ml-2 text-destructive">{t(lang, "retry")}</Button>
           </Card>
         )}
 
@@ -666,11 +662,11 @@ export default function IdeaToBlueprintPublic() {
             </div>
             <div>
               <h2 className="font-semibold text-foreground">{meta.label}</h2>
-              <p className="text-xs text-muted-foreground">Powered by {meta.ai}</p>
+              <p className="text-xs text-muted-foreground">{t(lang, "poweredBy")} {meta.ai}</p>
             </div>
             {generating && <Loader2 className="ml-auto w-4 h-4 animate-spin text-primary" />}
             {!generating && currentContent && (
-              <Badge className="ml-auto bg-green-500/20 text-green-400 border-green-500/30">Complete</Badge>
+              <Badge className="ml-auto bg-green-500/20 text-green-400 border-green-500/30">{t(lang, "complete")}</Badge>
             )}
           </div>
 
@@ -682,7 +678,7 @@ export default function IdeaToBlueprintPublic() {
             ) : generating ? (
               <div className="flex flex-col items-center justify-center h-full gap-4 text-muted-foreground">
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                <p className="text-sm">Generating {meta.label.toLowerCase()}...</p>
+                <p className="text-sm">{t(lang, "generating")} {meta.label.toLowerCase()}...</p>
               </div>
             ) : null}
           </ScrollArea>
@@ -690,21 +686,20 @@ export default function IdeaToBlueprintPublic() {
           {!generating && currentContent && !isLastStep() && (
             <div className="p-4 border-t border-border flex justify-end">
               <Button onClick={proceedToNextStep} className="bg-primary text-primary-foreground">
-                Continue to Next Step <ArrowRight className="w-4 h-4 ml-1" />
+                {t(lang, "continueToNext")} <ArrowRight className="w-4 h-4 ml-1" />
               </Button>
             </div>
           )}
           {!generating && currentContent && isLastStep() && (
             <div className="p-4 border-t border-border flex items-center justify-between">
-              <p className="text-sm text-green-400">🎉 Your blueprint is complete!</p>
+              <p className="text-sm text-green-400">{t(lang, "blueprintComplete")}</p>
               <Button variant="outline" onClick={resetPipeline}>
-                <RotateCcw className="w-3 h-3 mr-1" /> New Project
+                <RotateCcw className="w-3 h-3 mr-1" /> {t(lang, "newProject")}
               </Button>
             </div>
           )}
         </Card>
 
-        {/* Show account CTA when pipeline is finished */}
         {!generating && currentContent && isLastStep() && renderAccountCTA()}
       </div>
     </div>
