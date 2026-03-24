@@ -11,6 +11,7 @@ const navLinks = [
   { label: "Testimonials", href: "#testimonials" },
   { label: "Contact", href: "#contact" },
   { label: "Quantum Generation", href: "/quantum-generation" },
+  { label: "Idea → Blueprint", href: "/idea-to-blueprint" },
 ];
 
 export default function Navbar() {
